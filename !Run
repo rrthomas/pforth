@@ -1,0 +1,1 @@
+If "%0" = "-cli" Then /aForth:!RunImage Else If "%0" = "-new" Then /aForth:ARMImg Else If "%0" = "" Then /aForth:!RunImage -name aForth -ctrl -display -quit Else Echo Usage: aForth [-cli || -new]

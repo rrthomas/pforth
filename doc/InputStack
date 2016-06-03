@@ -1,0 +1,7 @@
+Could generalise the input stream to be a stack. Have a specification for
+each stream giving its handle (e.g. a filename, file handle+ptr+length,
+address+length &c.). Also have a flag specifying whether the end of the
+stream counts as EOL or not. Then can splice into the middle of a source by
+copying its specifiers and changing the length and starting address (to do
+this, need to have a known start address and length for the source that is to
+be split).

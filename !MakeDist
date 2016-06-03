@@ -1,0 +1,7 @@
+Dir <Obey$Dir>.^
+Remove aforth/zip
+SparkFSMemory 6000k 6000k
+SparkFSCreate 4 aforth/zip
+Copy !aForth aforth/zip.* R
+Delete aforth/zip.!aForth.!MakeDist
+Delete aforth/zip.!aForth.doc.aforth/tex

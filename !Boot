@@ -1,0 +1,12 @@
+IconSprites <Obey$Dir>.!Sprites
+
+Path aForth <Obey$Dir>.
+
+Alias aForth /aForth:!Run %%0 -cli
+Alias CopyNew Copy aForth:ARMImg aForth:NewImg
+Alias Update Copy aForth:NewImg aForth:!RunImage|MRemove aForth:NewImg|MRemove aForth:ARMImg
+Alias aOK Diff aForth:ARMImg aForth:NewImg
+Alias aDiff DiffN aForth:ARMImg aForth:!RunImage
+
+Set File$Type_00F ForthBlk
+SetMacro Alias$@RunType_00F <Alias$@RunType_FFF>

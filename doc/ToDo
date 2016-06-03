@@ -1,0 +1,75 @@
+The future of aForth:
+
+Port it to sMite.
+
+All the stuff below still applies if I feel like doing anything to the Forth
+system itself. Indeed, it may well provide a good starting point for many of
+the Tau structures, though I'll probably want to develop the language first.
+
+
+Add INLINE name and ( xt ) INLINE, for compiling in-line code.
+
+Have DLITERAL, as the current way of doing double literals is rather
+unportable.
+
+Have proper escape and error handlers that throw an exception. Use exceptions
+in the file words instead of return codes (have a switch to go between
+returning codes and throwing exceptions).
+
+To make aForth threading-independent (provided some form of threading is used
+which occupies a cell) have words B@ and B! for fetching and storing branch
+addresses.
+
+Metacompilation: all defining words should be classes; then during
+metacompilation there's two versions of each class, one implemented by the
+cross-compiler, and one in the compiled implementation. Using something like
+delegation, metacompiled classes can delegate to a class in the metacompiler,
+or (much of the time) delegate wholesale to the standard class (when the
+structure of the metacompiled class is the same).
+
+Continue to reengineer HighLevel code:
+
+0. OOPify; this takes in all the steps below. Rewrite the metacompiler to use
+objects whose methods are different depending on whether we're in the
+compiler or metacompiler (this is really contexts).
+
+1. Factor long definitions. Especially, re-engineer code that deals with
+input source in a much more OOP manner into one package for each type of
+input stream (string, terminal, blocks, files): have an input source object
+whose methods (SOURCE-ID, SOURCE, SAVE-INPUT, RESTORE-INPUT &c.) can be called.
+
+2. Break up HighLevel into multiple source files: do it by wordset: then can
+build versions of aForth with any specified wordsets, and later wordsets
+ought to be able to be loaded on top of older ones. The hard thing will be to
+deal with words whose semantics are extended by different wordsets,
+especially those whose semantics are extended more than once. aForth's own
+words such as the forward refs compiler tools ought to have their own
+wordsets.
+
+3. Separate OS from processor, so that e.g. sMite and ARM versions of RISC OS
+aForth can use the same OS interface and code.
+
+4. Add memory allocation and use for transient buffers. Using for
+dictionaries has two obvious problems: first, need to auto-extend areas being
+compiled into (or shrink to fit at end); second, generating a meta-compiled
+image will be harder.
+
+5. Make general-purpose forward-reference mechanism (using CATCH/THROW around
+ordinary INTERPRET, and existing forward resolution mechanism). Needs memory
+allocation to be able to start a new definition when half-way through the
+current one.
+
+6. Reorganize the mess over wordlists (FOREIGN &c.); there must be a simpler
+way of handling metacompilation using a more OOP approach (so that even
+different dictionary structures can be accomodated). Wordlists in the search
+order should call their method (inherited from their dictionary) for
+scanning themselves, and report whether the word found is executable on the
+current system or not.
+
+7. Need a mechanism for handling system-specific replacement code; then can
+replace bits all the way from a simple VM implementation (Tau?) down to a
+highly OS-integrated one which replaces ACCEPT &c. Again, use objects.
+
+8. Don't interpret, always compile (incrementally compile a line, then
+execute). This gets rid of STATE and dual-action (compile/interpret) words.
+Hopefully (there may be some traps in ANS).

@@ -1,0 +1,25 @@
+Object-oriented Forth syntax
+
+CREATE[ ... ] for per instance declarations. Compile immediate words and save
+others as literal strings. At run-time, run the NEW" method of each class
+compiled, supplying the literal string on the stack.
+
+DOES[ ... ] for methods. Go into interpretation mode after DOES[ and compile
+into a private dictionary.
+
+DOES> and CREATE work as normal: CREATE is effectively CREATE[ ] and DOES> is
+DOES[ :NONAME ... ].
+
+DEFAULT after a declaration in CREATE[ ... ] or DOES[ ... ] makes that method
+the default.
+
+Modify the parser to allow the following syntax:
+
+object		executes default method of object
+object.method	executes method of object
+class_method	executes method of class on the object on the stack
+O' object	returns the object pointer of object.
+
+Can parse the top three after attempting to parse a token as a number (should
+be before for efficiency, but after for ANS compatibility; and yet not, as if
+no non-ANSI object words are created, this effect will not occur).
