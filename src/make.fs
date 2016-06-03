@@ -72,7 +72,6 @@ M0 4 + <M0 SWAP   \ address of start of threads hash table
 HEX 8000 DECIMAL SWAP   \ M0 of new system
 INCLUDE highlevel/fs
 INCLUDE initialize/fs
->COMPILERS<
 
 HERE <M0  V' ROOTDP !   \ patch ROOTDP
 HEX
@@ -85,8 +84,8 @@ HEX
 DECIMAL
 ' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
 ' VOCABULARY >DOES> RESOLVES (VOCABULARY)
-
 ' NEW-FORTH >BODY @ @  PREVIOUS  DUP RELOCATE   \ relocate the new dictionary
+>COMPILERS<
 
 ALIGN HERE M0 -   \ ( length ) of binary image
 ROOT HERE OVER ALLOT   \ make space for binary image ( length start )
