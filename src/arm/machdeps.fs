@@ -121,3 +121,9 @@ END-SUB
 
 : "COPYRIGHT   S" ©" ;
 : "ENVIRONMENT   S" RISC OS" ;
+
+
+\ OS-specific file access
+
+\ Set the type of the file given by c-addr u2 to u1
+: TYPE-FILE   ( u1 c-addr u2 -- )   C0END  18  [ 3 0 8 ] OS ;

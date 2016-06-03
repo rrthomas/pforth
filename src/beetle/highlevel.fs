@@ -129,15 +129,24 @@ DECIMAL
 : SMUDGE   ( f -- )   LAST  SMUDGE! ;
 
 
-INCLUDE machdeps/fs   \ include machine-dependent words
-
-
 \ Interpreter #2
 
 : PAD   R0 @ 256 + ;
 : TOKEN   R0 @ 512 + ;
 : S"B   R0 @ 768 + ;
 : SCRATCH   R0 @ 1024 + ;
+
+
+\ Strings #2
+
+: C0END   ( c-addr1 u -- c-addr2 )   SCRATCH SWAP  2DUP + >R  MOVE  0 R> C!
+   SCRATCH ;
+
+
+INCLUDE machdeps/fs   \ include machine-dependent words
+
+
+\ Interpreter #3
 
 : ABORT   -1 THROW ;
 : QUIT   -56 THROW ;
@@ -185,11 +194,9 @@ IMMEDIATE COMPILING
 : 2,   , , ;
 
 
-\ Strings #2
+\ Strings #3
 
 : BLANK   BL FILL ;
-: C0END   ( c-addr1 u -- c-addr2 )   SCRATCH SWAP  2DUP + >R  MOVE  0 R> C!
-   SCRATCH ;
 
 : COMPARE   ( c-addr1 u1 c-addr2 u2 -- n )
    ROT 2SWAP 2OVER MIN               \ no. of characters to check
@@ -492,7 +499,7 @@ VARIABLE 'SCAN-TEST
 : [CHAR]   CHAR  POSTPONE LITERAL ; IMMEDIATE COMPILING
 
 
-\ Interpreter #3
+\ Interpreter #4
 
 : ABORT"   POSTPONE C"  POSTPONE (ABORT") ; IMMEDIATE COMPILING
 
@@ -691,7 +698,7 @@ VARIABLE 'FRAME  0 V' 'FRAME !
    0 ;                               \ leave OK flag
 
 
-\ Interpreter #4
+\ Interpreter #5
 
 : FOREIGN?   ( wid -- f )   2 CELLS + @  1023 > ;
 : LOCAL?   ( wid xt n -- f )
