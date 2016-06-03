@@ -5,7 +5,7 @@ CR .( Metacompiling aForth for RISC OS: )
 
 
 MARKER DISPOSE
-INCLUDE armasm/fs
+INCLUDE assembler/fs
 
 
 \ Meta-compiler utilities
