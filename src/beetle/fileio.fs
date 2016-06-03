@@ -1,5 +1,5 @@
 \ Mass storage input/output words
-\ Reuben Thomas   2/7-1/8/96
+\ Reuben Thomas   2/7/96-3/6/16
 
 : BIN ; IMMEDIATE
 CREATE R/O  CHAR r C, CHAR b C, 0 C,
@@ -16,12 +16,12 @@ CREATE CREATE-FAM  CHAR w C, CHAR + C, CHAR b C, 0 C,
 
 : READ-FILE   ( adr u1 fid -- u2 ior )   6 LIB ;
 : WRITE-FILE   ( adr u fid -- ior )   7 LIB ;
-
-\ Can find no evidence these were ever implemented!
-\ : READ-LINE   ( adr u1 fid -- u2 f ior )   13 LIB ;
-\ : WRITE-LINE   ( adr u fid -- ior )   14 LIB ;
+: FLUSH-FILE   ( fid -- ior )   10 LIB ;
 
 : FILE-POSITION   ( fid -- u ior )   8 LIB ;
 : REPOSITION-FILE   ( u fid -- ior )   9 LIB ;
 
-: FLUSH-FILE   ( fid -- ior )   10 LIB ;
+\ FIXME: FILE-SIZE   ( fid -- ud ior ) ;
+\ FIXME: RESIZE-FILE   ( ud fid -- ior ) ;
+
+\ FIXME: FILE-STATUS   ( c-addr u -- x ior ) ;
