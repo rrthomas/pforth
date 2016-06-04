@@ -483,6 +483,11 @@ TOP R1 31 #ASR MOV,              \ set flag TRUE if signs
 END-SUB                          \ different or FALSE if not
 COMPILING
 
+CODE UNLOOP
+RP RP 8 # ADD,
+END-SUB
+COMPILING
+
 CODE EXECUTE
 R0 TOP MOV,
 TOP SP POP,
