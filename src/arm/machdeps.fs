@@ -1,5 +1,10 @@
-\ Machine-dependent words
-\ Reuben Thomas   1/7/96-14/5/00
+\ Machine-dependent words (ARM)
+\ Reuben Thomas
+
+
+\ System variables
+
+0 VALUE LIMIT \ FIXME: make it a constant
 
 
 \ Compiler #1

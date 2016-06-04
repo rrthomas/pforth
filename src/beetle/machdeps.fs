@@ -1,5 +1,5 @@
 \ Machine-dependent words (Beetle)
-\ Reuben Thomas   2/7/96-2/4/97
+\ Reuben Thomas
 
 
 \ System variables

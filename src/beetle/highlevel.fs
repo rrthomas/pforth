@@ -10,7 +10,6 @@ VARIABLE S0
 4096 CONSTANT CELLS/S
 VARIABLE R0
 4096 CONSTANT CELLS/R
-\ 0 VALUE LIMIT FIXME: defined in machdeps.fs
 DUP VALUE M0   \ value is put on stack by make.fs
 : <M0   M0 -  LITERAL + ;   \ value is put on stack by make.fs
 
