@@ -16,7 +16,7 @@ HEX
 DECIMAL
 
 
-\ Cache synchronisation
+\ Writing code to memory
 
 : SYNCHRONIZE   ( from to -- )   SWAP 1  [ 3 0 ]
    OS" XOS_SynchroniseCodeAreas" ;

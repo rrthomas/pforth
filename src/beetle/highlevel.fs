@@ -1133,7 +1133,7 @@ DECIMAL
          I @                         \ get address to patch
          DUP @                       \ get old contents of cell to patch
          I CELL+ !                   \ save old contents
-         !                           \ patch word
+         CODE!                       \ patch word
       [ 2 CELLS ] LITERAL +LOOP ;
 
 

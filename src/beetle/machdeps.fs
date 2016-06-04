@@ -12,6 +12,13 @@
 : (C")   R>  DUP C@ 1+ OVER + ALIGNED  >R ;
 : (S")   R>  DUP C@  TUCK 1+ OVER + ALIGNED  >R  1+ SWAP ;
 
+
+\ Writing code to memory
+
+: CODE!   ( x adr -- )   ! ;
+\ FIXME: add CODE, and use CODE! and CODE, as for ARM
+
+
 \ Branches
 
 HEX
