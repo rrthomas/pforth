@@ -43,8 +43,8 @@ HEX
 R: <M0   M0 - 10 + ;
 R: AHEAD   HERE  42 C,  0 FIT,  0 , ;
 R: IF   HERE  44 C,  0 FIT,  0 , ;
-R: LITERAL   B(LITERAL) ;
-R: NOPALIGN   0 FIT, ;
+R: LITERAL   B(LITERAL) ; \ FIXME: use same definition as in machdeps.fs
+R: NOPALIGN   0 FIT, ; \ Use for 0 FIT, in the metacompiler
 : OFFSET   ( from to -- offset )   OVER M0 <  OVER M0 <  OR ABORT" OFFSET out of image!"
    >-<  CELL/ 1-  00FFFFFF AND ;
 R: !BRANCH   ( at from to opcode -- )   -ROT  OFFSET  8 LSHIFT  OR  SWAP ! ;

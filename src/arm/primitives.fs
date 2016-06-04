@@ -1,7 +1,7 @@
 \ Kernel assembler words
 \ Reuben Thomas   15/4/96-13/7/99
 
-CR .( Kernel assembler words )
+CR .( Assembler words )
 
 
 \ Stack manipulation
@@ -147,22 +147,7 @@ TOP TOP TOP SBC,
 END-SUB
 
 
-\ Compiler
-
-CODE (LITERAL)
-TOP SP PUSH,
-TOP LR 252 24 LSHIFT # BIC,
-TOP TOP 0@ LDR,
-PC LR 4 # ADD,
-END-CODE
-COMPILING
-
-CODE THROW
-PC SWAP PCR LDR,   \ 'THROW's contents put on stack by make/fs
-END-CODE
-
-
-\ Arithmetic and logical
+\ Arithmetic and logical #1
 
 CODE 0
 TOP SP PUSH,
@@ -258,6 +243,20 @@ CODE *
 R0 SP 4 #@+ LDR,
 TOP R0 TOP MUL,
 END-SUB
+
+
+\ Compiler #1
+
+CODE (LITERAL)
+TOP SP PUSH,
+TOP LR 252 24 LSHIFT # BIC,
+TOP TOP 0@ LDR,
+PC LR 4 # ADD,
+END-CODE
+COMPILING
+
+
+\ Arithmetic and logical #2
 
 CODE (U/MOD)
 R1 TOP SET MOV,                  \ copy divisor
@@ -401,10 +400,12 @@ R0 SP POP,
 TOP R0 TOP LSR MOV,
 END-SUB
 
-CODE ARSHIFT
-R0 SP POP,
-TOP R0 TOP ASR MOV,
-END-SUB
+
+\ Compiler #2
+
+CODE THROW
+PC SWAP PCR LDR,   \ 'THROW's contents put on stack by make/fs
+END-CODE
 
 
 \ Memory
@@ -438,11 +439,26 @@ TOP SP POP,
 END-SUB
 
 
+\ System
+
+CODE BYE
+R0 0 # MOV,
+R1 0 # MOV,
+SWI," XOS_Exit"
+END-CODE
+
+
 \ Control structures
+
 CODE J
 TOP SP PUSH,
 TOP RP 8 #+@ LDR,
 END-SUB
+COMPILING
+
+CODE EXIT
+UNLINK,
+END-CODE
 COMPILING
 
 CODE (LOOP)
@@ -465,11 +481,6 @@ R1 R0 R1 SUB,                    \ new index-limit
 R1 R1 R2 EOR,                    \ find whether signs the same
 TOP R1 31 #ASR MOV,              \ set flag TRUE if signs
 END-SUB                          \ different or FALSE if not
-COMPILING
-
-CODE EXIT
-UNLINK,
-END-CODE
 COMPILING
 
 CODE EXECUTE
@@ -502,21 +513,6 @@ END-SUB
 COMPILING
 
 
-\ System
-
-CODE BYE
-R0 0 # MOV,
-R1 0 # MOV,
-SWI," XOS_Exit"
-END-CODE
-
-CODE OS#
-R1 TOP MOV,
-SWI," OS_SWINumberFromString"
-TOP R0 MOV,
-END-SUB
-
-
 \ Stack pointers
 
 CODE SP@
@@ -536,4 +532,22 @@ END-SUB
 CODE RP!
 RP TOP MOV,
 TOP SP POP,
+END-SUB
+
+
+\ Extras
+
+\ Arithmetic and logic
+
+CODE ARSHIFT
+R0 SP POP,
+TOP R0 TOP ASR MOV,
+END-SUB
+
+\ System
+
+CODE OS#
+R1 TOP MOV,
+SWI," OS_SWINumberFromString"
+TOP R0 MOV,
 END-SUB
