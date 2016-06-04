@@ -12,7 +12,7 @@ VARIABLE S0
 VARIABLE R0
 4096 CONSTANT CELLS/R
 DUP VALUE M0   \ value is put on stack by make.fs
-: <M0   M0 -  LITERAL + ;
+: <M0   M0 -  LITERAL + ;   \ value is put on stack by make.fs
 
 
 \ Stack manipulation
@@ -889,8 +889,8 @@ VARIABLE CODEX  0 V' CODEX !
 VARIABLE CURRENT-VOLUME
 : VOLUME   CREATE  HERE 3 CELLS + ,  HERE CODEX  DUP @ ,  !  0 ,
    #THREADS 0 DO  0 ,  LOOP  DOES>  CURRENT-VOLUME ! ;
-: #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ;
-HERE <M0   \ leave address of data structure
+: #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ; \ FIXME: make ; execute ALIGN?
+ALIGN HERE <M0   \ leave address of data structure
 SWAP ,   \ address is HERE put on stack by make.fs
 HERE <M0  V' CODEX  DUP @ ,  !  0 ,
 : KERNEL   LITERAL ( address is HERE left earlier ) CURRENT-VOLUME ! ;

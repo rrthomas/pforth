@@ -5,6 +5,7 @@ CR .( aForth high level words )
 
 
 \ System variables
+
 CONSTANT 'THROW   \ value is put on stack by make.fs
 VARIABLE S0
 4096 CONSTANT CELLS/S
@@ -274,7 +275,6 @@ INCLUDE fileio/fs
       DROP  R> DROP                  \ else u2=u1; drop fid
    THEN
    TRUE 0 ;                          \ leave true flag, ior=0
-
 : WRITE-LINE   ( c-addr u fid -- ior )
    >R                                \ save fid
    R@ WRITE-FILE                     \ write the line
@@ -894,7 +894,7 @@ VARIABLE CURRENT-VOLUME
 : #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ; \ FIXME: make ; execute ALIGN?
 ALIGN HERE <M0   \ leave address of data structure
 SWAP ,   \ address is HERE put on stack by make.fs
-HERE <M0   V' CODEX  DUP @ ,  !  0 ,
+HERE <M0  V' CODEX  DUP @ ,  !  0 ,
 : KERNEL   LITERAL ( address is HERE left earlier ) CURRENT-VOLUME ! ;
 
 VARIABLE CHAIN  0 V' CHAIN !
@@ -1140,6 +1140,7 @@ DECIMAL
 
 
 INCLUDE os/fs   \ include OS access words
+
 
 \ Initialisation and version number
 
