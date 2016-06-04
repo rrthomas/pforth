@@ -1140,7 +1140,7 @@ DECIMAL
       [ 2 CELLS ] LITERAL +LOOP ;
 
 
-\ INCLUDE os/fs   \ include OS access words
+INCLUDE os/fs   \ include OS access words
 
 \ Initialisation and version number
 
