@@ -404,7 +404,7 @@ END-SUB
 \ Compiler #2
 
 CODE THROW
-PC SWAP PCR LDR,   \ 'THROW's contents put on stack by make/fs
+PC SWAP PCR LDR,   \ 'THROW's value put on stack by make/fs
 END-CODE
 
 
