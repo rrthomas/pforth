@@ -1039,29 +1039,40 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 \ RESOLVERs allow forward branches. Define a resolver, use it in definitions
 \ and then use RESOLVE: or RESOLVES to resolve it. RESOLVERs may be POSTPONEd
 \ but the code to POSTPONE the RESOLVER will not itself be resolved.
-: RESOLVER   ( name )
+: (RESOLVER)   ( name )
    CREATE IMMEDIATE COMPILING        \ create RESOLVER
-   0 ,                               \ end-of-list marker
+   ,                                 \ end-of-list marker (left by caller)
    DOES>
       HERE                           \ address of branch to resolve
-      SWAP DUP @ ,                   \ compile previous branch address
-      ! ;                            \ record next branch in list
+      SWAP DUP @  DUP 1 AND          \ get previous branch address & type flag
+      SWAP ,                         \ compile previous branch address & flag
+      ROT OR SWAP ! ;                \ record next branch in list
+                                     \ with call/branch flag in LSB
+: RESOLVER   ( name )
+   0 (RESOLVER) ;
+\ A RESOLVER which compiles branches instead of calls
+: BRANCH-RESOLVER   ( name )
+   1 (RESOLVER) ;
 
 \ RESOLVE resolves all occurrences of the RESOLVER whose execution token is
 \ from with calls to to. RESOLVE must not be used directly, but via RESOLVE:
 \ or RESOLVES.
 : RESOLVE   ( from to -- )
    SWAP >BODY @                      \ get first address in branch list
-   BEGIN  ?DUP WHILE                 \ chain down list until null marker
+   DUP 1 AND >R                      \ get and save call/branch flag
+   BEGIN  1 INVERT AND ?DUP WHILE    \ chain down list until null marker,
+                                     \ clearing call/branch flag
       DUP @                          \ get next address in list
-      -ROT  2DUP SWAP CALL           \ compile the call
+      -ROT  2DUP SWAP  R@ IF         \ compile the call or branch
+         BRANCH
+      ELSE
+         CALL
+      THEN
       SWAP
    REPEAT
-   DROP ;                            \ drop a-addr
+   R> 2DROP ;                        \ drop to and flag
 
-\ RESOLVES is used to resolve DOES> code in metacompilation, where the
-\ defining word has WILL-DO X instead of DOES> ..., and the resolving word
-\ has DOES> [ HERE RESOLVES X ] ... .
+\ RESOLVES is used to resolve WILL-DO defining words (see WILL-DO).
 : RESOLVES   ( name )   ( a-addr -- )   '  SWAP RESOLVE ;
 
 \ RESOLVE: is used to supply the definition of a RESOLVER; the branch list is
@@ -1102,12 +1113,11 @@ DECIMAL
    ' >DOES>                          \ get address of old DOES> code
    :NONAME ;                         \ start new definition
 
-\ WILL-DO makes a defining word compile a RESOLVER rather than its normal
-\ code. Use as RESOLVER X WILL-DO Y, where Y must be a defining word. This
-\ can be used both to revector existing defining words, and to resolve the
-\ run-time code of new ones. Use RESOLVES or RESOLVE: to resolve WILL-DO.
-\ A typical way of doing this is to use the phrase ' X >DOES> RESOLVES Y
-\ where X is the new definition of a defining word and Y its resolver.
+\ WILL-DO makes a defining word compile a BRANCH-RESOLVER rather than its
+\ normal code. Use as BRANCH-RESOLVER X WILL-DO Y, where Y must be a defining
+\ word. This can be used both to revector existing defining words, and to
+\ resolve the run-time code of new ones. Use RESOLVES or RESOLVE: to resolve
+\ WILL-DO, e.g.: ' NEW-DEFINER >DOES> RESOLVES DEFINER-RESOLVER
 \ WILL-DO must be used as part of a REDEFINER.
 : WILL-DO   ( -- old new )   ' >DOES> 8 -  :NONAME POSTPONE LAST
    POSTPONE >DOES POSTPONE HERE POSTPONE SWAP POSTPONE DP POSTPONE !
