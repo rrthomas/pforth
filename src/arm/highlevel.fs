@@ -1031,7 +1031,6 @@ VARIABLE CURSORX   \ cursor x position during WORDS
          ENDCASE
       THEN
    THEN ;
-HEX  ' (THROW) <M0  ' 'THROW 8 + @ M0 + 8000 -  !  DECIMAL
 
 
 \ Forward branches
@@ -1153,6 +1152,7 @@ INCLUDE os/fs   \ include OS access words
    DUP R0 !  DUP RP!                 \ set R0 and RP
    CELLS/R CELLS -                   \ make room for return stack
    DUP S0 !  SP!                     \ set S0 and SP
+   [ ' (THROW) <M0 ] LITERAL 'THROW !
    R0 @  LIMIT  OVER -  ERASE        \ erase buffers
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
