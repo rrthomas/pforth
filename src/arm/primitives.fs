@@ -245,7 +245,7 @@ TOP R0 TOP MUL,
 END-SUB
 
 
-\ Compiler #1
+\ Compiler
 
 CODE (LITERAL)
 TOP SP PUSH,
@@ -254,6 +254,10 @@ TOP TOP 0@ LDR,
 PC LR 4 # ADD,
 END-CODE
 COMPILING
+
+CODE THROW
+PC SWAP PCR LDR,   \ 'THROW's value put on stack by make/fs
+END-CODE
 
 
 \ Arithmetic and logical #2
@@ -399,13 +403,6 @@ CODE RSHIFT
 R0 SP POP,
 TOP R0 TOP LSR MOV,
 END-SUB
-
-
-\ Compiler #2
-
-CODE THROW
-PC SWAP PCR LDR,   \ 'THROW's value put on stack by make/fs
-END-CODE
 
 
 \ Memory
