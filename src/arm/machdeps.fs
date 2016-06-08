@@ -9,6 +9,7 @@
 
 \ Compiler #1
 
+\ FIXME: Extract 03FFFFFF AND as a word
 HEX
 : (C")   R>  03FFFFFF AND  DUP C@ 1+ CHARS OVER + ALIGNED  >R ;
 : (S")   R>  03FFFFFF AND  DUP C@  TUCK 1+ CHARS OVER + ALIGNED  >R

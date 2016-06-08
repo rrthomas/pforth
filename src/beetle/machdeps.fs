@@ -36,6 +36,8 @@ HEX
 : !BRANCH   ( at from to opcode -- )   HERE >R  >R  ROT DP !  R> C,  OFFSET
    FIT,  R> DP ! ;
 
+\ FIXME: allow arbitrary branches; at the moment we're effectively
+\ restricted to 64Mb.
 : BRANCH   ( at from to -- )   43 !BRANCH ;
 : CALL   ( at from to -- )   49 !BRANCH ;
 
