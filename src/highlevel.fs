@@ -241,9 +241,16 @@ IMMEDIATE COMPILING
 : "ENDCASE   POSTPONE 2DROP  0 ?DO  POSTPONE THEN  LOOP ; IMMEDIATE COMPILING
 
 
-\ Mass storage input/output
+\ Mass storage input/output #1
 
 INCLUDE fileio/fs
+
+\ Save u1 bytes at a-addr in the file given by c-addr u2
+: SAVE-FILE   ( a-addr u1 c-addr u2 -- )
+   W/O CREATE-FILE DROP          \ open file
+   >R                            \ save file-id
+   R@ WRITE-FILE DROP            \ write data
+   R> CLOSE-FILE DROP ;          \ close file
 
 : READ-LINE   ( c-addr u1 fid -- u2 flag ior )
    >R  OVER SWAP                     \ save fid and copy c-addr
@@ -292,7 +299,7 @@ INCLUDE fileio/fs
    WHILE  1-  REPEAT ;
 
 
-\ Mass storage input/output #1
+\ Mass storage input/output #2
 
 0 VALUE "BLOCK
 VARIABLE SCR
@@ -572,7 +579,7 @@ VARIABLE HELD
    R> DROP ;                         \ drop address of string
 
 
-\ Mass storage input/output #2
+\ Mass storage input/output #3
 
 : LIST   ( u -- )
    BASE @ SWAP  DECIMAL              \ save BASE and switch to decimal
@@ -805,7 +812,7 @@ IMMEDIATE
    ELSE ." stack empty "  THEN ;
 
 
-\ Mass storage input/output #3
+\ Mass storage input/output #4
 
 : FROM   ( name )   BL WORD COUNT  HERE TO "BLOCK  ", ;
 
