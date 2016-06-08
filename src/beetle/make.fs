@@ -62,7 +62,7 @@ HEX
    \ patch FORTH wordlist
 1  ' KERNEL >NAME 8 -  !   \ patch #WORDLISTS
 DECIMAL
-\ ' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
+' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
 ' VOCABULARY >DOES> RESOLVES (VOCABULARY)
 ' FORTH >DOES DUP  ' VOCABULARY >DOES>  BRANCH   \ patch FORTH to call Beetle's VOCABULARY's DOES> code, not aForth's
 ' NEW-FORTH >BODY @ @  PREVIOUS  DUP RELOCATE   \ relocate the new dictionary

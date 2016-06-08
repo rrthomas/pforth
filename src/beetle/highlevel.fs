@@ -872,7 +872,7 @@ COMPILING
 
 : VARIABLE   CREATE  CELL ALLOT ;
 : CONSTANT   BL WORD HEADER  LINK,  POSTPONE LITERAL  UNLINK, ;
-: VALUE   CREATE  ,  DOES>  @ ; \ FIXME: Make this work as for the metacompiler (i.e. machine-specific, sigh)
+: VALUE   CREATE  ,  DOES>  @ ;
 : TO   ' >BODY ! ;
    :NONAME   ' >BODY  <M0  POSTPONE LITERAL  POSTPONE ! ;IMMEDIATE
 
