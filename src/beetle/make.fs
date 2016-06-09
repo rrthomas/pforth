@@ -1,11 +1,14 @@
-\ Metacompile aForth for Beetle
-\ Reuben Thomas   15/4/96-9/4/99
+\ Metacompile aForth
+\ Reuben Thomas   started 15/4/96
+
+INCLUDE platform/fs
+
+CR .( Metacompiling aForth for ) PLATFORM TYPE .( : )
 
 
-CR .( Metacompiling aForth for Beetle: )
-
-INCLUDE file/fs
+MARKER DISPOSE
 INCLUDE assembler/fs
+
 
 \ Meta-compiler utilities
 
@@ -14,7 +17,7 @@ DECIMAL
 
 \ Relocate new dictionary
 : >ADDRESS<   DUP @  ?DUP IF  <M0 SWAP !  ELSE DROP  THEN ;
-: RELOCATE   ( adr -- )
+: RELOCATE   ( a-addr -- )
    CURRENT-VOLUME @ @  #THREADS CELLS  OVER + SWAP DO
       I @  ?DUP IF  <M0 I !  THEN
    CELL +LOOP
@@ -53,7 +56,7 @@ PREVIOUS
 
 INCLUDE highlevel/fs
 INCLUDE initialize/fs
-HERE <M0  V' ROOTDP !   \ patch DP
+HERE <M0  V' ROOTDP !   \ patch ROOTDP
 HEX
 ' NEW-FORTH >BODY @ @ <M0  ' FORTH >BODY @ ( FIXME: this calculation is >M0 ) M0 + 10 -  !
    \ patch root wordlist
@@ -64,7 +67,6 @@ HEX
 DECIMAL
 ' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
 ' VOCABULARY >DOES> RESOLVES (VOCABULARY)
-' FORTH >DOES DUP  ' VOCABULARY >DOES>  BRANCH   \ patch FORTH to call Beetle's VOCABULARY's DOES> code, not aForth's
 ' NEW-FORTH >BODY @ @  PREVIOUS  DUP RELOCATE   \ relocate the new dictionary
    \ leave address of START on the stack
 >COMPILERS<
@@ -78,9 +80,9 @@ TUCK + -ROT +   \ ( s l M0+(#T+1)CELLS H+(#T+1)CELLS )
 OVER CELL+ CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+CELL )
 #THREADS CELLS MOVE   \ copy threads ( s l )
 
-OVER TUCK DUP 2ROT  + M0 -  >COMPILERS< BRANCH >COMPILERS<   \ patch in branch to START
+OVER TUCK DUP 2ROT  + M0 -  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
 
-S" mImg"  SAVE   \ write object module
+S" aForthImage" SAVE   \ write system image
 
 KERNEL PREVIOUS DEFINITIONS   \ restore original order
 TO M0   \ restore M0

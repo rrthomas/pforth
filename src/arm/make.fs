@@ -1,7 +1,9 @@
-\ Metacompile aForth for RISC OS
-\ Reuben Thomas   15/4/96-18/11/99
+\ Metacompile aForth
+\ Reuben Thomas   started 15/4/96
 
-CR .( Metacompiling aForth for RISC OS: )
+INCLUDE platform/fs
+
+CR .( Metacompiling aForth for ) PLATFORM TYPE .( : )
 
 
 MARKER DISPOSE
@@ -36,7 +38,6 @@ VOLUME NEW   \ define a new hash table
 NEW VOCABULARY NEW-FORTH   \ define the new root vocabulary
 NEW   \ make the new dictionary the current volume
 
-48 1024 * CONSTANT SIZE
 SIZE DICTIONARY CROSS  \ define a new dictionary
 M0   \ save value of M0
 ' CROSS >BODY @  #THREADS 1+ CELLS -  TO M0   \ make M0 point to the start
@@ -78,9 +79,9 @@ TUCK + -ROT +   \ ( s l M0+(#T+1)CELLS H+(#T+1)CELLS )
 OVER CELL+ CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+CELL )
 #THREADS CELLS MOVE   \ copy threads ( s l )
 
-OVER TUCK DUP 2ROT  + M0 -  BRANCH   \ patch in branch to INITIALIZE
+OVER TUCK DUP 2ROT  + M0 -  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
 
-S" ^.ARMImg" SAVE   \ write image
+S" aForthImage" SAVE   \ write system image
 
 KERNEL PREVIOUS DEFINITIONS   \ restore original order
 TO M0   \ restore M0
