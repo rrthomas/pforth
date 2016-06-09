@@ -40,34 +40,31 @@ NEW   \ make the new dictionary the current volume
 
 SIZE DICTIONARY CROSS  \ define a new dictionary
 M0   \ save value of M0
-' CROSS >BODY @  #THREADS 1+ CELLS -  TO M0   \ make M0 point to the start
-\ of it minus the threads table and branch to startup code
+' CROSS >BODY @  #THREADS 1+ CELLS -  TO M0
+   \ make M0 point to the start of it minus the threads table and
+   \ initial branch
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
-
 >COMPILERS<
-4 ALLOT   \ space for 'THROW's contents
-HEX
-#THREADS 1+ CELLS  DUP  8000 + SWAP  M0 +   \ address of 'THROW's contents
-DECIMAL
+M0 <M0   \ M0 of new system
 INCLUDE primitives/fs
-M0 4 + <M0 SWAP   \ address of start of threads hash table
-HEX 8000 DECIMAL SWAP   \ M0 of new system
+
 INCLUDE highlevel/fs
 INCLUDE initialize/fs
 
 HERE <M0  V' ROOTDP !   \ patch ROOTDP
 HEX
-' NEW-FORTH >BODY @ @ <M0  ' FORTH >BODY @ M0 + 8000 -  !
+' NEW-FORTH >BODY @ @ <M0  ' FORTH >BODY @ >M0  !
    \ patch root wordlist
 ' FORTH >BODY @ CELL+  ' CHAIN >BODY  !   \ patch CHAIN
-' FORTH >NAME 8 -  8004 OVER !  4 -  0 OVER !  4 -  0 SWAP !
+' FORTH >NAME 8 -  M0 <M0 CELL+ OVER !  4 -  0 OVER !  4 -  0 SWAP !
    \ patch FORTH wordlist
 1  ' KERNEL >NAME 8 -  !   \ patch #WORDLISTS
 DECIMAL
 ' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
 ' VOCABULARY >DOES> RESOLVES (VOCABULARY)
 ' NEW-FORTH >BODY @ @  PREVIOUS  DUP RELOCATE   \ relocate the new dictionary
+   \ leave initial branch target on the stack
 >COMPILERS<
 
 ALIGN HERE M0 -   \ ( length ) of binary image

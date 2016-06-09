@@ -1,18 +1,19 @@
 \ aForth high level words
-\ Reuben Thomas   1/91-14/5/00
+\ Reuben Thomas   started 1/91
 
 CR .( aForth high level words )
 
 
 \ System variables
 
-CONSTANT 'THROW   \ value is put on stack by make.fs
+'THROW-CONTENTS <M0 CONSTANT 'THROW
 VARIABLE S0
 4096 CONSTANT CELLS/S
 VARIABLE R0
 4096 CONSTANT CELLS/R
 DUP VALUE M0   \ value is put on stack by make.fs
-: <M0   M0 -  LITERAL + ;   \ value is put on stack by make.fs
+: <M0   M0 -  [ DUP ] LITERAL + ;   \ value is put on stack by make.fs
+: >M0   M0 +  LITERAL - ;   \ value is put on stack by make.fs
 
 
 \ Stack manipulation
@@ -897,7 +898,7 @@ VARIABLE CURRENT-VOLUME
    #THREADS 0 DO  0 ,  LOOP  DOES>  CURRENT-VOLUME ! ;
 : #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ; \ FIXME: make ; execute ALIGN?
 ALIGN HERE <M0   \ leave address of data structure
-SWAP ,   \ address is HERE put on stack by make.fs
+M0 CELL+  <M0  ,   \ address of start of threads hash table
 HERE <M0  V' CODEX  DUP @ ,  !  0 ,
 : KERNEL   LITERAL ( address is HERE left earlier ) CURRENT-VOLUME ! ;
 
@@ -1158,7 +1159,7 @@ INCLUDE os/fs   \ include OS access words
 
 \ Initialisation and version number
 
-77 CONSTANT VERSION
+78 CONSTANT VERSION
 : %.   S>D  <# # # [CHAR] . HOLD #S #>  TYPE ;
 
 : START
@@ -1175,7 +1176,6 @@ INCLUDE os/fs   \ include OS access words
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
    ." aForth for "  "ENVIRONMENT TYPE ."  v" VERSION %.
-   ."  14th May 2000"
-   CR "COPYRIGHT TYPE  ."  Reuben Thomas 1991-2000" CR
+   CR "COPYRIGHT TYPE  ."  Reuben Thomas 1991-2016" CR
                                      \ display the start message
    QUIT ;                            \ enter the main loop

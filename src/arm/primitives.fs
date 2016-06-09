@@ -4,6 +4,11 @@
 CR .( Assembler words )
 
 
+\ Compiler #1
+
+HERE 4 ALLOT  >COMPILERS< TO 'THROW-CONTENTS >COMPILERS<   \ space for 'THROW's contents
+
+
 \ Stack manipulation
 
 CODE DUP
@@ -245,7 +250,7 @@ TOP R0 TOP MUL,
 END-SUB
 
 
-\ Compiler
+\ Compiler #2
 
 CODE (LITERAL)
 TOP SP PUSH,
@@ -256,7 +261,7 @@ END-CODE
 COMPILING
 
 CODE THROW
-PC SWAP PCR LDR,   \ 'THROW's value put on stack by make/fs
+PC 'THROW-CONTENTS PCR LDR,
 END-CODE
 
 
