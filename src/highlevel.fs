@@ -6,14 +6,14 @@ CR .( aForth high level words )
 
 \ System variables
 
-'THROW-CONTENTS <M0 CONSTANT 'THROW
+'THROW-CONTENTS <'FORTH CONSTANT 'THROW
 VARIABLE S0
 4096 CONSTANT CELLS/S
 VARIABLE R0
 4096 CONSTANT CELLS/R
-DUP VALUE M0   \ value is put on stack by make.fs
-: <M0   M0 -  [ DUP ] LITERAL + ;   \ value is put on stack by make.fs
-: >M0   M0 +  LITERAL - ;   \ value is put on stack by make.fs
+DUP VALUE 'FORTH   \ value is put on stack by make.fs
+: <'FORTH   'FORTH -  [ DUP ] LITERAL + ;   \ value is put on stack by make.fs
+: >'FORTH   'FORTH +  LITERAL - ;   \ value is put on stack by make.fs
 
 
 \ Stack manipulation
@@ -168,7 +168,7 @@ INCLUDE machdeps/fs   \ include machine-dependent words
 : ELSE   POSTPONE AHEAD  1 CS-ROLL  POSTPONE THEN ; IMMEDIATE COMPILING
 
 VARIABLE 'NODE
-: >NODE   'NODE @  BEGIN  ?DUP WHILE  DUP @  HERE <M0 ROT !  REPEAT ;
+: >NODE   'NODE @  BEGIN  ?DUP WHILE  DUP @  HERE <'FORTH ROT !  REPEAT ;
 : I   POSTPONE R@ ; IMMEDIATE COMPILING
 : LEAVE   LEAVE, NOPALIGN  HERE 'NODE  DUP @ ,  ! ; IMMEDIATE COMPILING
 : DO   'NODE @  0 'NODE !  DO,  POSTPONE BEGIN ; IMMEDIATE COMPILING
@@ -662,7 +662,7 @@ VARIABLE VISIBLE?   \ holds execution token of word visibility test
 : FIND   ( c-addr -- a-addr n )   ['] ALL-VISIBLE SELECT ;
 
 : POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
-   COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <M0 ,  THEN ; IMMEDIATE
+   COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ; IMMEDIATE
 COMPILING
 
 : HEADER   ( c-addr -- )
@@ -868,7 +868,7 @@ DECIMAL
 \ Compiler #6
 
 : '   BL WORD FIND  0= IF  UNDEFINED  THEN ;
-: [']   ' <M0  POSTPONE LITERAL ; IMMEDIATE COMPILING
+: [']   ' <'FORTH  POSTPONE LITERAL ; IMMEDIATE COMPILING
 : [COMPILE]   '  DUP >COMPILE @  ?DUP IF NIP  THEN  COMPILE, ; IMMEDIATE
 COMPILING
 
@@ -877,13 +877,13 @@ COMPILING
 
 : CREATE   BL WORD HEADER  CREATE, ;
 : DOES>   POSTPONE (DOES>) ALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
-   DUP @ ROT OR  SWAP !  <M0 ,  LINK,  POSTPONE (DOES) ; IMMEDIATE COMPILING
+   DUP @ ROT OR  SWAP !  <'FORTH ,  LINK,  POSTPONE (DOES) ; IMMEDIATE COMPILING
 
 : VARIABLE   CREATE  CELL ALLOT ;
 : CONSTANT   BL WORD HEADER  LINK,  POSTPONE LITERAL  UNLINK, ;
 : VALUE   CREATE  ,  DOES>  @ ;
 : TO   ' >BODY ! ;
-   :NONAME   ' >BODY  <M0  POSTPONE LITERAL  POSTPONE ! ;IMMEDIATE
+   :NONAME   ' >BODY  <'FORTH  POSTPONE LITERAL  POSTPONE ! ;IMMEDIATE
 
 
 \ Word lists
@@ -897,15 +897,15 @@ VARIABLE CURRENT-VOLUME
 : VOLUME   CREATE  HERE 3 CELLS + ,  HERE CODEX  DUP @ ,  !  0 ,
    #THREADS 0 DO  0 ,  LOOP  DOES>  CURRENT-VOLUME ! ;
 : #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ; \ FIXME: make ; execute ALIGN?
-ALIGN HERE <M0   \ leave address of data structure
-M0 CELL+  <M0  ,   \ address of start of threads hash table
-HERE <M0  V' CODEX  DUP @ ,  !  0 ,
+ALIGN HERE <'FORTH   \ leave address of data structure
+'FORTH CELL+  <'FORTH  ,   \ address of start of threads hash table
+HERE <'FORTH  V' CODEX  DUP @ ,  !  0 ,
 : KERNEL   LITERAL ( address is HERE left earlier ) CURRENT-VOLUME ! ;
 
 VARIABLE CHAIN  0 V' CHAIN !
-: WORDLIST   ALIGN HERE  0 ,  HERE <M0  CHAIN  DUP @ ,  !  CURRENT-VOLUME @
-   TUCK #WORDLISTS  DUP @  DUP ,  1+ SWAP !  SWAP @ <M0 , ;
-: VOCABULARY   WORDLIST <M0  CREATE  ,  DOES>  #ORDER @ 0= IF  1 #ORDER +!
+: WORDLIST   ALIGN HERE  0 ,  HERE <'FORTH  CHAIN  DUP @ ,  !  CURRENT-VOLUME @
+   TUCK #WORDLISTS  DUP @  DUP ,  1+ SWAP !  SWAP @ <'FORTH , ;
+: VOCABULARY   WORDLIST <'FORTH  CREATE  ,  DOES>  #ORDER @ 0= IF  1 #ORDER +!
    THEN  @ CONTEXT ! ;
 VOCABULARY FORTH
 ' FORTH >BODY @ CONSTANT FORTH-WORDLIST
@@ -1170,7 +1170,7 @@ INCLUDE os/fs   \ include OS access words
    DUP R0 !  DUP RP!                 \ set R0 and RP
    CELLS/R CELLS -                   \ make room for return stack
    DUP S0 !  SP!                     \ set S0 and SP
-   [ ' (THROW) <M0 ] LITERAL 'THROW !
+   [ ' (THROW) <'FORTH ] LITERAL 'THROW !
    R0 @  LIMIT  OVER -  ERASE        \ erase buffers
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list

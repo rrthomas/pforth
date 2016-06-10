@@ -8,5 +8,5 @@ R1 R2 0@ STR,
 RP R1 MOV,
 SP RP 256 # SUB,
 ' START 4 + B,
-' LIMIT 8 + <M0 ,
+' LIMIT 8 + <'FORTH ,
 END-CODE

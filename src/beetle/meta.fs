@@ -32,20 +32,22 @@
 : V'   ' >BODY ; \ FIXME: see note about >BODY in machdeps.fs
 
 ALSO ASSEMBLER
-: ADR,   ( to opcode -- )   OVER M0 < ABORT" ADR, out of image!"
+: ADR,   ( to opcode -- )   OVER 'FORTH < ABORT" ADR, out of image!"
    OVER HERE 1+ ALIGNED - CELL/  DUP HERE 1+ FITS
-   IF  SWAP 1+ C, FIT,  DROP  ELSE DROP C,  0 FIT,  <M0 ,  THEN ;
+   IF  SWAP 1+ C, FIT,  DROP  ELSE DROP C,  0 FIT,  <'FORTH ,  THEN ;
 
 HEX
 : EXECUTE   STATE @ IF  46 C,  ALIGN  ELSE  EXECUTE  THEN ; IMMEDIATE
 : @EXECUTE   STATE @ IF  47 C,  ALIGN  ELSE  @EXECUTE  THEN ; IMMEDIATE
-: OFFSET   ( from to -- offset )   OVER M0 <  OVER M0 <  OR ABORT" OFFSET out of image!"
+: OFFSET   ( from to -- offset )   OVER 'FORTH <  OVER 'FORTH <  OR ABORT" OFFSET out of image!"
    >-<  CELL/ 1-  00FFFFFF AND ;
 : (ERROR")   -512 THROW ;
 : ERROR"   POSTPONE S"  POSTPONE (ERROR") ; IMMEDIATE COMPILING
 
-R: <M0   M0 - 10 + ;
-R: >M0   M0 + 10 - ;
+10 CONSTANT TARGET-'FORTH
+
+R: <'FORTH   'FORTH - TARGET-'FORTH + ;
+R: >'FORTH   'FORTH + TARGET-'FORTH - ;
 R: AHEAD   HERE  42 C,  0 FIT,  0 , ;
 R: IF   HERE  44 C,  0 FIT,  0 , ;
 R: LITERAL   B(LITERAL) ; \ FIXME: use same definition as in machdeps.fs
@@ -53,11 +55,11 @@ R: NOPALIGN   0 FIT, ; \ Use for 0 FIT, in the metacompiler
 R: !BRANCH   ( at from to opcode -- )   -ROT  OFFSET  8 LSHIFT  OR  SWAP ! ;
 R: BRANCH   ( at from to -- )   43 !BRANCH ;
 R: CALL   ( at from to -- )   49 !BRANCH ;
-R: JOIN   ( from to -- )   <M0  SWAP 1+ ALIGNED  ! ;
+R: JOIN   ( from to -- )   <'FORTH  SWAP 1+ ALIGNED  ! ;
 R: CALL,   ( to -- )   48 ADR, ;
 R: COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP C@ C,  1+  LOOP  DROP
    ELSE CALL,  THEN ;
-R: LINK, ; IMMEDIATE
+R: LINK, ;
 R: UNLINK,   4A C, ;
 R: DO,   4B C, ;
 R: LOOP,   4C ADR, ;
@@ -66,7 +68,7 @@ R: LEAVE,   50 C, 42 C, ;
 R: I   0E C, ;
 R: ?DO   'NODE @  0 'NODE !  04 C, 04 C,  DO,  11 C,  POSTPONE IF
    POSTPONE LEAVE POSTPONE THEN POSTPONE BEGIN ;
-R: >NODE   'NODE @  BEGIN  ?DUP WHILE  DUP @  HERE <M0 ROT !  REPEAT ;
+R: >NODE   'NODE @  BEGIN  ?DUP WHILE  DUP @  HERE <'FORTH ROT !  REPEAT ;
 R: LOOP   LOOP,  >NODE  'NODE ! ;
 R: +LOOP   +LOOP,  >NODE  'NODE ! ;
 R: CREATE,   LINK,  56 C,  23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
@@ -75,11 +77,11 @@ R: CREATE,   LINK,  56 C,  23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
 R: >DOES   ( xt -- adr ) CELL+ ;
 R: (DOES>)   LAST >DOES  DUP  R> @  BRANCH ;
 R: DOES>   POSTPONE (DOES>) ALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
-   DUP @ ROT OR  SWAP !  <M0 , ; IMMEDIATE
+   DUP @ ROT OR  SWAP !  <'FORTH , ;
 R: (POSTPONE)   R>  03FFFFFF AND  DUP 4 + >R  @ >NAME FIND  0= IF  ERROR" ?"
    THEN  COMPILE, ;
 R: POSTPONE   BL WORD FIND  ?DUP 0= IF  ERROR" ?"  THEN  0> IF  COMPILE,
-   ELSE POSTPONE (POSTPONE) ALIGN  <M0 ,  THEN ;
+   ELSE POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ;
 DECIMAL
 BRANCH-RESOLVER (VALUE) WILL-DO VALUE
 BRANCH-RESOLVER (VOCABULARY) WILL-DO VOCABULARY
@@ -91,4 +93,4 @@ PREVIOUS
 \ Constants and patch phrases
 
 32 1024 * CONSTANT SIZE
-: 'THROW-CONTENTS   M0 16 - ;
+: 'THROW-CONTENTS   'FORTH TARGET-'FORTH - ;
