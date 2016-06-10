@@ -46,7 +46,7 @@ M0   \ save value of M0
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
 >COMPILERS<
-M0 16 - <M0   \ M0 of new system
+M0 <M0   \ M0 of new system
 INCLUDE primitives/fs
 
 INCLUDE highlevel/fs
