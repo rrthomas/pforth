@@ -1,6 +1,6 @@
 \ ARM assembler
 \ Based on Silicon Vision's RiscForth's assembler
-\ Reuben Thomas   15/4/96-6/4/99
+\ Reuben Thomas   started 15/4/96
 
 CR .( ARM assembler )
 
@@ -235,8 +235,8 @@ VARIABLE 'NEXTB
 
 PREVIOUS  DEFINITIONS  ALSO ASSEMBLER
 : CODE   BL WORD HEADER  ALSO ASSEMBLER  RESET ;
-: END-CODE   LAST HERE CELL- SYNCHRONIZE  PREVIOUS ;
-: END-SUB   RET,  LAST HERE CELL- SYNCHRONIZE  PREVIOUS ;
+: END-CODE   PREVIOUS ;
+: END-SUB   RET,  PREVIOUS ;
 
 
 PREVIOUS
