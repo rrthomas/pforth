@@ -149,7 +149,7 @@ DECIMAL
    SCRATCH ;
 
 
-INCLUDE machdeps/fs   \ include machine-dependent words
+INCLUDE machdeps.fs   \ include machine-dependent words
 
 
 \ Interpreter #3
@@ -249,7 +249,7 @@ IMMEDIATE COMPILING
 
 \ Mass storage input/output #1
 
-INCLUDE fileio/fs
+INCLUDE fileio.fs
 
 \ Save u1 bytes at a-addr in the file given by c-addr u2
 : SAVE-FILE   ( a-addr u1 c-addr u2 -- )
@@ -1161,7 +1161,7 @@ DECIMAL
       [ 2 CELLS ] LITERAL +LOOP ;
 
 
-INCLUDE os/fs   \ include OS access words
+INCLUDE os.fs   \ include OS access words
 
 
 \ Initialisation and version number

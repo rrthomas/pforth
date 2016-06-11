@@ -1,13 +1,13 @@
 \ Metacompile aForth
 \ Reuben Thomas   started 15/4/96
 
-INCLUDE platform/fs
+INCLUDE platform.fs
 
 CR .( Metacompiling aForth for ) PLATFORM TYPE .( : )
 
 
 MARKER DISPOSE
-INCLUDE assembler/fs
+INCLUDE assembler.fs
 
 
 \ Meta-compiler utilities
@@ -15,7 +15,7 @@ INCLUDE assembler/fs
 VOCABULARY META  ALSO META DEFINITIONS
 DECIMAL
 
-INCLUDE meta/fs
+INCLUDE meta.fs
 
 \ Relocate new dictionary
 : >ADDRESS<   DUP @  ?DUP IF  <'FORTH SWAP !  ELSE DROP  THEN ;
@@ -47,10 +47,10 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
 >COMPILERS<
 'FORTH <'FORTH   \ 'FORTH of new system
-INCLUDE primitives/fs
+INCLUDE primitives.fs
 
-INCLUDE highlevel/fs
-INCLUDE initialize/fs
+INCLUDE highlevel.fs
+INCLUDE initialize.fs
 
 HERE <'FORTH  V' ROOTDP !   \ patch ROOTDP
 HEX
