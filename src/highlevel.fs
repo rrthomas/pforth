@@ -784,6 +784,7 @@ VARIABLE 'FRAME  0 V' 'FRAME !
 : :   BL WORD HEADER  TRUE SMUDGE  LINK,  ] ;
 : ;   UNLINK,  POSTPONE [  FALSE SMUDGE ; IMMEDIATE COMPILING
 : :NONAME   ALIGN HERE LINK,  ] ;
+\ FIXME: This is the only use for a separate compilation method
 : ;IMMEDIATE   POSTPONE ;  IMMEDIATE  LAST >COMPILE ! ; IMMEDIATE COMPILING
 
 
@@ -979,6 +980,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 
 \ Environmental queries
 
+\ FIXME: Use a wordlist; remove "CASE
 : ENVIRONMENT?
    "CASE
       S" /COUNTED-STRING"    "OF  255             "ENDOF
