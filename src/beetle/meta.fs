@@ -41,11 +41,13 @@ HEX
 : @EXECUTE   STATE @ IF  47 C,  ALIGN  ELSE  @EXECUTE  THEN ; IMMEDIATE
 : OFFSET   ( from to -- offset )   OVER 'FORTH <  OVER 'FORTH <  OR ABORT" OFFSET out of image!"
    >-<  CELL/ 1-  00FFFFFF AND ;
+\ FIXME: Add this to aForth, or use something else
 : (ERROR")   -512 THROW ;
 : ERROR"   POSTPONE S"  POSTPONE (ERROR") ; IMMEDIATE COMPILING
 
 10 CONSTANT TARGET-'FORTH
 
+\ FIXME: The following two definitions are the same on any platform; move to make.fs
 R: <'FORTH   'FORTH - TARGET-'FORTH + ;
 R: >'FORTH   'FORTH + TARGET-'FORTH - ;
 R: AHEAD   HERE  42 C,  0 FIT,  0 , ;
