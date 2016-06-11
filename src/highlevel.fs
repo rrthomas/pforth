@@ -462,10 +462,9 @@ VARIABLE 'RETURN
    RESTORE-INPUT DROP                \ set input specification
    'RETURN @ >R ;                    \ restore return address
 
-VARIABLE 'SCAN-TEST
-: SCAN-TEST   'SCAN-TEST @EXECUTE ;
+0 VECTOR SCAN-TEST
 : SCAN   ( char xt -- c-addr u )
-   'SCAN-TEST !
+   TO SCAN-TEST
    SOURCE CHARS                      \ get input source
    OVER +                            \ end of input buffer + 1
    SWAP >IN @ CHARS +                \ start of parse area
@@ -617,9 +616,9 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
 : GET-ORDER   #ORDER @  DUP IF  DUP >R  CELLS  CONTEXT TUCK + CELL-  DO
    I @  -CELL +LOOP  R>  THEN ;
 
-VARIABLE VISIBLE?   \ holds execution token of word visibility test
+0 VECTOR VISIBLE?   \ word visibility test
 : ALL-VISIBLE   ( wid xt n -- true )   2DROP DROP  TRUE ;
-\ VISIBLE? must be set up before VET-WORDLIST is called with a word whose
+\ VISIBLE? must be set before VET-WORDLIST is called, with a word whose
 \ stack effect is [ wid xt n -- f ], where wid is the word list and xt the
 \ execution token of the found word and n its immediacy flag, and f is true
 \ if the word is deemed visible by the test.
@@ -635,7 +634,7 @@ VARIABLE VISIBLE?   \ holds execution token of word visibility test
             R@ OVER                  \ get wid and xt of word
             DUP >INFO @ 0< 2* INVERT \ get immediacy flag
             DUP >R                   \ save flag
-            VISIBLE? @EXECUTE IF     \ if word is deemed visible
+            VISIBLE? IF              \ if word is deemed visible
                NIP NIP  R>  R> DROP  \ get flag, drop string and wid,
                EXIT                  \ and exit
             ELSE
@@ -648,10 +647,10 @@ VARIABLE VISIBLE?   \ holds execution token of word visibility test
    2DROP  R> DROP                    \ get rid of c-addr, u and wid,
    0 ;                               \ and set flag to 0
 : SEARCH-WORDLIST   ( c-addr u wid -- 0 | xt 1 | xt -1 )
-   ['] ALL-VISIBLE VISIBLE? !  VET-WORDLIST ;
+   ['] ALL-VISIBLE TO VISIBLE?  VET-WORDLIST ;
 
 : SELECT   ( a-addr1 xt -- a-addr2 n )
-   VISIBLE? !                        \ set up visibility selector
+   TO VISIBLE?                       \ set up visibility selector
    >R  GET-ORDER  R> SWAP            \ get search order
    ?DUP IF                           \ if search order non-empty
       1 SWAP DO                      \ for each word list in order
