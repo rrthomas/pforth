@@ -62,6 +62,7 @@ HEX
 1  ' KERNEL >NAME 8 -  !   \ patch #WORDLISTS
 DECIMAL
 ' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
+' VECTOR >DOES> RESOLVES (VECTOR)
 ' VOCABULARY >DOES> RESOLVES (VOCABULARY)
 ' NEW-FORTH >BODY @ @  PREVIOUS  DUP RELOCATE   \ relocate the new dictionary
    \ leave initial branch target on the stack

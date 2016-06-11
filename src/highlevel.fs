@@ -4,6 +4,11 @@
 CR .( aForth high level words )
 
 
+\ Placeholder
+
+: NOTHING ;
+
+
 \ System variables
 
 'THROW-CONTENTS <'FORTH CONSTANT 'THROW
@@ -883,6 +888,7 @@ COMPILING
 : VARIABLE   CREATE  CELL ALLOT ;
 : CONSTANT   BL WORD HEADER  LINK,  POSTPONE LITERAL  UNLINK, ;
 : VALUE   CREATE  ,  DOES>  @ ;
+: VECTOR   CREATE  ,  DOES>  @EXECUTE ;
 : TO   ' >BODY ! ;
    :NONAME   ' >BODY  <'FORTH  POSTPONE LITERAL  POSTPONE ! ;IMMEDIATE
 
