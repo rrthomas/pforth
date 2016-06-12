@@ -669,6 +669,19 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
    COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ; IMMEDIATE
 COMPILING
 
+( A header has the following structure:
+
+  Compilation method                 1 cell
+  Name field                         counted string, up to 8 cells
+  Link field                         1 cell, link to LAST
+  Thread field                       1 cell, link to previous word in CURRENT
+  Info field                         1 cell: bit 31 is IMMEDIATE flag,
+                                     bit 30 is COMPILING flag,
+                                     bit 29 is SMUDGE flag,
+                                     rest of MS byte is length of name field,
+                                     lower 3 bytes are number of bytes of code
+                                     for an inline word
+)
 : HEADER   ( c-addr -- )
    ALIGN                             \ align DP for new definition
    0 ,                               \ store null compilation method
@@ -900,6 +913,12 @@ COMPILING
 
 VARIABLE CODEX  0 V' CODEX !
 VARIABLE CURRENT-VOLUME
+( A volume has the following structure:
+
+  'THREADS                          address of dictionary's THREADS
+  Link field                        link to next volume in CODEX
+  #WORDLISTS                        number of wordlists in volume
+)
 : VOLUME   CREATE  HERE 3 CELLS + ,  HERE CODEX  DUP @ ,  !  0 ,
    #THREADS 0 DO  0 ,  LOOP  DOES>  CURRENT-VOLUME ! ;
 : #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ; \ FIXME: make ; execute ALIGN?
@@ -909,6 +928,13 @@ HERE <'FORTH  V' CODEX  DUP @ ,  !  0 ,
 : KERNEL   LITERAL ( address is HERE left earlier ) CURRENT-VOLUME ! ;
 
 VARIABLE CHAIN  0 V' CHAIN !
+( A wordlist has the following structure:
+
+  Head of list                       most recently defined word
+  Link field                         next wordlist in CHAIN
+  '#WORDLISTS                        address of #WORDLISTS in volume
+  'THREADS                           address of dictionary's THREADS
+)
 : WORDLIST   ALIGN HERE  0 ,  HERE <'FORTH  CHAIN  DUP @ ,  !  CURRENT-VOLUME @
    TUCK #WORDLISTS  DUP @  DUP ,  1+ SWAP !  SWAP @ <'FORTH , ;
 : VOCABULARY   WORDLIST <'FORTH  CREATE  ,  DOES>  #ORDER @ 0= IF  1 #ORDER +!
