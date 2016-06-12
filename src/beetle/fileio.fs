@@ -18,8 +18,8 @@ CREATE CREATE-FAM  CHAR w C, CHAR + C, CHAR b C, 0 C,
 : WRITE-FILE   ( adr u fid -- ior )   7 LIB ;
 : FLUSH-FILE   ( fid -- ior )   10 LIB ;
 
-: FILE-POSITION   ( fid -- u ior )   8 LIB ;
-: REPOSITION-FILE   ( u fid -- ior )   9 LIB ;
+: FILE-POSITION   ( fid -- ud ior )   8 LIB ;
+: REPOSITION-FILE   ( ud fid -- ior )   9 LIB ;
 
 \ FIXME: FILE-SIZE   ( fid -- ud ior ) ;
 \ FIXME: RESIZE-FILE   ( ud fid -- ior ) ;
