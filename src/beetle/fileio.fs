@@ -11,7 +11,7 @@ CREATE CREATE-FAM  CHAR w C, CHAR + C, CHAR b C, 0 C,
 : CLOSE-FILE   ( fid -- ior )   5 LIB ;
 
 : CREATE-FILE   ( adr u fam -- fid ior )   DROP  CREATE-FAM OPEN-FILE ;
-: RENAME-FILE   ( adr1 u1 adr2 u2 -- )   C0END -ROT C0END  SWAP 11 LIB ;
+: RENAME-FILE   ( adr1 u1 adr2 u2 -- ior )   C0END -ROT C0END  SWAP 11 LIB ;
 : DELETE-FILE   ( adr u -- ior )   C0END 12 LIB ;
 
 : READ-FILE   ( adr u1 fid -- u2 ior )   6 LIB ;

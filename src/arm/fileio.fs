@@ -34,7 +34,7 @@ CREATE FILE-NAME   256 ALLOT
 
 : CREATE-FILE   ( c-addr u fam -- fid ior )   DROP
    [ HEX ] 80 [ DECIMAL ] OPEN-FILE ;
-: RENAME-FILE   ( c-addr1 u1 c-addr2 u2 -- )   >FILE-NAME< C0END -ROT
+: RENAME-FILE   ( c-addr1 u1 c-addr2 u2 -- ior )   >FILE-NAME< C0END -ROT
    >FILE-NAME< C0END  25 [ 3 0 ] OS" OS_FSControl"  0 ;
 : DELETE-FILE   ( c-addr u -- ior )   >FILE-NAME< C0END
    6  [ 2 1 ] OS" OS_File"  0= ;
