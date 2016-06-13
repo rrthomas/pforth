@@ -106,7 +106,7 @@ for messing around, although adr itself may not be aligned. )
 
 : DEL?   DUP 127 =  SWAP 8 =  OR ;
 : CR?   DUP 13 =  SWAP 10 =  OR ;
-: EOL   (S")  [ 1 C, 10 C, ALIGN ]  COUNT ;
+: EOL   (S")  [ 1 C, 10 C, ALIGN ] ;
 
 77 CONSTANT WIDTH   \ width of display
 

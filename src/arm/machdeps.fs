@@ -115,7 +115,7 @@ END-SUB
 
 : DEL?   DUP 127 =  SWAP 8 =  OR ;
 : CR?   13 = ;
-: EOL   (C")  [ 1 C, 10 C, ALIGN ]  COUNT ;
+: EOL   (S")  [ 1 C, 10 C, ALIGN ] ;
 
 \ GET-LINE behaves like ACCEPT except that the line terminator is appended to
 \ the string, so that +n1-1 is the maximum possible length of the string
