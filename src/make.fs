@@ -1,12 +1,11 @@
 \ Metacompile aForth
 \ Reuben Thomas   started 15/4/96
 
+MARKER DISPOSE
 INCLUDE" platform.fs"
-
 CR .( Metacompiling aForth for ) PLATFORM TYPE .( : )
 
 
-MARKER DISPOSE
 INCLUDE" assembler.fs"
 
 
