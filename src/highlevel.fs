@@ -263,13 +263,13 @@ INCLUDE" fileio.fs"
    R@ READ-FILE                      \ fill buffer
    ?DUP IF                           \ if an error occurred
       NIP NIP 0 FALSE ROT            \ leave 0 false ior
-      R> DROP EXIT                   \ drop fid and exit
+      R> DROP  EXIT                  \ drop fid and exit
    THEN
    DUP 0= IF                         \ if the line is of length 0,
       NIP FALSE 0  R> DROP  EXIT     \ exit with false flag
    THEN
    TUCK                              \ save no. of chars read
-   EOL SEARCH ROT DROP               \ search for EOL; drop address
+   EOL SEARCH  ROT DROP              \ search for EOL; drop address
    IF                                \ if found,
       R@ FILE-POSITION               \ get the current file position
       ?DUP IF                        \ if an error occurred
