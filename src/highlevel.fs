@@ -1063,10 +1063,12 @@ VARIABLE CURSORX   \ cursor x position during WORDS
          CASE                        \ if no frame, act on code
             -1 OF  S0 @ SP!  QUIT  ENDOF
             -2 OF  'THROWN @ COUNT TYPE  ABORT  ENDOF
+            -9 OF   -9 HALT  ENDOF
             -10 OF  ." division by zero"  ABORT  ENDOF
             -11 OF  ." quotient too large"  ABORT  ENDOF
             -13 OF  'THROWN @ COUNT TYPE  ."  ?"  ABORT  ENDOF
             -14 OF  ." compilation only"  ABORT  ENDOF
+            -23 OF  -23 HALT  ENDOF
             -56 OF  (QUIT)  ENDOF
             ." exception " DUP . ." raised"  ABORT
          ENDCASE
