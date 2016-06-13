@@ -75,6 +75,12 @@ R: CREATE,   LINK,  56 C,  23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
 \ R: VALUE   CREATE HERE 2 CELLS - DP !  56 C,  23 C,  39 C,  4A C,  NOPALIGN  0 ,  , ;
 R: >DOES   ( xt -- adr ) CELL+ ;
 R: (DOES>)   LAST >DOES  DUP  R> @  BRANCH ;
+\ FIXME: Redefining (DOES) in the meta-compiler does not suffice to stop a call being
+\ compiled, as on RISC OS it is a normal word, so a call to an empty word would
+\ be compiled; hence, redefine DOES>. This should really be fixed: POSTPONE
+\ should re-check the IMMEDIATE flag of the word it's compiling in the meta-compiler.
+\ But to make that work, it would need to compile a harmless call before each
+\ IMMEDIATE word, so that that can itself be redefined.
 R: DOES>   POSTPONE (DOES>) ALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
    DUP @ ROT OR  SWAP !  <'FORTH , ;
 R: (POSTPONE)   R>  03FFFFFF AND  DUP 4 + >R  @ >NAME FIND  0= IF  UNDEFINED
