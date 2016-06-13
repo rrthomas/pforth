@@ -1,4 +1,4 @@
-                         aForth for RISC OS v0.77
+                         aForth for RISC OS v0.78
                          ˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜
 
                       by Reuben Thomas (rrt@sc3d.org)
@@ -21,7 +21,7 @@ someone.
 Copyright and Disclaimer
 ˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜
 
-The package is distributed under the GNU Public License version 2, or, at
+The package is distributed under the GNU Public License version 3, or, at
 your option, any later version. A copy is available from my web page (address
 above).
 
