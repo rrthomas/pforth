@@ -41,16 +41,19 @@ R: >DOES   ( xt -- adr )   4 + ;
 R: (DOES>)   LAST >DOES  DUP  R> 03FFFFFF AND @  CALL ;
 R: DOES>   POSTPONE (DOES>) ALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
    DUP @ ROT OR  SWAP !  <'FORTH ,  LINK,  POSTPONE (DOES) ;
+\ FIXME: (POSTPONE)'s redefinition is tricky: it uses FIND to ensure that
+\ the target word is found, not the host word, and the 03FFFFFF AND pattern
+\ is only needed on RISC OS. In other words, this should be a standard
+\ meta-compiler definition made with a system-specific piece to get the
+\ return address.
 R: (POSTPONE)   R>  03FFFFFF AND  DUP 4 + >R  @ >NAME FIND  0= IF  UNDEFINED
    THEN  COMPILE, ;
-R: POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
-   COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ;
 DECIMAL
 \ FIXME: These are duplicated in beetle/make.fs
 RESOLVER (VALUE) WILL-DO VALUE
 RESOLVER (VECTOR) WILL-DO VECTOR
 RESOLVER (VOCABULARY) WILL-DO VOCABULARY
-32 REDEFINER >COMPILERS<
+31 REDEFINER >COMPILERS<
 
 : V'   ' >BODY ;
 
