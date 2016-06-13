@@ -932,7 +932,7 @@ VARIABLE CHAIN  0 V' CHAIN !
 
   Head of list                       most recently defined word
   Link field                         next wordlist in CHAIN
-  '#WORDLISTS                        address of #WORDLISTS in volume
+  #WORDLISTS                         #WORDLISTS in VOLUME
   'THREADS                           address of dictionary's THREADS
 )
 : WORDLIST   ALIGN HERE  0 ,  HERE <'FORTH  CHAIN  DUP @ ,  !  CURRENT-VOLUME @
