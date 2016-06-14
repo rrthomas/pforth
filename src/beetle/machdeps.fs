@@ -36,7 +36,7 @@ HEX
 : AHEAD   HERE  42 C,  NOPALIGN  0 , ; IMMEDIATE
 : IF   HERE  44 C,  NOPALIGN  0 , ; IMMEDIATE
 
-: OFFSET   ( from to -- offset )   >-<  CELL/  00FFFFFF AND ;
+: OFFSET   ( from to -- offset )   >-<  CELL/ 1-  00FFFFFF AND ;
 : !BRANCH   ( at from to opcode -- )   HERE >R  >R  ROT DP !  R> C,  OFFSET
    FIT,  R> DP ! ;
 
@@ -93,7 +93,7 @@ DECIMAL
 DOES> code. There is always at least an aligned cell after this address free
 for messing around, although adr itself may not be aligned. )
 : >DOES   ( xt -- adr ) CELL+ ;
-: (DOES>)   LAST >DOES  DUP  R> @ CELL-  BRANCH ;
+: (DOES>)   LAST >DOES  DUP  R> @  BRANCH ;
 
 
 \ Terminal input/output
