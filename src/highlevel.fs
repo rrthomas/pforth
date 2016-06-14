@@ -1176,7 +1176,7 @@ DECIMAL
    CREATE  DUP ,                     \ write the no. of words to redefine
    0 ?DO                             \ for each word
       OVER ,                         \ record the old xt
-      POSTPONE AHEAD                 \ compile a branch
+      HERE 0 ,                       \ compile a branch (FIXME: do this portably)
       -ROT BRANCH                    \ from the old word to the new
    LOOP
    DOES>
