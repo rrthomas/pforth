@@ -6,6 +6,9 @@
                                  \ set filetype to Absolute
 
 \ Compiler redefinition and additions
+
+: V'   ' >BODY ; \ FIXME: Add to highlevel.fs, or inline
+
 HEX
 8000 CONSTANT TARGET-'FORTH
 
@@ -48,8 +51,6 @@ RESOLVER (VALUE) WILL-DO VALUE
 RESOLVER (VECTOR) WILL-DO VECTOR
 RESOLVER (VOCABULARY) WILL-DO VOCABULARY
 27 REDEFINER >COMPILERS<
-
-: V'   ' >BODY ;
 
 
 \ Constants
