@@ -1,16 +1,55 @@
 \ Save an object file
+: '?   BL WORD FIND  0= IF  DROP 0  THEN ;
+'? TYPE-FILE VALUE 'TYPE-FILE
+HEX
 : SAVE   ( a-addr u1 c-addr u2 -- )
    2SWAP 2OVER                   \ save filename
    SAVE-FILE
-   [ HEX ] FF8 [ DECIMAL ] -ROT TYPE-FILE ;
-                                 \ set filetype to Absolute
+   'TYPE-FILE  ?DUP IF           \ if we have TYPE-FILE,
+      >R FF8 -ROT R> EXECUTE     \ set filetype to Absolute
+   ELSE
+      2DROP                      \ otherwise drop file name
+   THEN ;
 
 \ Compiler redefinition and additions
 
 : V'   ' >BODY ; \ FIXME: Add to highlevel.fs, or inline
 
-HEX
+\ STUB FOO creates an empty word if FOO doesn't exist.
+\ This is used to POSTPONE target words that don't exist
+\ on the host.
+: STUB
+   BL WORD FIND  0= IF
+      HEADER  0 ,                \ reserve enough space for redefinition
+                                 \ FIXME: make portable; see REDEFINER
+   ELSE
+      DROP                       \ if found, discard xt
+   THEN ;
+
+\ Create stubs for words that may not exist on host
+STUB (LITERAL)
+STUB (LOOP)
+STUB (+LOOP)
+STUB UNLOOP
+STUB (CREATE)
+
 8000 CONSTANT TARGET-'FORTH
+ALSO ASSEMBLER   \ access to compiling words that may not exist on host
+
+: OS   ( regs-in regs-out swi -- )
+   -ROT 2DUP + >R ROT
+   R@ IF  E52CB004 CODE,  THEN
+   ROT ?DUP IF
+      1 SWAP LSHIFT 1- E8BC0000 OR CODE,
+   THEN
+   EF000000 OR CODE,
+   ?DUP IF
+      1 SWAP LSHIFT 1- E92C0000 OR CODE,
+   THEN
+   R> IF  E49CB004 CODE,  THEN ;
+IMMEDIATE COMPILING
+: OS"   ( name )   ( regs-in regs-out -- )   [CHAR] " PARSE  C0END OS#
+   POSTPONE OS ; IMMEDIATE COMPILING
 
 R: <'FORTH   'FORTH - TARGET-'FORTH + ;
 R: >'FORTH   'FORTH + TARGET-'FORTH - ;
@@ -50,7 +89,14 @@ DECIMAL
 RESOLVER (VALUE) WILL-DO VALUE
 RESOLVER (VECTOR) WILL-DO VECTOR
 RESOLVER (VOCABULARY) WILL-DO VOCABULARY
-27 REDEFINER >COMPILERS<
+\ On Beetle (DOES) is IMMEDIATE, so "POSTPONE (DOES)" in DOES> simply runs
+\ it; on ARM, (DOES) is not immediate; hence, do a manual POSTPONE.
+\ This must NOT be redefined on RISC OS, as it upsets all words created by defining words!
+R: (DOES)   C" (DOES)" FIND  DROP COMPILE, ;
+28   \ number of redefinitions
+: CHECK-(DOES)   C" (DOES)" FIND  NIP -1 = IF  1- -ROT 2DROP  THEN ;
+CHECK-(DOES)   \ don't redefine (DOES) if it already exists
+REDEFINER >COMPILERS<
 
 
 \ Constants
