@@ -991,6 +991,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 : ADVANCE   ( +n -- )   CURSORX +! ;
 : WRAP?   ( -- f )   CURSORX @ + WIDTH < INVERT ;
 : NEWLINE   0 CURSORX !  CR ;
+\ FIXME: make 3 a constant (GAP?)
 : WORDS
    NEWLINE                           \ start listing on a new line
    CONTEXT @                         \ get start of chain
