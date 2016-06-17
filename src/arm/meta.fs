@@ -13,8 +13,6 @@ HEX
 
 \ Compiler redefinition and additions
 
-: MASK-FLAGS   03FFFFFF AND ;
-
 \ STUB FOO creates an empty word if FOO doesn't exist.
 \ This is used to POSTPONE target words that don't exist
 \ on the host.
@@ -62,6 +60,7 @@ R: AHEAD   HERE  EA000000 CODE, ;
 R: IF   E35B0000 CODE, E49CB004 CODE,  HERE  0A000000 CODE, ;
 R: LITERAL   POSTPONE (LITERAL) ALIGN  , ;
 R: NOPALIGN   ALIGN ;
+R: R>ADDRESS   03FFFFFF POSTPONE LITERAL  POSTPONE AND ;
 R: !BRANCH   ( at from to op-mask -- )   OVER 'FORTH < ABORT" !BRANCH out of image"
    -ROT  >BRANCH  OR  SWAP CODE! ;
 R: BRANCH   ( at from to -- )    EA000000 !BRANCH ;
@@ -78,10 +77,10 @@ R: LEAVE,   E51FF004 CODE, ;
 R: UNLOOP,   POSTPONE UNLOOP ;
 R: CREATE,   LINK,  POSTPONE (CREATE) ;
 R: >DOES   ( xt -- adr )   4 + ;
-R: (DOES>)   LAST >DOES  DUP  R> MASK-FLAGS @  CALL ;
+R: (DOES>)   LAST >DOES  DUP  R> R>ADDRESS @  CALL ;
 R: DOES>   POSTPONE (DOES>) ALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
    DUP @ ROT OR  SWAP !  <'FORTH ,  LINK,  POSTPONE (DOES) ;
-R: (POSTPONE)   R> MASK-FLAGS  DUP CELL+ >R  FIND-AND-COMPILE, ;
+R: (POSTPONE)   R> R>ADDRESS  DUP CELL+ >R  FIND-AND-COMPILE, ;
 DECIMAL
 \ FIXME: These are duplicated in beetle/meta.fs
 DOES>-RESOLVER (VALUE) WILL-DO VALUE
@@ -91,7 +90,7 @@ DOES>-RESOLVER (VOCABULARY) WILL-DO VOCABULARY
 \ it; on ARM, (DOES) is not immediate; hence, do a manual POSTPONE.
 \ This must NOT be redefined on RISC OS, as it upsets all words created by defining words!
 R: (DOES)   C" (DOES)" FIND  DROP COMPILE, ;
-28   \ number of redefinitions
+29   \ number of redefinitions
 : CHECK-(DOES)   C" (DOES)" FIND  NIP -1 = IF  1- -ROT 2DROP  THEN ;
 CHECK-(DOES)   \ don't redefine (DOES) if it already exists
 REDEFINER >COMPILERS<

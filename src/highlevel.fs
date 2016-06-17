@@ -142,13 +142,19 @@ DECIMAL
 : SCRATCH   R0 @ 1024 + ;
 
 
+INCLUDE" compiler.fs"   \ machine-dependent compiler words
+
+
 \ Strings #2
 
 : C0END   ( c-addr1 u -- c-addr2 )   SCRATCH SWAP  2DUP + >R  MOVE  0 R> C!
    SCRATCH ;
 
+: (C")   R>  R>ADDRESS  DUP C@ 1+ CHARS OVER + ALIGNED  >R ;
+: (S")   R>  R>ADDRESS  DUP C@  TUCK 1+ CHARS OVER + ALIGNED  >R
+   CHAR+ SWAP ;
 
-INCLUDE" compiler.fs"   \ machine-dependent compiler words
+
 INCLUDE" terminal.fs"   \ terminal I/O words
 
 

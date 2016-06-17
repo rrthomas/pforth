@@ -8,12 +8,6 @@
 : LIMIT   4 @ ;
 
 
-\ Compiler #1
-
-: (C")   R>  DUP C@ 1+ OVER + ALIGNED  >R ;
-: (S")   R>  DUP C@  TUCK 1+ OVER + ALIGNED  >R  1+ SWAP ;
-
-
 \ Writing code to memory
 
 \ These words are not needed or used for Beetle (until such time as CPUs
@@ -60,8 +54,9 @@ HEX
 DECIMAL
 
 
-\ Compiler #2
+\ Compiler
 
+: R>ADDRESS ; IMMEDIATE COMPILING
 : (POSTPONE)   R>  DUP CELL+ >R  @ COMPILE, ;
 
 HEX

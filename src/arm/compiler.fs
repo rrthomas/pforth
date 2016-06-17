@@ -15,16 +15,6 @@
 : CODE,   ( x -- )   ALIGN  ,  HERE CELL- DUP SYNCHRONIZE ;
 
 
-\ Compiler #1
-
-HEX
-: MASK-FLAGS   03FFFFFF AND ;
-: (C")   R>  MASK-FLAGS  DUP C@ 1+ CHARS OVER + ALIGNED  >R ;
-: (S")   R>  MASK-FLAGS  DUP C@  TUCK 1+ CHARS OVER + ALIGNED  >R
-   CHAR+ SWAP ;
-DECIMAL
-
-
 \ Branches
 
 : NOPALIGN   ALIGN ; COMPILING
@@ -51,10 +41,15 @@ HEX
 DECIMAL
 
 
-\ Compiler #2
+\ Compiler
 
 HEX
-: (POSTPONE)   R>  MASK-FLAGS  DUP 4 + >R  @ COMPILE, ; COMPILING
+\ IMMEDIATE both for run-time speed and R: compatibility with Beetle version
+\ FIXME: It should not be necessary for the latter reason
+\ FIXME: Inline POSTPONE LITERAL to avoid loop with definition of (POSTPONE)
+: R>ADDRESS   ['] (LITERAL) COMPILE, 03FFFFFF ,  ['] AND COMPILE, ; IMMEDIATE
+COMPILING
+: (POSTPONE)   R> R>ADDRESS  DUP 4 + >R  @ COMPILE, ; COMPILING
 DECIMAL
 
 : DO,   POSTPONE 2>R ; COMPILING
@@ -74,5 +69,5 @@ DOES> code. There is always at least an aligned cell after this address free
 for messing around, although adr itself may not be aligned. )
 : >DOES   ( xt -- adr )   4 + ;
 HEX
-: (DOES>)   LAST >DOES  DUP  R> MASK-FLAGS @  CALL ;
+: (DOES>)   LAST >DOES  DUP  R> R>ADDRESS @  CALL ;
 DECIMAL
