@@ -34,8 +34,8 @@ INCLUDE" meta.fs"
    DROP ;
 
 VOLUME NEW   \ define a new hash table
-NEW VOCABULARY NEW-FORTH   \ define the new root vocabulary
 NEW   \ make the new dictionary the current volume
+VOCABULARY NEW-FORTH   \ define the new root vocabulary
 
 SIZE DICTIONARY CROSS  \ define a new dictionary
 'FORTH   \ save value of 'FORTH
