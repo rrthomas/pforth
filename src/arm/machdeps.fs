@@ -93,7 +93,7 @@ HEX
    R> IF  E49CB004 CODE,  THEN ;
 IMMEDIATE COMPILING
 DECIMAL
-: CLI   ( c-addr -- )   [ 1 0 ] OS" OS_CLI" ;
+: CLI   ( c-addr -- )   C0END  [ 1 0 ] OS" OS_CLI" ;
 
 
 \ Terminal input/output
