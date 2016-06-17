@@ -48,7 +48,7 @@ ALSO ASSEMBLER   \ access to compiling words that may not exist on host
    THEN
    R> IF  E49CB004 CODE,  THEN ;
 IMMEDIATE COMPILING
-: OS"   ( name )   ( regs-in regs-out -- )   [CHAR] " PARSE  C0END OS#
+: OS"   ( name )   ( regs-in regs-out -- )   [CHAR] " PARSE OS#
    POSTPONE OS ; IMMEDIATE COMPILING
 
 R: DOES>-RESOLVER   RESOLVER ;

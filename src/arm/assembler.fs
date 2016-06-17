@@ -8,19 +8,11 @@ CR .( ARM assembler )
 VOCABULARY ASSEMBLER  ALSO ASSEMBLER DEFINITIONS
 HEX
 
-\ Count a NUL-terminated string
-\ FIXME: Get rid of this; see os.fs
-: 0COUNT   ( c-addr1 -- c-addr2 n )
-   DUP BEGIN  DUP C@ WHILE           \ find NUL delimiter
-      1+
-   REPEAT
-   OVER - ;
-
 \ Convert SWI names to numbers
 \ ad-hoc list for metacompiling
 \ FIXME: this shouldn't really be in the assembler; move to the metacompiler
 : OS#   ( c-addr -- u )
-   0COUNT OVER C@  [CHAR] X = IF     \ If the string starts with X,
+   OVER C@  [CHAR] X = IF     \ If the string starts with X,
       1 /STRING                      \ strip the X
       20000                          \ set X bit in SWI number
    ELSE
@@ -199,7 +191,7 @@ STACKS ED EA FD FA
 
 : SWI,   INST @ F000000 OR OR CODE,  RESET ;
 : X   20000 INST OR! ;
-: SWI"   [CHAR] " PARSE  C0END OS# ;
+: SWI"   [CHAR] " PARSE OS# ;
 : SWI,"   SWI"  SWI, ;
    :NONAME   SWI"  POSTPONE LITERAL  POSTPONE SWI, ;IMMEDIATE
 
