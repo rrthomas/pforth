@@ -88,7 +88,7 @@ IMMEDIATE
 \ Leave UNLINK, in next cell where it can be patched by DOES>
 : CREATE,   LINK,  56 C,  23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
 DECIMAL
-\ : >BODY   2 CELLS + ; FIXME: This should really be machine-dependent
+: >BODY   2 CELLS + ;
 ( >DOES given an execution token returns the address of the branch to the
 DOES> code. There is always at least an aligned cell after this address free
 for messing around, although adr itself may not be aligned. )
