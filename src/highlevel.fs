@@ -921,7 +921,7 @@ VARIABLE CURRENT-VOLUME
 )
 : VOLUME   CREATE  HERE 3 CELLS + ,  HERE CODEX  DUP @ ,  !  0 ,
    #THREADS 0 DO  0 ,  LOOP  DOES>  CURRENT-VOLUME ! ;
-: #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ; \ FIXME: make ; execute ALIGN?
+: #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ;
 ALIGN HERE <'FORTH   \ leave address of data structure
 'FORTH CELL+  <'FORTH  ,   \ address of start of threads hash table
 HERE <'FORTH  V' CODEX  DUP @ ,  !  0 ,
