@@ -80,7 +80,7 @@ DECIMAL
 \ OS access #2
 
 HEX
-: OS   ( regs-in regs-out swi -- )
+: OS   ( #regs-in #regs-out swi -- )
    -ROT 2DUP + >R ROT
    R@ IF  E52CB004 CODE,  THEN
    ROT ?DUP IF
