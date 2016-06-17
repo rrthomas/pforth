@@ -14,6 +14,7 @@ HEX
 \ Compiler redefinition and additions
 
 : V'   ' >BODY ; \ FIXME: Add to highlevel.fs, or inline
+: MASK-FLAGS   03FFFFFF AND ;
 
 \ STUB FOO creates an empty word if FOO doesn't exist.
 \ This is used to POSTPONE target words that don't exist
@@ -78,15 +79,15 @@ R: LEAVE,   E51FF004 CODE, ;
 R: UNLOOP,   POSTPONE UNLOOP ;
 R: CREATE,   LINK,  POSTPONE (CREATE) ;
 R: >DOES   ( xt -- adr )   4 + ;
-R: (DOES>)   LAST >DOES  DUP  R> 03FFFFFF AND @  CALL ;
+R: (DOES>)   LAST >DOES  DUP  R> MASK-FLAGS @  CALL ;
 R: DOES>   POSTPONE (DOES>) ALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
    DUP @ ROT OR  SWAP !  <'FORTH ,  LINK,  POSTPONE (DOES) ;
 \ FIXME: (POSTPONE)'s redefinition is tricky: it uses FIND to ensure that
-\ the target word is found, not the host word, and the 03FFFFFF AND pattern
+\ the target word is found, not the host word, and MASK-FLAGS
 \ is only needed on RISC OS. In other words, this should be a standard
 \ meta-compiler definition made with a system-specific piece to get the
 \ return address.
-R: (POSTPONE)   R>  03FFFFFF AND  DUP 4 + >R  @ >NAME FIND  0= IF  UNDEFINED
+R: (POSTPONE)   R>  MASK-FLAGS  DUP 4 + >R  @ >NAME FIND  0= IF  UNDEFINED
    THEN  COMPILE, ;
 DECIMAL
 \ FIXME: These are duplicated in beetle/meta.fs
