@@ -991,7 +991,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 : ADVANCE   ( +n -- )   CURSORX +! ;
 : WRAP?   ( -- f )   CURSORX @ + WIDTH < INVERT ;
 : NEWLINE   0 CURSORX !  CR ;
-\ FIXME: make 3 a constant (GAP?)
+3 CONSTANT GAP
 : WORDS
    NEWLINE                           \ start listing on a new line
    CONTEXT @                         \ get start of chain
@@ -1000,10 +1000,10 @@ VARIABLE CURSORX   \ cursor x position during WORDS
       DUP WRAP? IF  NEWLINE  THEN    \ new line if necessary
       DUP ADVANCE                    \ advance the cursor
       TYPE                           \ type the name
-      3 WRAP? IF                     \ leave a gap or move to a new
+      GAP WRAP? IF                   \ leave a gap or move to a new
          NEWLINE                     \ line
       ELSE
-         3 SPACES  3 ADVANCE
+         GAP  DUP SPACES  ADVANCE
       THEN
       >LINK                          \ get link to next word
    REPEAT
