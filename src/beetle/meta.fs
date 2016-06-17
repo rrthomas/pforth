@@ -32,7 +32,7 @@
 ALSO ASSEMBLER
 : ADR,   ( to opcode -- )   OVER 'FORTH < ABORT" ADR, out of image!"
    OVER HERE 1+ ALIGNED - CELL/  DUP HERE 1+ FITS
-   IF  SWAP 1+ C, FIT,  DROP  ELSE DROP C,  0 FIT,  <'FORTH ,  THEN ;
+   IF  SWAP 1+ C, FIT,  DROP  ELSE DROP C,  NOPALIGN  <'FORTH ,  THEN ;
 
 HEX
 : EXECUTE   STATE @ IF  46 C,  ALIGN  ELSE  EXECUTE  THEN ; IMMEDIATE
@@ -49,10 +49,10 @@ DOES>-RESOLVER-REDEFINER
 \ FIXME: The following two definitions are the same on any platform; move to make.fs
 R: <'FORTH   'FORTH - TARGET-'FORTH + ;
 R: >'FORTH   'FORTH + TARGET-'FORTH - ;
-R: AHEAD   HERE  42 C,  0 FIT,  0 , ;
-R: IF   HERE  44 C,  0 FIT,  0 , ;
-R: LITERAL   B(LITERAL) ; \ FIXME: use same definition as in machdeps.fs
-R: NOPALIGN   0 FIT, ; \ Use for 0 FIT, in the metacompiler
+R: AHEAD   HERE  42 C,  NOPALIGN  0 , ;
+R: IF   HERE  44 C,  NOPALIGN  0 , ;
+R: LITERAL   B(LITERAL) ;
+R: NOPALIGN   0 FIT, ;
 R: !BRANCH   ( at from to opcode -- )   -ROT  OFFSET  8 LSHIFT  OR  SWAP ! ;
 R: BRANCH   ( at from to -- )   43 !BRANCH ;
 R: CALL   ( at from to -- )   49 !BRANCH ;
