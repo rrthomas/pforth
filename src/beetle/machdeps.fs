@@ -61,7 +61,7 @@ DECIMAL
 
 \ Compiler #2
 
-: (POSTPONE)   R>  DUP 4 + >R  @ COMPILE, ;
+: (POSTPONE)   R>  DUP CELL+ >R  @ COMPILE, ;
 
 HEX
 : DO,   4B C, ;

@@ -15,6 +15,10 @@ INCLUDE" assembler.fs"
 VOCABULARY META  ALSO META DEFINITIONS
 DECIMAL
 
+\ Used by meta-compiler's redefinition of (POSTPONE)
+: FIND-AND-COMPILE,   ( xt -- )
+   @ >NAME FIND  0= IF  UNDEFINED  THEN  COMPILE, ;
+
 INCLUDE" meta.fs"
 
 \ Relocate new dictionary
