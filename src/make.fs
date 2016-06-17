@@ -51,7 +51,7 @@ INCLUDE" primitives.fs"
 INCLUDE" highlevel.fs"
 INCLUDE" initialize.fs"
 
-HERE <'FORTH  V' ROOTDP !   \ patch ROOTDP
+HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
 HEX
 ' NEW-FORTH >BODY @ @ <'FORTH  ' FORTH >BODY @ >'FORTH  !
    \ patch root wordlist

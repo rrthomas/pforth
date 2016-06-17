@@ -342,7 +342,7 @@ DECIMAL
 
 128 CONSTANT /FILE-BUFFER
 16 CONSTANT #FILE-BUFFERS
-VARIABLE FILE-BUFFER#  0 V' FILE-BUFFER# !   \ next file buffer to use
+VARIABLE FILE-BUFFER#  0 ' FILE-BUFFER# >BODY !   \ next file buffer to use
 : FIRST-FILE   LIMIT  #FILE-BUFFERS /FILE-BUFFER * - ;
 : ALLOCATE-BUFFER   ( -- c-addr ior )   FILE-BUFFER# @  DUP #FILE-BUFFERS
    = IF  -1  ELSE DUP 1+ FILE-BUFFER# !  /FILE-BUFFER *  FIRST-FILE +  0
@@ -706,7 +706,7 @@ COMPILING
 
 \ Exceptions #2
 
-VARIABLE 'FRAME  0 V' 'FRAME !
+VARIABLE 'FRAME  0 ' 'FRAME >BODY !
 : CATCH
    'FRAME @ >R                       \ push pointer to last frame
    SAVE-INPUT>R                      \ push current input source
@@ -911,7 +911,7 @@ COMPILING
    DOES>  TO DP ;
 : ROOT   ROOTDP TO DP ;
 
-VARIABLE CODEX  0 V' CODEX !
+VARIABLE CODEX  0 ' CODEX >BODY !
 VARIABLE CURRENT-VOLUME
 ( A volume has the following structure:
 
@@ -924,10 +924,10 @@ VARIABLE CURRENT-VOLUME
 : #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ;
 ALIGN HERE <'FORTH   \ leave address of data structure
 'FORTH CELL+  <'FORTH  ,   \ address of start of threads hash table
-HERE <'FORTH  V' CODEX  DUP @ ,  !  0 ,
+HERE <'FORTH  ' CODEX >BODY  DUP @ ,  !  0 ,
 : KERNEL   LITERAL ( address is HERE left earlier ) CURRENT-VOLUME ! ;
 
-VARIABLE CHAIN  0 V' CHAIN !
+VARIABLE CHAIN  0 ' CHAIN >BODY !
 ( A wordlist has the following structure:
 
   Head of list                       most recently defined word

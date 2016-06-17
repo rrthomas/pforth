@@ -29,8 +29,6 @@
 
 \ Compiler redefinition and additions
 
-: V'   ' >BODY ; \ FIXME: see note about >BODY in machdeps.fs
-
 ALSO ASSEMBLER
 : ADR,   ( to opcode -- )   OVER 'FORTH < ABORT" ADR, out of image!"
    OVER HERE 1+ ALIGNED - CELL/  DUP HERE 1+ FITS

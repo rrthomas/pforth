@@ -13,7 +13,6 @@ HEX
 
 \ Compiler redefinition and additions
 
-: V'   ' >BODY ; \ FIXME: Add to highlevel.fs, or inline
 : MASK-FLAGS   03FFFFFF AND ;
 
 \ STUB FOO creates an empty word if FOO doesn't exist.
