@@ -51,6 +51,10 @@ IMMEDIATE COMPILING
 : OS"   ( name )   ( regs-in regs-out -- )   [CHAR] " PARSE  C0END OS#
    POSTPONE OS ; IMMEDIATE COMPILING
 
+R: DOES>-RESOLVER   RESOLVER ;
+1 REDEFINER DOES>-RESOLVER-REDEFINER
+DOES>-RESOLVER-REDEFINER
+
 R: <'FORTH   'FORTH - TARGET-'FORTH + ;
 R: >'FORTH   'FORTH + TARGET-'FORTH - ;
 \ FIXME: Share the following with machdeps.fs
@@ -85,10 +89,10 @@ R: DOES>   POSTPONE (DOES>) ALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
 R: (POSTPONE)   R>  03FFFFFF AND  DUP 4 + >R  @ >NAME FIND  0= IF  UNDEFINED
    THEN  COMPILE, ;
 DECIMAL
-\ FIXME: These are duplicated in beetle/make.fs
-RESOLVER (VALUE) WILL-DO VALUE
-RESOLVER (VECTOR) WILL-DO VECTOR
-RESOLVER (VOCABULARY) WILL-DO VOCABULARY
+\ FIXME: These are duplicated in beetle/meta.fs
+DOES>-RESOLVER (VALUE) WILL-DO VALUE
+DOES>-RESOLVER (VECTOR) WILL-DO VECTOR
+DOES>-RESOLVER (VOCABULARY) WILL-DO VOCABULARY
 \ On Beetle (DOES) is IMMEDIATE, so "POSTPONE (DOES)" in DOES> simply runs
 \ it; on ARM, (DOES) is not immediate; hence, do a manual POSTPONE.
 \ This must NOT be redefined on RISC OS, as it upsets all words created by defining words!
@@ -97,6 +101,7 @@ R: (DOES)   C" (DOES)" FIND  DROP COMPILE, ;
 : CHECK-(DOES)   C" (DOES)" FIND  NIP -1 = IF  1- -ROT 2DROP  THEN ;
 CHECK-(DOES)   \ don't redefine (DOES) if it already exists
 REDEFINER >COMPILERS<
+DOES>-RESOLVER-REDEFINER
 
 
 \ Constants
