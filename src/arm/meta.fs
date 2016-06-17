@@ -62,7 +62,7 @@ R: AHEAD   HERE  EA000000 CODE, ;
 R: IF   E35B0000 CODE, E49CB004 CODE,  HERE  0A000000 CODE, ;
 R: LITERAL   POSTPONE (LITERAL) ALIGN  , ;
 R: NOPALIGN   ALIGN ;
-R: !BRANCH   ( at from to op-mask -- )   OVER 'FORTH < ABORT" !BRANCH out of image!"
+R: !BRANCH   ( at from to op-mask -- )   OVER 'FORTH < ABORT" !BRANCH out of image"
    -ROT  >BRANCH  OR  SWAP CODE! ;
 R: BRANCH   ( at from to -- )    EA000000 !BRANCH ;
 R: CALL   ( at from to -- )   EB000000 !BRANCH ;

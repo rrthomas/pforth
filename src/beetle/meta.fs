@@ -30,14 +30,14 @@
 \ Compiler redefinition and additions
 
 ALSO ASSEMBLER
-: ADR,   ( to opcode -- )   OVER 'FORTH < ABORT" ADR, out of image!"
+: ADR,   ( to opcode -- )   OVER 'FORTH < ABORT" ADR, out of image"
    OVER HERE 1+ ALIGNED - CELL/  DUP HERE 1+ FITS
    IF  SWAP 1+ C, FIT,  DROP  ELSE DROP C,  NOPALIGN  <'FORTH ,  THEN ;
 
 HEX
 : EXECUTE   STATE @ IF  46 C,  ALIGN  ELSE  EXECUTE  THEN ; IMMEDIATE
 : @EXECUTE   STATE @ IF  47 C,  ALIGN  ELSE  @EXECUTE  THEN ; IMMEDIATE
-: OFFSET   ( from to -- offset )   OVER 'FORTH <  OVER 'FORTH <  OR ABORT" OFFSET out of image!"
+: OFFSET   ( from to -- offset )   OVER 'FORTH <  OVER 'FORTH <  OR ABORT" OFFSET out of image"
    >-<  CELL/ 1-  00FFFFFF AND ;
 
 10 CONSTANT TARGET-'FORTH
