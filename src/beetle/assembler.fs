@@ -19,7 +19,6 @@ ASSEMBLER DEFINITIONS
 
 : INLINE   ( char -- )   LAST >INFO 2 + C! ;
 
-\ FIXME: these duplicate definitions in machdeps.fs
 : FITS   ( x addr -- flag )   DUP ALIGNED >-<  DUP IF  BITS/ * 1-
    1 SWAP LSHIFT  SWAP DUP 0< IF  INVERT  THEN  U>  ELSE NIP  THEN ;
 : FIT,   ( x -- )   HERE DUP ALIGNED >-<  0 ?DO  DUP C,

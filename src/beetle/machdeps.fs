@@ -1,4 +1,5 @@
 \ Machine-dependent words (Beetle)
+\ FIXME: Use assembler
 \ Reuben Thomas
 
 
@@ -26,11 +27,11 @@
 \ Branches
 
 HEX
+\ FIXME: once assembler "built-in", remove the following
 : FITS   ( x addr -- flag )   DUP ALIGNED >-<  DUP IF  8 * 1-  1 SWAP LSHIFT
    SWAP DUP 0< IF  INVERT  THEN  U>  ELSE NIP  THEN ;
 : FIT,   ( x -- )   HERE DUP ALIGNED >-<  0 ?DO  DUP C,  8 RSHIFT  LOOP
    DROP ;
-
 : NOPALIGN   0 FIT, ;
 
 : AHEAD   HERE  42 C,  NOPALIGN  0 , ; IMMEDIATE
@@ -70,7 +71,6 @@ HEX
 : UNLOOP, ;
 
 ALSO ASSEMBLER
-\ FIXME: Define in primitives.fs
 : EXECUTE   STATE @ IF  46 C,  NOPALIGN  ELSE [ 46 C,  NOPALIGN ]
    THEN ; IMMEDIATE
 : @EXECUTE   STATE @ IF  47 C,  NOPALIGN  ELSE [ 47 C,  NOPALIGN ]
