@@ -570,6 +570,7 @@ VARIABLE HELD
       >NUMBER                        \ convert up to non-digit
       ?DUP WHILE                     \ if the string's not finished,
       OVER C@ 4 / 11 <> IF           \ is the non-digit punctuation?
+                                     \ FIXME: Tighten up parsing
          2R> 2DROP  R> UNDEFINED     \ if not, then not a number
       THEN
       R> DROP  TRUE >R               \ if so, set double no. flag
