@@ -148,7 +148,8 @@ DECIMAL
    SCRATCH ;
 
 
-INCLUDE" machdeps.fs"   \ include machine-dependent words
+INCLUDE" compiler.fs"   \ machine-dependent compiler words
+INCLUDE" terminal.fs"   \ terminal I/O words
 
 
 \ Interpreter #3
