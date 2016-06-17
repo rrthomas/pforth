@@ -127,9 +127,6 @@ END-SUB
 
 77 CONSTANT WIDTH   \ width of display
 
-: "COPYRIGHT   S" ©" ;
-: "ENVIRONMENT   S" RISC OS" ;
-
 
 \ OS-specific file access
 

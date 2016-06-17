@@ -1,1 +1,1 @@
-: PLATFORM   S" RISC OS" ;
+: "PLATFORM   S" RISC OS" ;

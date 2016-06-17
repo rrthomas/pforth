@@ -1197,6 +1197,7 @@ INCLUDE" os.fs"   \ include OS access words
 \ Initialisation and version number
 
 78 CONSTANT VERSION
+INCLUDE" platform.fs"
 : %.   S>D  <# # # [CHAR] . HOLD #S #>  TYPE ;
 
 : START
@@ -1212,7 +1213,7 @@ INCLUDE" os.fs"   \ include OS access words
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
-   ." aForth for "  "ENVIRONMENT TYPE ."  v" VERSION %.
-   CR "COPYRIGHT TYPE  ."  Reuben Thomas 1991-2016" CR
+   ." aForth for "  "PLATFORM TYPE ."  v" VERSION %.
+   CR ." (c) Reuben Thomas 1991-2016" CR
                                      \ display the start message
    QUIT ;                            \ enter the main loop

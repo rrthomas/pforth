@@ -3,7 +3,7 @@
 
 MARKER DISPOSE
 INCLUDE" platform.fs"
-CR .( Metacompiling aForth for ) PLATFORM TYPE .( : )
+CR .( Metacompiling aForth for ) "PLATFORM TYPE .( : )
 
 
 INCLUDE" machdeps-pre.fs"

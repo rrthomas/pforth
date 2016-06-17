@@ -109,6 +109,3 @@ for messing around, although adr itself may not be aligned. )
 : EOL   (S")  [ 1 C, 10 C, ALIGN ] ;
 
 77 CONSTANT WIDTH   \ width of display
-
-: "COPYRIGHT   S" (c)" ;
-: "ENVIRONMENT   S" Beetle" ;

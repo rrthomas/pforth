@@ -1,1 +1,1 @@
-: PLATFORM   S" Beetle" ;
+: "PLATFORM   S" Beetle" ;
