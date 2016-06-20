@@ -31,8 +31,8 @@ HEX
 
 \ Core compiler, also used for metacompilation
 
-: AHEAD   HERE  42 C,  NOPALIGN  0 , ; IMMEDIATE
-: IF   HERE  44 C,  NOPALIGN  0 , ; IMMEDIATE
+: AHEAD   HERE  42 C,  NOPALIGN  0 , ; IMMEDIATE COMPILING
+: IF   HERE  44 C,  NOPALIGN  0 , ; IMMEDIATE COMPILING
 
 : OFFSET   ( from to -- offset )   >-<  CELL/ 1-  00FFFFFF AND ;
 : !BRANCH   ( at from to opcode -- )   HERE >R  >R  ROT DP !  R> C,  OFFSET
@@ -81,7 +81,7 @@ DECIMAL
 
 HEX
 : LITERAL   DUP HERE 1+ FITS IF  53 C, FIT,  ELSE 52 C,  NOPALIGN  ,  THEN ;
-IMMEDIATE
+IMMEDIATE COMPILING
 
 \ Leave UNLINK, in next cell where it can be patched by DOES>
 : CREATE,   LINK,  56 C,  23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
