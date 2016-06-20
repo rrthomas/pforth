@@ -19,8 +19,6 @@ DECIMAL
 : FIND-AND-COMPILE,   ( xt -- )
    @ >NAME FIND  0= IF  UNDEFINED  THEN  COMPILE, ;
 
-INCLUDE" meta.fs"
-
 \ Relocate new dictionary
 : >ADDRESS<   DUP @  ?DUP IF  <'FORTH SWAP !  ELSE DROP  THEN ;
 : RELOCATE   ( a-addr -- )
@@ -37,6 +35,8 @@ INCLUDE" meta.fs"
       DUP <'FORTH ROT !
    REPEAT
    DROP ;
+
+INCLUDE" meta.fs"
 
 VOLUME NEW   \ define a new hash table
 NEW   \ make the new dictionary the current volume
