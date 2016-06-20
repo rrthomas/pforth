@@ -33,7 +33,7 @@
 
 \title{The aForth Forth compiler}
 \author{Reuben Thomas}
-\date{18th November 1999}
+\date{20th June 2016}
 \maketitle
 
 
@@ -159,8 +159,8 @@ glossary entries of the relevant words in the standard.
 \item[*]If the argument input source is different from the current input source for {\tt RESTORE-}\-{\tt INPUT}, the flag returned is true.
 \item[*]If data space containing definitions is de-allocated, those definitions continue to be found by dictionary search, and remain intact until overwritten, when the effects depend on exactly what is overwritten, but will probably include name lookup malfunction and incorrect execution semantics.
 \item[*]If {\tt IMMEDIATE} is executed when the most recent definition does not have a \textit{name}, the most recent named definition in the compilation word list is made immediate.
-\item[*]If a \textit{name} is not found by {\tt '}, {\tt POSTPONE}, {\tt [']} or {\tt [COMPILE]}, the \textit{name} is displayed followed by a question mark, and {\tt ABORT} is executed.
-\item[*]If {\tt POSTPONE} or {\tt [COMPILE]} is applied to {\tt TO}, the compilation semantics of {\tt TO} are appended to the current definition.
+\item[*]If a \textit{name} is not found by {\tt '}, {\tt POSTPONE} or {\tt [']}, the \textit{name} is displayed followed by a question mark, and {\tt ABORT} is executed.
+\item[*]If {\tt POSTPONE} is applied to {\tt TO}, the compilation semantics of {\tt TO} are appended to the current definition.
 \end{itemize}
 
 \subsubsection{Block word set}
