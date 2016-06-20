@@ -937,10 +937,10 @@ HERE <'FORTH  ' CODEX >BODY  DUP @ ,  !  0 ,
 VARIABLE CHAIN  0 ' CHAIN >BODY !
 ( A wordlist has the following structure:
 
-  Head of list                       most recently defined word
-  Link field                         next wordlist in CHAIN
-  #WORDLISTS                         #WORDLISTS in VOLUME
-  'THREADS                           address of dictionary's THREADS
+  Head of list         most recently defined word
+  Link field           next wordlist in CHAIN
+  Wordlist number      number of wordlist in VOLUME; bit 10 is FOREIGN flag
+  'THREADS             address of dictionary's THREADS
 )
 : WORDLIST   ALIGN HERE  0 ,  HERE <'FORTH  CHAIN  DUP @ ,  !  CURRENT-VOLUME @
    TUCK #WORDLISTS  DUP @  DUP ,  1+ SWAP !  SWAP @ <'FORTH , ;
