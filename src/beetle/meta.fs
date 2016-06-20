@@ -1,3 +1,5 @@
+ALSO ASSEMBLER
+
 \ Save an object file
 : SAVE   ( a-addr u1 c-addr u2 -- )
    W/O CREATE-FILE DROP          \ open file
@@ -18,18 +20,15 @@
       CHAR+ DUP NEGATE >IN +!    \ move >IN back over the name
       PAD  TUCK C!               \ save PAD; store name's length
       CODE                       \ make an inline code word
-      [ ALSO ASSEMBLER ]
       1 INLINE                   \ with one byte of code
       FIND DROP  EXECUTE         \ append the opcode      
       BEXIT                      \ append EXIT
       END-CODE                   \ finish the definition
-      [ PREVIOUS ]
    LOOP ;
 
 
 \ Compiler redefinition and additions
 
-ALSO ASSEMBLER
 HEX
 
 10 CONSTANT TARGET-'FORTH
