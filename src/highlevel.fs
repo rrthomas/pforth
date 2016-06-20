@@ -500,7 +500,7 @@ VARIABLE 'RETURN
 : .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
 
 
-\ Compiler #3
+\ Compiler #2
 
 : ",   ( c-addr u -- )   DUP C,  HERE SWAP  DUP ALLOT  CMOVE ;
 : SLITERAL   POSTPONE (S")  ", 0 CALIGN ; IMMEDIATE COMPILING
@@ -608,7 +608,7 @@ VARIABLE HELD
    BASE ! ;                          \ restore BASE
 
 
-\ Compiler #4
+\ Compiler #3
 
 : DEFINITIONS   CONTEXT @  SET-CURRENT ;
 
@@ -803,7 +803,7 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
    ." parse area empty" ABORT ;
 
 
-\ Compiler #5
+\ Compiler #4
 
 : :   BL WORD HEADER  TRUE SMUDGE  LINK,  ] ;
 : ;   UNLINK,  POSTPONE [  FALSE SMUDGE ; IMMEDIATE COMPILING
@@ -889,7 +889,7 @@ DECIMAL
 : INCLUDE"   ( file )   [CHAR] " WORD COUNT  INCLUDED ;
 
 
-\ Compiler #6
+\ Compiler #5
 
 : '   BL WORD FIND  0= IF  UNDEFINED  THEN ;
 : [']   ' <'FORTH  POSTPONE LITERAL ; IMMEDIATE COMPILING
