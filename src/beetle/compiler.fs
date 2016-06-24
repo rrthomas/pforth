@@ -43,10 +43,10 @@ HEX
 : BRANCH   ( at from to -- )   43 !BRANCH ;
 : CALL   ( at from to -- )   49 !BRANCH ;
 
-: JOIN   ( from to -- )   SWAP  1+ ALIGNED  ! ;
+: JOIN   ( from to -- )   <'FORTH  SWAP  1+ ALIGNED  ! ;
 
 : ADR,   ( to opcode -- )   OVER HERE 1+ ALIGNED - CELL/  DUP HERE 1+ FITS
-   IF  SWAP 1+ C, FIT,  DROP  ELSE DROP C,  NOPALIGN  ,  THEN ;
+   IF  SWAP 1+ C, FIT,  DROP  ELSE DROP C,  NOPALIGN  <'FORTH ,  THEN ;
 : CALL,   ( to -- )   48 ADR, ;
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP C@ C,  1+  LOOP  DROP
    ELSE CALL,  THEN ;
