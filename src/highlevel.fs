@@ -142,9 +142,11 @@ DECIMAL
 : SCRATCH   R0 @ 1024 + ;
 
 
+INCLUDE" os-compiler.fs"   \ words necessary for the machine
 INCLUDE" compiler.fs"
 ' COMPILE, <'FORTH VECTOR CURRENT-COMPILE,
 INCLUDE" compiler1.fs"
+INCLUDE" compiler-postpone.fs"
 
 
 \ Strings #2
@@ -166,37 +168,7 @@ INCLUDE" terminal.fs"   \ terminal I/O words
 : QUIT   -56 THROW ;
 
 
-\ Control structures #1
-
-: BEGIN   NOPALIGN HERE ; IMMEDIATE COMPILING
-: AGAIN   POSTPONE AHEAD  SWAP JOIN ; IMMEDIATE COMPILING
-: UNTIL   POSTPONE IF  SWAP JOIN ; IMMEDIATE COMPILING
-: THEN   NOPALIGN HERE JOIN ; IMMEDIATE COMPILING
-
-: CS-PICK   PICK ; COMPILING
-: CS-ROLL   ROLL ; COMPILING
-
-: WHILE   POSTPONE IF  1 CS-ROLL ; IMMEDIATE COMPILING
-: REPEAT   POSTPONE AGAIN  POSTPONE THEN ; IMMEDIATE COMPILING
-: ELSE   POSTPONE AHEAD  1 CS-ROLL  POSTPONE THEN ; IMMEDIATE COMPILING
-
-VARIABLE 'NODE
-: >NODE   'NODE @  BEGIN  ?DUP WHILE  DUP @  HERE <'FORTH ROT !  REPEAT ;
-: I   POSTPONE R@ ; IMMEDIATE COMPILING
-: LEAVE   LEAVE, NOPALIGN  HERE 'NODE  DUP @ ,  ! ; IMMEDIATE COMPILING
-: DO   'NODE @  0 'NODE !  DO,  POSTPONE BEGIN ; IMMEDIATE COMPILING
-: ?DO   'NODE @  0 'NODE !  POSTPONE 2DUP DO,  POSTPONE = POSTPONE IF
-   POSTPONE LEAVE POSTPONE THEN  POSTPONE BEGIN ; IMMEDIATE COMPILING
-: LOOP   LOOP,  >NODE  'NODE !  UNLOOP, ; IMMEDIATE COMPILING
-: +LOOP   +LOOP,  >NODE  'NODE !  UNLOOP, ; IMMEDIATE COMPILING
-
-: RECURSE   LAST COMPILE, ; IMMEDIATE COMPILING
-
-: CASE   0 ; IMMEDIATE COMPILING
-: OF   1+ >R  POSTPONE OVER POSTPONE = POSTPONE IF  POSTPONE DROP  R> ;
-IMMEDIATE COMPILING
-: ENDOF   >R  POSTPONE ELSE  R> ; IMMEDIATE COMPILING
-: ENDCASE   POSTPONE DROP  0 ?DO  POSTPONE THEN  LOOP ; IMMEDIATE COMPILING
+INCLUDE" control1.fs"
 
 
 \ Memory
@@ -246,13 +218,7 @@ IMMEDIATE COMPILING
    2DROP FALSE ;                     \ leave c-addr1 u1 false
 
 
-\ Control structures #2
-
-: "CASE   POSTPONE CASE ; IMMEDIATE COMPILING
-: "OF   1+ >R  POSTPONE 2OVER POSTPONE COMPARE POSTPONE 0= POSTPONE IF
-  POSTPONE 2DROP  R> ; IMMEDIATE COMPILING
-: "ENDOF   POSTPONE ENDOF ; IMMEDIATE COMPILING
-: "ENDCASE   POSTPONE 2DROP  0 ?DO  POSTPONE THEN  LOOP ; IMMEDIATE COMPILING
+INCLUDE" control2.fs"
 
 
 \ Mass storage input/output #1
@@ -502,24 +468,8 @@ VARIABLE 'RETURN
 : .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
 
 
-\ Compiler #2
-
-: ",   ( c-addr u -- )   DUP C,  HERE SWAP  DUP ALLOT  CMOVE ;
-: SLITERAL   POSTPONE (S")  ", 0 CALIGN ; IMMEDIATE COMPILING
-
-: C"   [CHAR] " PARSE  POSTPONE (C")  ", 0 CALIGN ; IMMEDIATE COMPILING
-: S"   [CHAR] " PARSE  S"B SWAP 2DUP 2>R  CMOVE  2R> ;
-   :NONAME   [CHAR] " PARSE  POSTPONE SLITERAL ;IMMEDIATE
-
-: ."   POSTPONE S"  POSTPONE TYPE ; IMMEDIATE COMPILING
-
-: CHAR   BL WORD  CHAR+ C@ ;
-: [CHAR]   CHAR  POSTPONE LITERAL ; IMMEDIATE COMPILING
-
-
-\ Interpreter #4
-
-: ABORT"   POSTPONE C"  POSTPONE (ABORT") ; IMMEDIATE COMPILING
+INCLUDE" compiler2.fs"
+INCLUDE" interpreter4.fs"
 
 
 \ Numeric conversion
@@ -675,6 +625,7 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
 : FIND   ( c-addr -- a-addr n )   ['] ALL-VISIBLE SELECT ;
 
 ' LITERAL <'FORTH VECTOR CURRENT-LITERAL
+\ FIXME: The definition of POSTPONE should not call the metacompiler's POSTPONE
 : POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
    CURRENT-COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ;
 IMMEDIATE COMPILING
@@ -899,24 +850,8 @@ DECIMAL
 : INCLUDE"   ( file )   [CHAR] " WORD COUNT  INCLUDED ;
 
 
-\ Compiler #5
-
-: '   BL WORD FIND  0= IF  UNDEFINED  THEN ;
-: [']   ' <'FORTH  POSTPONE LITERAL ; IMMEDIATE COMPILING
-
-
-\ Defining
-
-: CREATE   BL WORD HEADER  CREATE, ;
-: DOES>   POSTPONE (DOES>) ALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
-   DUP @ ROT OR  SWAP !  <'FORTH ,  LINK,  POSTPONE (DOES) ; IMMEDIATE COMPILING
-
-: VARIABLE   CREATE  CELL ALLOT ;
-: CONSTANT   BL WORD HEADER  LINK,  POSTPONE LITERAL  UNLINK, ;
-: VALUE   CREATE  ,  DOES>  @ ;
-: VECTOR   CREATE  ,  DOES>  @EXECUTE ;
-: TO   ' >BODY ! ;
-   :NONAME   ' >BODY  <'FORTH  POSTPONE LITERAL  POSTPONE ! ;IMMEDIATE
+INCLUDE" compiler5.fs"
+INCLUDE" defining.fs"
 
 
 \ Word lists
@@ -951,8 +886,7 @@ VARIABLE CHAIN  0 ' CHAIN >BODY !
 )
 : WORDLIST   ALIGN HERE  0 ,  HERE <'FORTH  CHAIN  DUP @ ,  !  CURRENT-VOLUME @
    TUCK #WORDLISTS  DUP @  DUP ,  1+ SWAP !  SWAP @ <'FORTH , ;
-: VOCABULARY   WORDLIST <'FORTH  CREATE  ,  DOES>  #ORDER @ 0= IF  1 #ORDER +!
-   THEN  @ CONTEXT ! ;
+INCLUDE" vocabulary.fs"
 VOCABULARY FORTH
 ' FORTH >BODY @ CONSTANT FORTH-WORDLIST
 : ALSO   CONTEXT  DUP CELL+  #ORDER @ CELLS  MOVE  1 #ORDER +! ;
@@ -1091,56 +1025,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
    THEN ;
 
 
-\ Forward branches
-
-\ RESOLVERs allow forward branches. Define a resolver, use it in definitions
-\ and then use RESOLVE: or RESOLVES to resolve it. RESOLVERs may be POSTPONEd
-\ but the code to POSTPONE the RESOLVER will not itself be resolved.
-: (RESOLVER)   ( name )
-   CREATE IMMEDIATE COMPILING        \ create RESOLVER
-   ,                                 \ end-of-list marker (left by caller)
-   DOES>
-      HERE                           \ address of branch to resolve
-      SWAP DUP @  DUP 1 AND          \ get previous branch address & type flag
-      SWAP ,                         \ compile previous branch address & flag
-      ROT OR SWAP ! ;                \ record next branch in list
-                                     \ with call/branch flag in LSB
-: RESOLVER   ( name )
-   0 (RESOLVER) ;
-\ A RESOLVER which compiles branches instead of calls
-: BRANCH-RESOLVER   ( name )
-   1 (RESOLVER) ;
-
-\ RESOLVE resolves all occurrences of the RESOLVER whose execution token is
-\ from with calls to to. RESOLVE must not be used directly, but via RESOLVE:
-\ or RESOLVES.
-: RESOLVE   ( from to -- )
-   SWAP >BODY @                      \ get first address in branch list
-   DUP 1 AND >R                      \ get and save call/branch flag
-   BEGIN  1 INVERT AND ?DUP WHILE    \ chain down list until null marker,
-                                     \ clearing call/branch flag
-      DUP @                          \ get next address in list
-      -ROT  2DUP SWAP  R@ IF         \ compile the call or branch
-         BRANCH
-      ELSE
-         CALL
-      THEN
-      SWAP
-   REPEAT
-   R> 2DROP ;                        \ drop to and flag
-
-\ RESOLVES is used to resolve WILL-DO defining words (see WILL-DO).
-: RESOLVES   ( name )   ( a-addr -- )   '  SWAP RESOLVE ;
-
-\ RESOLVE: is used to supply the definition of a RESOLVER; the branch list is
-\ resolved to calls to the new definition.
-: RESOLVE:   ( name )
-   BL WORD                           \ get name
-   DUP FIND 0= IF  UNDEFINED  THEN   \ get RESOLVER's execution token
-   TRUE OVER SMUDGE!                 \ remove RESOLVER from search order
-   SWAP HEADER  TRUE SMUDGE          \ start creating new definition
-   HERE RESOLVE                      \ resolve calls to new definition
-   LINK,  ] ;                        \ add link code and start compiling
+INCLUDE" resolver.fs"
 
 
 \ Redefinition

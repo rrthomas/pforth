@@ -28,4 +28,40 @@ HEX
       ." Unknown SWI " TYPE ABORT
    "ENDCASE
    OR ;                              \ or with X bit
+
+: OS   ( regs-in regs-out swi -- )
+   -ROT 2DUP + >R ROT
+   R@ IF  E52CB004 CODE,  THEN
+   ROT ?DUP IF
+      1 SWAP LSHIFT 1- E8BC0000 OR CODE,
+   THEN
+   EF000000 OR CODE,
+   ?DUP IF
+      1 SWAP LSHIFT 1- E92C0000 OR CODE,
+   THEN
+   R> IF  E49CB004 CODE,  THEN ;
+IMMEDIATE COMPILING
 DECIMAL
+: OS"   ( name )   ( regs-in regs-out -- )   [CHAR] " PARSE OS#
+   POSTPONE OS ; IMMEDIATE COMPILING
+\ FIXME: implement on all platforms
+: ARSHIFT   1 SWAP LSHIFT  / ;
+
+\ FIXME: "os-primitives" does not really describe the following
+\ STUB FOO creates an empty word if FOO doesn't exist.
+\ This is used to POSTPONE target words that don't exist
+\ on the host.
+: STUB
+   BL WORD \ FIND  0= IF
+      HEADER  0 ,                \ reserve enough space for redefinition
+                                 \ FIXME: make portable; see REDEFINER
+\   ELSE
+\      DROP                       \ if found, discard xt
+ (  THEN) ;
+
+\ Create stubs for words that may not exist on host
+STUB (LITERAL)
+STUB (LOOP)
+STUB (+LOOP)
+STUB UNLOOP
+STUB (CREATE)

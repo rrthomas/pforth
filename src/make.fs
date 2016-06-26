@@ -6,18 +6,18 @@ INCLUDE" platform.fs"
 CR .( Metacompiling aForth for ) "PLATFORM TYPE .( : )
 
 
-INCLUDE" os-primitives.fs"
+INCLUDE" target-util.fs"
 INCLUDE" assembler.fs"
 
 
 \ Meta-compiler utilities
 
-VOCABULARY META  ALSO META DEFINITIONS
-DECIMAL
+\ ARM-specific meta-compiler utilities (FIXME)
+: '?   BL WORD FIND  0= IF  DROP 0  THEN ;
 
-\ Used by meta-compiler's redefinition of (POSTPONE)
-: FIND-AND-COMPILE,   ( xt -- )
-   @ >NAME FIND  0= IF  UNDEFINED  THEN  COMPILE, ;
+VOCABULARY META  ALSO META DEFINITIONS
+FOREIGN  ' NON-META? TO 'SELECTOR \ build meta-compiler using native compiler
+DECIMAL
 
 \ Relocate new dictionary
 : >ADDRESS<   DUP @  ?DUP IF  <'FORTH SWAP !  ELSE DROP  THEN ;
@@ -36,13 +36,81 @@ DECIMAL
    REPEAT
    DROP ;
 
-INCLUDE" meta.fs"
+
+ALSO ASSEMBLER
+
+INCLUDE" save.fs"
+INCLUDE" util.fs"
+
+
+\ Compiler redefinition and additions
+
+INCLUDE" target-forth.fs" CONSTANT TARGET-'FORTH
+
+R: <'FORTH   'FORTH - TARGET-'FORTH + ;
+R: >'FORTH   'FORTH + TARGET-'FORTH - ;
+
+INCLUDE" compiler.fs"
+INCLUDE" compiler1.fs"
+
+
+\ Special definition of POSTPONE, to cope with FOREIGN vocabularies
+
+: FIND-AND-COMPILE,   ( c-addr -- )
+   FIND  0= IF  UNDEFINED  THEN  CURRENT-COMPILE, ;
+: (POSTPONE)   R> R>ADDRESS DUP CELL+ >R @ >NAME  FIND-AND-COMPILE, ;
+
+\ POSTPONE itself must be defined in FORTH, so that it can be run during the
+\ compilation of the rest of META, which is FOREIGN while it is being built.
+NATIVE ALSO FORTH DEFINITIONS
+: POSTPONE   BL WORD FIND ?DUP 0= IF UNDEFINED THEN 0> IF >COMPILE @
+   CURRENT-COMPILE, ELSE C" (POSTPONE)" FIND-AND-COMPILE, ALIGN <'FORTH , THEN ;
+IMMEDIATE COMPILING
+PREVIOUS   \ use META POSTPONE and LINK,
+INCLUDE" compiler-postpone.fs"
+INCLUDE" (does).fs"
+INCLUDE" does.fs"
+INCLUDE" does-resolver.fs"
+ALSO FORTH  META DEFINITIONS FOREIGN  PREVIOUS \ FIXME: this line knows about the search order set up in make.fs
+
+
+INCLUDE" control1.fs"
+INCLUDE" control2.fs"
+INCLUDE" compiler2.fs"
+INCLUDE" interpreter4.fs"
+INCLUDE" compiler4.fs"
+INCLUDE" compiler5.fs"
+INCLUDE" defining.fs"
+INCLUDE" vocabulary.fs"
+INCLUDE" resolver.fs"
+
+DOES>-RESOLVER (VALUE) WILL-DO VALUE
+DOES>-RESOLVER (VECTOR) WILL-DO VECTOR
+DOES>-RESOLVER (VOCABULARY) WILL-DO VOCABULARY
+5 REDEFINER >COMPILERS<
+
+PREVIOUS
+
+
+\ Constants
+
+32 1024 * CONSTANT SIZE
+INCLUDE" throw-contents.fs"
+
+
+NATIVE  ' LOCAL? TO 'SELECTOR \ now meta-compiler is built, allow it to run
 
 VOLUME NEW   \ define a new hash table
 NEW   \ make the new dictionary the current volume
+ALSO FORTH   \ use FORTH's VOCABULARY
 VOCABULARY NEW-FORTH   \ define the new root vocabulary
+PREVIOUS
 
 SIZE DICTIONARY CROSS  \ define a new dictionary
+' CURRENT-COMPILE, >BODY @   \ save compiler
+' CURRENT-LITERAL >BODY @
+' COMPILE, TO CURRENT-COMPILE,   \ use target compiler
+' LITERAL TO CURRENT-LITERAL   \ use target compiler
 'FORTH   \ save value of 'FORTH
 ' CROSS >BODY @  #THREADS 1+ CELLS -  TO 'FORTH
    \ make 'FORTH point to the start of it minus the threads table and
@@ -87,3 +155,5 @@ S" aForthImage" SAVE   \ write system image
 
 KERNEL PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
+TO CURRENT-LITERAL   \ restore original compiler
+TO CURRENT-COMPILE,

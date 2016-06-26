@@ -167,6 +167,12 @@ STACKS ED EA FD FA
 
 \ Control structure macros
 
+\ FIXME: Following three words are copied from arm/compiler.fs; when
+\ assembler is merged into base system, de-duplicate
+: >BRANCH   ( from to -- offset )   >-<  2 RSHIFT 2 -  00FFFFFF AND ;
+: !BRANCH   ( at from to op-mask -- )   -ROT  >BRANCH  OR  SWAP CODE! ;
+: JOIN   ( from to -- )   OVER TUCK @ !BRANCH ;
+
 : AHEAD,   HERE  DUP 8 + B, ;
 : IF,   REVERSE AHEAD, ;
 : THEN,   HERE JOIN ;

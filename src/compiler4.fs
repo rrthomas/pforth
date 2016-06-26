@@ -1,0 +1,7 @@
+\ Compiler #4
+
+: :   BL WORD HEADER  TRUE SMUDGE  LINK,  ] ;
+: ;   UNLINK,  POSTPONE [  FALSE SMUDGE ; IMMEDIATE COMPILING
+: :NONAME   ALIGN HERE LINK,  ] ;
+\ FIXME: This is the only use for a separate compilation method
+: ;IMMEDIATE   POSTPONE ;  IMMEDIATE  LAST >COMPILE ! ; IMMEDIATE COMPILING
