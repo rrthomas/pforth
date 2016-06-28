@@ -740,9 +740,16 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
       THEN
    THEN
    FOREIGN? INVERT ;                 \ otherwise word must be native
+: NON-META?   ( wid xt n -- f )
+   NIP  1 <>  STATE @  AND IF        \ if we are compiling a word,
+      DROP  TRUE                     \ allow any word;
+   ELSE
+      FOREIGN? INVERT                \ to execute, word must be native
+   THEN ;
+' LOCAL? <'FORTH VALUE 'SELECTOR
 : INTERPRET
    BEGIN  BL WORD  DUP C@ WHILE      \ while text in input stream
-      ['] LOCAL? SELECT              \ search for word
+      'SELECTOR SELECT               \ search for word
       DUP IF                         \ if word found in dictionary
          STATE @ 0= IF               \ if interpreting, execute it
             DROP                     \ drop found flag
