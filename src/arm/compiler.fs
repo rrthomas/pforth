@@ -69,6 +69,4 @@ DECIMAL
 DOES> code. There is always at least an aligned cell after this address free
 for messing around, although adr itself may not be aligned. )
 : >DOES   ( xt -- adr )   4 + ;
-HEX
 : (DOES>)   LAST >DOES  DUP  R> R>ADDRESS @  CALL ;
-DECIMAL
