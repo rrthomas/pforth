@@ -1,7 +1,7 @@
 \ Convert SWI names to numbers
 \ ad-hoc list for metacompiling
 HEX
-: OS#   ( c-addr -- u )
+: OS#   ( c-addr n -- u )
    OVER C@  [CHAR] X = IF            \ If the string starts with X,
       1 /STRING                      \ strip the X
       20000                          \ set X bit in SWI number
