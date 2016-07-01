@@ -672,8 +672,9 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
    0 ;                               \ if not found leave string & 0 flag
 : FIND   ( c-addr -- a-addr n )   ['] ALL-VISIBLE SELECT ;
 
+' COMPILE, <'FORTH VECTOR CURRENT-COMPILE,
 : POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
-   COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ;
+   CURRENT-COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ;
 IMMEDIATE COMPILING
 
 ( A header has the following structure:
@@ -760,7 +761,7 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
             0> IF                    \ if immediate, execute compile method
                >COMPILE @EXECUTE
             ELSE
-               COMPILE,              \ if non-immediate, compile it
+               CURRENT-COMPILE,      \ if non-immediate, compile it
             THEN
          THEN
       ELSE                           \ if word is not found
@@ -1175,7 +1176,7 @@ DECIMAL
 \ be used as part of a REDEFINER.
 : WILL-DO   ( -- old new )   ' >DOES> 8 -  :NONAME POSTPONE LAST
    POSTPONE >DOES POSTPONE HERE POSTPONE SWAP POSTPONE DP POSTPONE !
-   LAST COMPILE,  POSTPONE DP POSTPONE ! POSTPONE ; ;
+   LAST CURRENT-COMPILE,  POSTPONE DP POSTPONE ! POSTPONE ; ;
 
 INCLUDE" does-resolver.fs"
 
