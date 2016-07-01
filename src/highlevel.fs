@@ -673,6 +673,7 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
 : FIND   ( c-addr -- a-addr n )   ['] ALL-VISIBLE SELECT ;
 
 ' COMPILE, <'FORTH VECTOR CURRENT-COMPILE,
+' LITERAL <'FORTH VECTOR CURRENT-LITERAL
 : POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
    CURRENT-COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ;
 IMMEDIATE COMPILING
@@ -770,9 +771,9 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
          STATE @ IF                  \ compile if STATE is non-zero
             IF                       \ if a double number
                SWAP                  \ compile MS word
-               POSTPONE LITERAL
+               CURRENT-LITERAL
             THEN
-            POSTPONE LITERAL         \ compile single no./LS word
+            CURRENT-LITERAL          \ compile single no./LS word
          ELSE
             DROP                     \ else get rid of flag
          THEN
