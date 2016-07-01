@@ -91,4 +91,4 @@ DECIMAL
 DOES> code. There is always at least an aligned cell after this address free
 for messing around, although adr itself may not be aligned. )
 : >DOES   ( xt -- adr ) CELL+ ;
-: (DOES>)   LAST >DOES  DUP  R> @  BRANCH ;
+: (DOES>)   LAST >DOES  DUP  R> R>ADDRESS @  BRANCH ;
