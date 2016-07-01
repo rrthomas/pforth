@@ -142,7 +142,9 @@ DECIMAL
 : SCRATCH   R0 @ 1024 + ;
 
 
-INCLUDE" compiler.fs"   \ machine-dependent compiler words
+INCLUDE" compiler.fs"
+' COMPILE, <'FORTH VECTOR CURRENT-COMPILE,
+INCLUDE" compiler1.fs"
 
 
 \ Strings #2
@@ -672,7 +674,6 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
    0 ;                               \ if not found leave string & 0 flag
 : FIND   ( c-addr -- a-addr n )   ['] ALL-VISIBLE SELECT ;
 
-' COMPILE, <'FORTH VECTOR CURRENT-COMPILE,
 ' LITERAL <'FORTH VECTOR CURRENT-LITERAL
 : POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
    CURRENT-COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ;
