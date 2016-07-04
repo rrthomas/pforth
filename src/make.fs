@@ -1,9 +1,9 @@
-\ Metacompile aForth
+\ Metacompile pForth
 \ Reuben Thomas   started 15/4/96
 
 MARKER DISPOSE
 INCLUDE" platform.fs"
-CR .( Metacompiling aForth for ) "PLATFORM TYPE .( : )
+CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
 
 
 INCLUDE" target-util.fs"
@@ -151,7 +151,7 @@ OVER CELL+ CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+CELL )
 
 OVER TUCK DUP 2ROT  + 'FORTH -  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
 
-S" aForthImage" SAVE   \ write system image
+S" pForthImage" SAVE   \ write system image
 
 KERNEL PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH

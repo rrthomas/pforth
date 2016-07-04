@@ -1,7 +1,7 @@
-\ aForth high level words
+\ pForth high level words
 \ Reuben Thomas   started 1/91
 
-CR .( aForth high level words )
+CR .( pForth high level words )
 
 
 \ Placeholder
@@ -1112,7 +1112,7 @@ INCLUDE" platform.fs"
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
-   ." aForth for "  "PLATFORM TYPE ."  v" VERSION %.
+   ." pForth for "  "PLATFORM TYPE ."  v" VERSION %.
    CR ." (c) Reuben Thomas 1991-2016" CR
                                      \ display the start message
    QUIT ;                            \ enter the main loop

@@ -1,5 +1,5 @@
-\ Beetle assembler for aForth
-\ Reuben Thomas   1/95-2/4/97
+\ Beetle assembler for pForth
+\ Reuben Thomas   started 1/95
 
 \ FIXME: Add an IP which allows advantage to be taken of packing opcodes
 \ into the current word after an instruction with an operand is assembled

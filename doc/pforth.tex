@@ -1,12 +1,9 @@
 %
-% Documentation for aForth
+% Documentation for pForth
 %
 % Reuben Thomas
 %
-% 14/1/95-21/4/99
-% body separated out 2/3/96
-% converted to LaTeX2e and separate bibliography 16/6/96
-% PDF-ized 29/1/98
+% Started 14/1/95
 %
 
 \documentclass{scrartcl}
@@ -31,15 +28,15 @@
 
 \begin{document}
 
-\title{The aForth Forth compiler}
+\title{The pForth Forth compiler}
 \author{Reuben Thomas}
-\date{20th June 2016}
+\date{4th July 2016}
 \maketitle
 
 
 \section{Introduction}
 
-aForth is a Forth compiler which complies with the ANSI Forth standard~\cite{ANSIforth}. It evolved from an earlier system which was designed to be a teaching tool and portable Forth compiler, but ended up fulfilling neither criterion well. It has been implemented on Acorn RISC OS. It is designed to be used as a teaching tool, and to this end is written mostly in standard Forth, so that the workings of the compiler can be examined and understood by students learning the language; the compiler itself can be used to illustrate the language and the ANSI standard. Some primitive functions are written in assembly code, and the compiler has a few environmental dependencies, such as requiring twos-complement arithmetic, which are exploited to make the system simpler.
+pForth is a Forth compiler which complies with the ANSI Forth standard~\cite{ANSIforth}. Is is designed to be a teaching tool and portable Forth compiler. It has been implemented for the Beetle VM and on Acorn RISC OS. It is written mostly in standard Forth, so that the workings of the compiler can be examined and understood by students learning the language; the compiler itself can be used to illustrate the language and the ANSI standard. Some primitive functions are written in assembly code, and the compiler has a few environmental dependencies, such as requiring twos-complement arithmetic, which are exploited to make the system simpler.
 
 Because it is designed to be easily understood and ported, the compiler is
 simple, using few optimisations, and with little error checking. It does not
@@ -48,7 +45,7 @@ implement the whole of the ANSI standard, notably omitting floating point arithm
 
 \section{Documentation required by the ANSI standard}
 
-Section \ref{labelling} contains the ANS labelling for aForth; the other
+Section \ref{labelling} contains the ANS labelling for pForth; the other
 sections give the documentation required in \cite[section 4.1]{ANSIforth},
 laid out like the corresponding sections in the standard.
 
@@ -56,7 +53,7 @@ laid out like the corresponding sections in the standard.
 \subsection{Labelling}
 \label{labelling}
 
-aForth is an ANS Forth System
+pForth is an ANS Forth System
 \vspace{-3mm}
 \begin{itemize}
 \item[]providing the Core Extensions word set (except {\tt CONVERT}, {\tt EXPECT}, {\tt SPAN} and {\tt UNUSED}),
@@ -121,7 +118,7 @@ aForth is an ANS Forth System
 \subsubsection{Exception word set}
 
 \begin{itemize}
-\item[--]Exceptions $-1$, $-2$, $-10$, $-11$, $-14$ and $-56$ may be raised by the system. Exception values $-256$ to $-511$ are reserved for the environment executing aForth to raise exceptions. Value $-512$ is used by the word {\tt (ERROR")}. Other exceptions in the range \{$-255\dots -1$\} may be raised by the host environment.
+\item[--]Exceptions $-1$, $-2$, $-10$, $-11$, $-14$ and $-56$ may be raised by the system. Exception values $-256$ to $-511$ are reserved for the environment executing pForth to raise exceptions. Value $-512$ is used by the word {\tt (ERROR")}. Other exceptions in the range \{$-255\dots -1$\} may be raised by the host environment.
 \end{itemize}
 
 \subsubsection{File word set}

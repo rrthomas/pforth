@@ -1,0 +1,1 @@
+If "%0" = "-cli" Then /pForth:!RunImage Else If "%0" = "-new" Then /pForth:src/arm/pForthImage Else If "%0" = "" Then /pForth:!RunImage -name pForth -ctrl -display -quit Else Echo Usage: pForth [-cli || -new]
