@@ -1,4 +1,17 @@
-The future of aForth:
+Add TIMES combinator and use in assembler and for REDEFINER.
+
+Make pForth case-insensitive for word lookup, or downcase it all.
+
+Add assembler to base image.
+
+Make pForth work with forth-mode.
+
+Add number input in other bases from Forth 2012.
+
+Have consistent source copyright notices.
+
+
+The future of pForth:
 
 Port it to sMite.
 
@@ -16,7 +29,7 @@ Have proper escape and error handlers that throw an exception. Use exceptions
 in the file words instead of return codes (have a switch to go between
 returning codes and throwing exceptions).
 
-To make aForth threading-independent (provided some form of threading is used
+To make pForth threading-independent (provided some form of threading is used
 which occupies a cell) have words B@ and B! for fetching and storing branch
 addresses.
 
@@ -39,15 +52,15 @@ input stream (string, terminal, blocks, files): have an input source object
 whose methods (SOURCE-ID, SOURCE, SAVE-INPUT, RESTORE-INPUT &c.) can be called.
 
 2. Break up HighLevel into multiple source files: do it by wordset: then can
-build versions of aForth with any specified wordsets, and later wordsets
+build versions of pForth with any specified wordsets, and later wordsets
 ought to be able to be loaded on top of older ones. The hard thing will be to
 deal with words whose semantics are extended by different wordsets,
-especially those whose semantics are extended more than once. aForth's own
+especially those whose semantics are extended more than once. pForth's own
 words such as the forward refs compiler tools ought to have their own
 wordsets.
 
 3. Separate OS from processor, so that e.g. sMite and ARM versions of RISC OS
-aForth can use the same OS interface and code.
+pForth can use the same OS interface and code.
 
 4. Add memory allocation and use for transient buffers. Using for
 dictionaries has two obvious problems: first, need to auto-extend areas being
