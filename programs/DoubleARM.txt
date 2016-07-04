@@ -1,0 +1,406 @@
+REM ARM code double-length and mixed precision routines
+REM R.R.T.   from Animynd Forth '91-'92
+
+FNcode("2DUP")
+ldr r0,[sp]
+stmfd sp !,{r0,top}
+mov pc,lr
+
+FNcode("2DROP")
+add sp,sp,#4
+ldr top,[sp],#4
+mov pc,lr
+
+FNcode("2SWAP")
+ldmfd sp !,{r0-r2}
+mov r3,top
+mov r4,r0
+mov top,r1
+stmfd sp !,{r2-r4}
+mov pc,lr
+
+FNcode("2OVER")
+str top,[sp,#-4]
+ldmib sp,{r0-r1}
+str r1,[sp,#-8]!
+mov top,r0
+mov pc,lr
+
+FNcode("2ROT")
+ldmfd sp !,{r0-r4}
+stmfd sp !,{r0-r2}
+stmfd sp !,{r4,top}
+mov top,r3
+mov pc,lr
+
+FNcode("2-ROT")
+mov r0,top
+ldmfd sp !,{r1-r4,top}
+stmfd sp !,{r0-r1}
+stmfd sp !,{r3-r4,top}
+mov top,r2
+mov pc,lr
+
+FNcode("2TUCK")
+ldmfd sp !,{r0-r2}
+mov r4,r0
+mov r3,top
+stmfd sp !,{r0-r4}
+mov pc,lr
+
+FNcode("2NIP")
+ldr r0,[sp]
+str r0,[sp,#8]!
+mov pc,lr
+
+FNcode("D<")
+ldmfd sp !,{r0-r2}
+cmp r2,r0
+mvnlt top,#0
+movgt top,#0
+movne pc,lr
+sub top,r1,top
+mov top,top,asr#31
+mov pc,lr
+
+FNcode("D>")
+ldmfd sp !,{r0-r2}
+cmp r2,r0
+mvngt top,#0
+movlt top,#0
+movne pc,lr
+sub top,top,r1
+mov top,top,asr#31
+mov pc,lr
+
+FNcode("D=")
+ldmfd sp !,{r0-r2}
+cmp r2,r0
+cmpeq r1,top
+mvneq top,#0
+movne top,#0
+mov pc,lr
+
+FNcode("D<>")
+ldmfd sp !,{r0-r2}
+cmp r2,r0
+cmpeq r1,top
+mvnne top,#0
+moveq top,#0
+mov pc,lr
+
+FNcode("D0<")
+ldr top,[sp],#4
+mov top,top,asr#31
+mov pc,lr
+
+FNcode("D0>")
+cmp top,#0
+ldr top,[sp],#4
+cmpeq top,#0
+mvn top,top,asr#31
+moveq top,#0
+mov pc,lr
+
+FNcode("D0=")
+ldr r0,[sp],#4
+orrs r0,r0,top
+mvneq top,#0
+movne top,#0
+mov pc,lr
+
+FNcode("DU<")
+ldmfd sp !,{r0-r2}
+subs top,r1,top
+sbc r0,r0,r2
+mov top,r0,asr#31
+mov pc,lr
+
+FNcode("(UD/MOD)")
+cmp r3,#0                \ shift divisor left until MSB in same position
+cmpeq r2,r1              \ as dividend's
+movls r3,r2              \ 32 bits
+movls r2,#0
+mov r4,r0,lsr#16         \ 16 bits
+orr r4,r4,r1,lsl#16
+cmp r3,r1,lsr#16
+cmpeq r2,r4
+movls r3,r3,lsl#16
+orrls r3,r3,r2,lsr#16
+movls r2,r2,lsl#16
+mov r4,r0,lsr#8          \ 8 bits
+orr r4,r4,r1,lsl#24
+cmp r3,r1,lsr#8
+cmpeq r2,r4
+movls r3,r3,lsl#8
+orrls r3,r3,r2,lsr#24
+movls r2,r2,lsl#8
+mov r4,r0,lsr#4          \ 4 bits
+orr r4,r4,r1,lsl#28
+cmp r3,r1,lsr#4
+cmpeq r2,r4
+movls r3,r3,lsl#4
+orrls r3,r3,r2,lsr#28
+movls r2,r2,lsl#4
+mov r4,r0,lsr#2          \ 2 bits
+orr r4,r4,r1,lsl#30
+cmp r3,r1,lsr#2
+cmpeq r2,r4
+movls r3,r3,lsl#2
+orrls r3,r3,r2,lsr#30
+movls r2,r2,lsl#2
+mov r4,r0,lsr#1          \ 1 bit
+orr r4,r4,r1,lsl#31
+cmp r3,r1,lsr#1
+cmpeq r2,r4
+movls r3,r3,lsl#1
+orrls r3,r3,r2,lsr#31
+movls r2,r2,lsl#1
+mov r5,#0                \ quotient=0
+mov r6,#0
+.loop
+cmp r1,r3                \ if dividend>divisor
+cmpeq r0,r2
+mov r6,r6,lsl#1          \ shift quotient and add carry
+orr r6,r6,r5,lsr#31
+adc r5,r5,r5
+blo P%+12
+subs r0,r0,r2            \ then dividend-=divisor
+sbc r1,r1,r3
+mov r2,r2,lsr#1          \ shift divisor
+orr r2,r2,r3,lsl#31
+mov r3,r3,lsr#1
+cmp r3,r7                \ continue until divisor<original
+cmpeq r2,top
+bhs loop
+mov pc,lr
+
+FNcode("UM/MOD")
+movs r2,top              \ copy low word of divisor
+bne ???                  \ abort on divide by 0
+mov r3,#0                \ make high word of divisor
+mov r7,r3                \ copy high word of divisor
+ldmfd sp !,{r0-r1}       \ get dividend
+str lr,[rp,#-4]!         \ push lr
+FNcall("(UD/MOD)")       \ do the division
+cmp r6,r6,asr#31         \ abort if quotient is out of range
+beq ???
+str r0,[sp,#-4]!         \ push the remainder
+mov top,r5               \ and get the quotient
+ldr pc,[rp],#4
+
+FNcode("D+")
+ldmfd sp !,{r0-r2}
+adds top,top,r1
+adc r0,r0,r2
+str r0,[sp,#-4]!
+mov pc,lr
+
+FNcode("D-")
+ldmfd sp !,{r0-r2}
+subs top,r1,top
+sbc r0,r2,r0
+str r0,[sp,#-4]!
+mov pc,lr
+
+FNcode("D*")
+ldmfd sp !,{r0-r2}
+mov r6,top
+mov r7,r1
+movs r4,r6,lsr#16
+bic r6,r6,r4,lsl#16
+mov r5,r7,lsr#16
+bic r7,r7,r5,lsl#16
+mul r3,r6,r7
+mul r7,r4,r7
+mul r6,r5,r6
+mulne r4,r5,r4
+adds r6,r6,r7
+addcs r4,r4,#&10000
+adds r3,r3,r6,lsl#16
+adc r4,r4,r6,lsr#16
+mul r1,r0,r1
+mul r2,top,r2
+add r0,r1,r2
+add r0,r0,r4
+mov top,r3
+str r0,[sp,#-4]!
+mov pc,lr
+
+FNcode("D/MOD")
+movs r2,top              \ copy low word of divisor
+ldr r3,[sp],#4           \ get high word of divisor
+mov r7,r3                \ copy high word of divisor
+cmpeq r3,#0              \ if low word=0 then check high word
+bne ???                  \ abort on divide by 0
+ldmfd sp !,{r0-r1}       \ get dividend
+eor r4,r1,r3             \ get sign of quotient
+and r4,r4,#1<<31
+add r4,r4,r3,lsr#1       \ get sign of remainder (=divisor)
+str r4,[sp,#-4]!         \ save signs on stack
+cmp r3,#0                \ ensure divisor is positive
+bpl P%+12
+rsbs r2,r2,#0
+rsc r3,r3,#0
+cmp r1,#0                \ ensure dividend is positive
+bpl P%+12
+rsbs r0,r0,#0
+rsc r1,r1,#0
+str lr,[rp,#-4]!         \ push lr
+FNcall("(UD/MOD)")       \ do the division
+ldr r4,[sp],#4
+tst r4,#1<<31            \ replace sign on quotient
+beq P%+40
+rsbs r5,r5,#0
+rsc r6,r6,#0
+cmp r1,#0                \ if the quotient is negative and
+cmpeq r0,#0              \ remainder non-zero
+beq P%+20
+subs r5,r5,#1            \ then floor the quotient and
+sbc r6,r6,#0
+subs r0,top,r0           \ correct the remainder
+sbc r1,r7,r1
+tst r4,#1<<30            \ replace sign on remainder
+beq P%+12
+rsbs r0,r0,#0
+rsc r1,r1,#0
+stmfd sp !,{r0-r1}       \ push the remainder
+str r6,[sp,#-4]!         \ push high word of quotient
+mov top,r5               \ and get low word
+ldr pc,[rp],#4
+
+FNcode("D/")
+str lr,[rp,#-4]!         \ push lr
+FNcall("D/MOD")
+ldr r0,[sp],#8           \ discard remainder, saving high word of quotient
+str r0,[sp]
+ldr pc,[rp],#4
+
+FNcode("DABS")
+ldr r0,[sp]
+cmp r0,#0
+movpl pc,lr
+rsbs top,top,#0
+rsc r0,r0,#0
+str r0,[sp]
+mov pc,lr
+
+FNcode("DNEGATE")
+ldr r0,[sp]
+rsbs top,top,#0
+rsc r0,r0,#0
+str r0,[sp]
+mov pc,lr
+
+FNcode("DMAX")
+ldmfd sp !,{r0-r2}
+cmp r2,r0
+cmpeq r1,top
+movgt top,r1
+movgt r0,r2
+str r0,[sp,#-4]!
+mov pc,lr
+
+FNcode("DMIN")
+ldmfd sp !,{r0-r2}
+cmp r2,r0
+cmpeq r1,top
+movlt top,r1
+movlt r0,r2
+str r0,[sp,#-4]!
+mov pc,lr
+
+FNcode("D2*")
+ldr r0,[sp]
+mov r0,r0,lsl#1
+orr r0,r0,top,lsr#31
+mov top,top,asl#1
+str r0,[sp]
+mov pc,lr
+
+FNcode("D2/")
+ldr r0,[sp]
+mov top,top,lsr#1
+orr top,top,r0,lsl#31
+mov r0,r0,asr#1
+str r0,[sp]
+mov pc,lr
+
+FNcode("M+")
+ldmfd sp !,{r0-r1}
+adds top,r0,top
+adc r1,r1,#0
+str r1,[sp,#-4]!
+mov pc,lr
+
+FNcode("M-")
+ldmfd sp !,{r0-r1}
+subs top,r0,top
+sbc r1,r1,#0
+str r1,[sp,#-4]!
+mov pc,lr
+
+FNcode("M*")
+ldr r0,[sp]
+movs r1,top,lsr#16
+bic top,top,r1,lsl#16
+mov r2,r0,lsr#16
+bic r0,r0,r2,lsl#16
+mul r3,top,r0
+mul r0,r1,r0
+mul top,r2,top
+mulne r1,r2,r1
+adds top,top,r0
+addcs r1,r1,#&10000
+adds r3,r3,top,lsl#16
+adc r1,r1,top,lsr#16
+mov top,r3
+str r1,[sp]
+mov pc,lr
+
+FNcode("M/MOD")
+movs r2,top              \ copy low word of divisor
+mov r3,r2,asr#31         \ make high word of divisor
+mov r7,r3                \ copy high word of divisor
+bne ???                  \ abort on divide by 0
+ldmfd sp !,{r0-r1}       \ get dividend
+eor r4,r1,r3             \ get sign of quotient
+and r4,r4,#1<<31
+add r4,r4,r3,lsr#1       \ get sign of remainder (=divisor)
+str r4,[sp,#-4]!         \ save signs on stack
+cmp r3,#0                \ ensure divisor is positive
+bpl P%+12
+rsbs r2,r2,#0
+rsc r3,r3,#0
+cmp r1,#0                \ ensure dividend is positive
+bpl P%+12
+rsbs r0,r0,#0
+rsc r1,r1,#0
+str lr,[rp,#-4]!         \ push lr
+FNcall("(UD/MOD)")       \ do the division
+ldr r4,[sp],#4
+tst r4,#1<<31            \ replace sign on quotient
+beq P%+40
+rsbs r5,r5,#0
+rsc r6,r6,#0
+cmp r1,#0                \ if the quotient is negative and
+cmpeq r0,#0              \ remainder non-zero
+beq P%+20
+subs r5,r5,#1            \ then floor the quotient and
+sbc r6,r6,#0
+subs r0,top,r0           \ correct the remainder
+sbc r1,r7,r1
+tst r4,#1<<30            \ replace sign on remainder
+beq P%+8
+rsbs r0,r0,#0
+str r0,[sp,#-4]!         \ push the remainder
+cmp r6,r6,asr#31         \ abort if quotient is out of range
+beq ???
+mov top,r5               \ and get quotient
+ldr pc,[rp],#4
+
+FNcode("M/")
+str lr,[rp,#-4]!         \ push lr
+FNcall("M/MOD")          \ do the division
+add sp,sp,#4             \ get rid of remainder
+ldr pc,[rp],#4
