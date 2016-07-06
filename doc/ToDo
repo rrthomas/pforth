@@ -4,7 +4,7 @@ Make pForth case-insensitive for word lookup, or downcase it all.
 
 Add assembler to base image.
 
-Make pForth work with forth-mode.
+Add a front-end (and allow code to be supplied on the command line).
 
 Add number input in other bases from Forth 2012.
 
