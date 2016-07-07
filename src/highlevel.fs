@@ -17,8 +17,9 @@ VARIABLE S0
 VARIABLE R0
 4096 CONSTANT CELLS/R
 DUP VALUE 'FORTH   \ value is put on stack by make.fs
-: <'FORTH   'FORTH -  [ DUP ] LITERAL + ;   \ value is put on stack by make.fs
-: >'FORTH   'FORTH +  LITERAL - ;   \ value is put on stack by make.fs
+VALUE TARGET-'FORTH
+: <'FORTH   'FORTH -  TARGET-'FORTH + ;
+: >'FORTH   'FORTH +  TARGET-'FORTH - ;
 
 
 \ Stack manipulation

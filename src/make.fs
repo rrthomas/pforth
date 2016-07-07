@@ -42,14 +42,6 @@ ALSO ASSEMBLER
 INCLUDE" save.fs"
 INCLUDE" util.fs"
 
-
-\ Compiler redefinition and additions
-
-INCLUDE" target-forth.fs" CONSTANT TARGET-'FORTH
-
-R: <'FORTH   'FORTH - TARGET-'FORTH + ;
-R: >'FORTH   'FORTH + TARGET-'FORTH - ;
-
 INCLUDE" compiler.fs"
 INCLUDE" compiler1.fs"
 
@@ -87,7 +79,7 @@ INCLUDE" resolver.fs"
 DOES>-RESOLVER (VALUE) WILL-DO VALUE
 DOES>-RESOLVER (VECTOR) WILL-DO VECTOR
 DOES>-RESOLVER (VOCABULARY) WILL-DO VOCABULARY
-5 REDEFINER >COMPILERS<
+3 REDEFINER >COMPILERS<
 
 PREVIOUS
 
@@ -111,10 +103,12 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 ' CURRENT-LITERAL >BODY @
 ' COMPILE, TO CURRENT-COMPILE,   \ use target compiler
 ' LITERAL TO CURRENT-LITERAL   \ use target compiler
+TARGET-'FORTH   \ save value of TARGET-'FORTH
 'FORTH   \ save value of 'FORTH
 ' CROSS >BODY @  #THREADS 1+ CELLS -  TO 'FORTH
    \ make 'FORTH point to the start of it minus the threads table and
    \ initial branch
+INCLUDE" target-forth.fs" TO TARGET-'FORTH
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
 >COMPILERS<
@@ -155,5 +149,6 @@ S" pForthImage" SAVE   \ write system image
 
 KERNEL PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
+TO TARGET-'FORTH   \ restore TARGET-'FORTH
 TO CURRENT-LITERAL   \ restore original compiler
 TO CURRENT-COMPILE,
