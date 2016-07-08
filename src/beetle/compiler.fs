@@ -19,7 +19,7 @@ HEX
 : NOPALIGN   0 FIT, ;
 
 
-\ Core compiler, also used for metacompilation
+\ Core compiler
 
 : AHEAD   HERE  42 C,  NOPALIGN  0 , ; IMMEDIATE COMPILING
 : IF   HERE  44 C,  NOPALIGN  0 , ; IMMEDIATE COMPILING
