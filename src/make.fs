@@ -145,7 +145,7 @@ OVER CELL+ CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+CELL )
 
 OVER TUCK DUP 2ROT  + 'FORTH -  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
 
-S" pForthImage" SAVE   \ write system image
+S" pforth" SAVE   \ write system image
 
 KERNEL PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
