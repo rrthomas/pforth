@@ -1,3 +1,5 @@
+Add PAGE on Beetle (needs Beetle LIB routine).
+
 Support objects.
 
 Support locals.
@@ -13,6 +15,13 @@ Add a front-end (and allow code to be supplied on the command line).
 Add number input in other bases from Forth 2012.
 
 Have consistent source copyright notices.
+
+Obviate the need for the compilation method field (>COMPILE) by using
+cmForth-like compilation word list. But this does prevent it being possible
+to have separate execution and interpretation semantics at compile time. Or,
+have a stateless always-compiling compiler, where running out of code to
+compile before ; causes the code compiled so far to be executed and thrown
+away.
 
 
 The future of pForth:
