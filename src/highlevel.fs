@@ -1041,18 +1041,18 @@ DECIMAL
 \ normal code. Use as DOES>-RESOLVER X WILL-DO Y, where Y must be a defining
 \ word. This can be used both to revector existing defining words, and to
 \ resolve the run-time code of new ones. Use RESOLVES or RESOLVE: to resolve
-\ WILL-DO, e.g.: ' NEW-DEFINER >DOES> RESOLVES DEFINER-RESOLVER WILL-DO must
-\ be used as part of a REDEFINER.
+\ WILL-DO, e.g.: ' NEW-DEFINER >DOES> RESOLVES DEFINER-RESOLVER
+\ WILL-DO must be used as part of a REDEFINER.
 : WILL-DO   ( -- old new )   ' >DOES> 8 -  :NONAME POSTPONE LAST
    POSTPONE >DOES POSTPONE HERE POSTPONE SWAP POSTPONE DP POSTPONE !
    LAST CURRENT-COMPILE,  POSTPONE DP POSTPONE ! POSTPONE ; ;
 
 INCLUDE" does-resolver.fs"
 
-\ REDEFINERs swap the execution semantics of words redefined with R: between
-\ the old and new semantics. u is the number of words to swap. The words must
-\ have been defined with R: name ... ; as R; consumes information that
-\ REDEFINER needs.
+\ REDEFINERs swap the execution semantics of WILL-DOs or words redefined
+\ with R: between the old and new semantics. u is the number of words to
+\ swap. The words must have been defined with R: name ... ; as R; consumes
+\ information that REDEFINER needs.
 : REDEFINER   ( name )   ( old1 new1...oldu newu u -- )
    CREATE  DUP ,                     \ write the no. of words to redefine
    0 ?DO                             \ for each word
