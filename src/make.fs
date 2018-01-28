@@ -63,7 +63,7 @@ INCLUDE" compiler-postpone.fs"
 INCLUDE" (does).fs"
 INCLUDE" does.fs"
 INCLUDE" does-resolver.fs"
-ALSO FORTH  META DEFINITIONS FOREIGN  PREVIOUS \ FIXME: this line knows about the search order set up in make.fs
+ALSO FORTH  META DEFINITIONS FOREIGN  PREVIOUS
 
 
 INCLUDE" control1.fs"
