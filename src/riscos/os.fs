@@ -47,3 +47,8 @@ END-SUB
 : CLI   ( c-addr -- )   C0END  [ 1 0 ] OS" OS_CLI" ;
 : *(   CR  [CHAR] ) PARSE  CLI ;
 : *"   CR  POSTPONE S"  POSTPONE CLI ; IMMEDIATE COMPILING
+
+
+\ FIXME: Stubs; implement by parsing *-command (R0 from OS_GetEnv in INITIALIZE)
+: ARGC   ( -- u )   0 ;
+: ARG   ( -- c-addr u )   0 0 ;

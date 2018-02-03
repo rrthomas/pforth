@@ -1094,7 +1094,10 @@ INCLUDE" platform.fs"
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
-   ." pForth for "  "PLATFORM TYPE ."  v" VERSION %.
-   CR ." (c) Reuben Thomas 1991-2016" CR
-                                     \ display the start message
+   ARGC ?DUP IF                      \ interpret any command-line args
+      0 DO  I ARG  EVALUATE  LOOP
+   ELSE                              \ otherwise, display start message
+      ." pForth for "  "PLATFORM TYPE ."  v" VERSION %.
+      CR ." (c) Reuben Thomas 1991-2016" CR
+   THEN
    QUIT ;                            \ enter the main loop
