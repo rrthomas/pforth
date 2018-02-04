@@ -1077,7 +1077,7 @@ INCLUDE" os.fs"   \ include OS access words
 
 \ Initialisation and version number
 
-78 CONSTANT VERSION
+79 CONSTANT VERSION
 INCLUDE" platform.fs"
 : %.   S>D  <# # # [CHAR] . HOLD #S #>  TYPE ;
 
@@ -1098,6 +1098,6 @@ INCLUDE" platform.fs"
       0 DO  I ARG  EVALUATE  LOOP
    ELSE                              \ otherwise, display start message
       ." pForth for "  "PLATFORM TYPE ."  v" VERSION %.
-      CR ." (c) Reuben Thomas 1991-2016" CR
+      CR ." (c) Reuben Thomas 1991-2018" CR
    THEN
    QUIT ;                            \ enter the main loop
