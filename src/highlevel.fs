@@ -1076,6 +1076,10 @@ INCLUDE" does-resolver.fs"
 
 
 INCLUDE" os.fs"   \ include OS access words
+INCLUDE" save.fs"
+
+: SAVE-IMAGE   ( c-addr u -- )
+   'FORTH -ROT  ALIGN HERE 'FORTH - -ROT  SAVE-OBJECT ;
 
 
 \ Initialisation and version number

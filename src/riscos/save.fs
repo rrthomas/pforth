@@ -9,7 +9,7 @@
 
 '? TYPE-FILE VALUE 'TYPE-FILE
 HEX
-: SAVE   ( a-addr u1 c-addr u2 -- )
+: SAVE-OBJECT   ( a-addr u1 c-addr u2 -- )
    2SWAP 2OVER                   \ save filename
    SAVE-FILE
    'TYPE-FILE  ?DUP IF           \ if we have TYPE-FILE,
