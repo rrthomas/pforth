@@ -826,13 +826,23 @@ DECIMAL
       ." no more file buffers"  ABORT
    THEN
    TO FIB
-   BEGIN  REFILL WHILE               \ interpret the file
+   REFILL DUP IF                     \ check for #! line at start of file
+      #FIB @ 1 > IF                  \ if we have at least 2 characters
+         FIB C@  [CHAR] # =
+         FIB 1+ C@  [CHAR] ! =
+         AND  IF                     \ and the first two are `#!'
+            DROP  REFILL             \ then skip the line
+         THEN
+      THEN
+   THEN
+   BEGIN  WHILE                      \ interpret the file
       ['] INTERPRET CATCH ?DUP IF    \ close the file if an exception is
          SOURCE-ID CLOSE-FILE DROP   \ generated, then pass the exception on
          FREE-BUFFER DROP            \ having freed the buffer
          NIP                         \ and dropped the input source address
          THROW
       THEN
+      REFILL
    REPEAT
    FREE-BUFFER ABORT" no file buffer to free"
                                      \ free the file buffer
