@@ -822,8 +822,8 @@ DECIMAL
    SAVE-INPUT>R                      \ save current input source
    TO SOURCE-ID  0 BLK !             \ set up new input source
    ALLOCATE-BUFFER IF                \ allocate new file buffer
-     SOURCE-ID CLOSE-FILE
-     ." no more file buffers"  ABORT
+      SOURCE-ID CLOSE-FILE
+      ." no more file buffers"  ABORT
    THEN
    TO FIB
    BEGIN  REFILL WHILE               \ interpret the file
