@@ -2,6 +2,7 @@
 \ Reuben Thomas   started 15/4/96
 
 MARKER DISPOSE
+DEPTH VALUE INITIAL-DEPTH   \ Note initial stack depth
 INCLUDE" platform.fs"
 CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
 
@@ -35,6 +36,12 @@ DECIMAL
       DUP <'FORTH ROT !
    REPEAT
    DROP ;
+
+\ Check stack is balanced
+: ??STACK
+   DEPTH INITIAL-DEPTH <> IF
+      .S ." stack not balanced" CR
+   THEN ;
 
 
 ALSO ASSEMBLER
@@ -152,3 +159,7 @@ TO 'FORTH   \ restore 'FORTH
 TO TARGET-'FORTH   \ restore TARGET-'FORTH
 TO CURRENT-LITERAL   \ restore original compiler
 TO CURRENT-COMPILE,
+
+ALSO META
+??STACK   \ check stack is balanced
+PREVIOUS
