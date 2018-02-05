@@ -1,3 +1,4 @@
+#!/usr/bin/env pforth
 \ Metacompile pForth
 \ Reuben Thomas   started 15/4/96
 
