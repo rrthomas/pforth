@@ -1091,6 +1091,25 @@ INCLUDE" os.fs"   \ include OS access words
 INCLUDE" platform.fs"
 : %.   S>D  <# # # [CHAR] . HOLD #S #>  TYPE ;
 
+: DO-START-OPTIONS
+   ARGC 0 ?DO
+      I ARG  ?DUP IF
+         OVER C@  [CHAR] - =  IF     \ process option
+            \ FIXME: implement --help, --version, --evaluate, --interact
+            ." unknown option " TYPE CR
+         ELSE                        \ or interpret file
+            INCLUDED
+         THEN
+      ELSE
+         DROP
+      THEN
+   LOOP
+   ARGC IF  BYE  THEN                \ exit if arguments given
+   ." pForth for "  "PLATFORM TYPE ."  v" VERSION %.
+   CR ." (c) Reuben Thomas 1991-2018" CR
+                                     \ display the start message
+   QUIT ;
+
 : START
    LIMIT                             \ get address of end of memory
    /BLOCK-BUFFER -                   \ reserve block buffer,
@@ -1104,10 +1123,4 @@ INCLUDE" platform.fs"
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
-   ARGC ?DUP IF                      \ interpret any command-line args
-      0 DO  I ARG  EVALUATE  LOOP
-   ELSE                              \ otherwise, display start message
-      ." pForth for "  "PLATFORM TYPE ."  v" VERSION %.
-      CR ." (c) Reuben Thomas 1991-2018" CR
-   THEN
-   QUIT ;                            \ enter the main loop
+   DO-START-OPTIONS ;                \ process command-line args
