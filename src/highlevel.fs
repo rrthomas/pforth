@@ -749,13 +749,33 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
    THEN ;
 
 : ?STACK   DEPTH 0< ABORT" stack underflow" ;
-: (QUIT)
-   POSTPONE [  R0 @ RP!
+: REPL
+   POSTPONE [
    0 BLK !  0 TO SOURCE-ID
    BEGIN  CR REFILL WHILE
       INTERPRET  ?STACK  STATE @ 0= IF  ." ok"  THEN
    REPEAT
    ." parse area empty" ABORT ;
+: HANDLE-ERROR ( n -- )
+   CASE
+      -1 OF  ( ABORT )  ENDOF
+      -2 OF  'THROWN @ COUNT TYPE  ENDOF
+      -9 OF   -9 HALT  ENDOF
+      -10 OF  ." division by zero"  ENDOF
+      -11 OF  ." quotient too large"  ENDOF
+      -13 OF  'THROWN @ COUNT TYPE  ."  ?"  ENDOF
+      -14 OF  ." compilation only"  ENDOF
+      -23 OF  -23 HALT  ENDOF
+      -56 OF  ( QUIT )  ENDOF
+      ." exception " DUP . ." raised"
+   ENDCASE ;
+: (QUIT)
+   BEGIN
+      R0 @ RP!
+      ['] REPL CATCH                 \ cannot return normally
+      DUP HANDLE-ERROR
+      -56 <> IF  S0 @ SP!  THEN
+   AGAIN ;
 
 
 \ Compiler #4
@@ -1013,18 +1033,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
          R>RESTORE-INPUT             \ reset input source
          R> 'FRAME !                 \ set pointer to next frame
       ELSE
-         CASE                        \ if no frame, act on code
-            -1 OF  S0 @ SP!  QUIT  ENDOF
-            -2 OF  'THROWN @ COUNT TYPE  ABORT  ENDOF
-            -9 OF   -9 HALT  ENDOF
-            -10 OF  ." division by zero"  ABORT  ENDOF
-            -11 OF  ." quotient too large"  ABORT  ENDOF
-            -13 OF  'THROWN @ COUNT TYPE  ."  ?"  ABORT  ENDOF
-            -14 OF  ." compilation only"  ABORT  ENDOF
-            -23 OF  -23 HALT  ENDOF
-            -56 OF  (QUIT)  ENDOF
-            ." exception " DUP . ." raised"  ABORT
-         ENDCASE
+         HANDLE-ERROR HALT           \ if no frame, print any message & halt
       THEN
    THEN ;
 
@@ -1089,7 +1098,7 @@ INCLUDE" platform.fs"
 : %.   S>D  <# # # [CHAR] . HOLD #S #>  TYPE ;
 
 : DO-START-OPTIONS
-   ARGC 0 ?DO
+   ARGC 0 ?DO \ FIXME: use ?DUP IF
       I ARG  ?DUP IF
          OVER C@  [CHAR] - =  IF     \ process option
             \ FIXME: implement --help, --version, --evaluate, --interact
@@ -1105,7 +1114,7 @@ INCLUDE" platform.fs"
    ." pForth for "  "PLATFORM TYPE ."  v" VERSION %.
    CR ." (c) Reuben Thomas 1991-2018" CR
                                      \ display the start message
-   QUIT ;
+   (QUIT) ;
 
 : START
    LIMIT                             \ get address of end of memory
