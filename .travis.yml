@@ -1,0 +1,43 @@
+language: c
+
+dist: trusty
+sudo: required
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages: &default_deps
+      - gcc-5
+
+# env:
+#   global:
+#     - VERBOSE=1
+
+matrix:
+  include:
+    - os: linux
+      env:
+        - COMPILER=gcc-5
+    - os: osx
+      osx_image: xcode9.2
+    - compiler: gcc
+      env:
+        - COMPILER=gcc-6
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *default_deps
+            - [gcc-6]
+
+install:
+  - git clone https://github.com/rrthomas/beetle.git
+  - cd beetle
+  - ./bootstrap && ./configure --enable-silent-rules && make check && sudo make install
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ldconfig ; fi
+  - cd ..
+
+script:
+  - autoreconf -i && ./configure --enable-silent-rules && make distcheck
