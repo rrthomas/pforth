@@ -68,7 +68,7 @@ NATIVE ALSO FORTH DEFINITIONS
 IMMEDIATE COMPILING
 PREVIOUS   \ use META POSTPONE and LINK,
 INCLUDE" compiler-postpone.fs"
-INCLUDE" (does).fs"
+INCLUDE" bracket-does.fs"
 INCLUDE" does.fs"
 INCLUDE" does-resolver.fs"
 ALSO FORTH  META DEFINITIONS FOREIGN  PREVIOUS
@@ -153,7 +153,7 @@ OVER CELL+ CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+CELL )
 
 OVER TUCK DUP 2ROT  + 'FORTH -  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
 
-S" pforth" SAVE-OBJECT   \ write system image
+S" pforth-new" SAVE-OBJECT   \ write system image
 
 KERNEL PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH

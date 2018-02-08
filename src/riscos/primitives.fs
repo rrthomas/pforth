@@ -520,7 +520,7 @@ UNLINK,
 END-CODE
 COMPILING
 
-INCLUDE" (does).fs"
+INCLUDE" bracket-does.fs"
 
 
 \ Stack pointers

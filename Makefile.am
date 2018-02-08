@@ -1,10 +1,8 @@
-# Maintainer Makefile for pForth
-# FIXME: autoconfiscate (or nancify?)
+# Top-level Makefile.am
 
-VERSION=0.79
+SUBDIRS = src
 
-# FIXME: should depend on some sort of distcheck
-release:
+release: distcheck
 	git diff --exit-code && \
 	git tag -a -m "Release tag" "v$(VERSION)" && \
 	git push && git push --tags && \
