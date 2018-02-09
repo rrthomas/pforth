@@ -17,3 +17,4 @@ HEX
    ELSE
       2DROP                      \ otherwise drop file name
    THEN ;
+DECIMAL
