@@ -1098,19 +1098,21 @@ INCLUDE" platform.fs"
 : %.   S>D  <# # # [CHAR] . HOLD #S #>  TYPE ;
 
 : DO-START-OPTIONS
-   ARGC 0 ?DO \ FIXME: use ?DUP IF
-      I ARG  ?DUP IF
-         OVER C@  [CHAR] - =  IF     \ process option
-            \ FIXME: implement --help, --version, --evaluate, --interact
-            ." unknown option " TYPE CR
-         ELSE                        \ or interpret file
-            INCLUDED
+   ARGC ?DUP IF
+      0 DO
+         I ARG  ?DUP IF
+            OVER C@  [CHAR] - =  IF  \ process option
+               \ FIXME: implement --help, --version, --evaluate, --interact
+               ." unknown option " TYPE CR
+            ELSE                     \ or interpret file
+               INCLUDED
+            THEN
+         ELSE
+            DROP
          THEN
-      ELSE
-         DROP
-      THEN
-   LOOP
-   ARGC IF  BYE  THEN                \ exit if arguments given
+      LOOP
+      BYE                            \ exit if arguments given
+   THEN
    ." pForth for "  "PLATFORM TYPE ."  v" VERSION %.
    CR ." (c) Reuben Thomas 1991-2018" CR
                                      \ display the start message
