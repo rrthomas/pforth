@@ -2,11 +2,13 @@
 
 bin_SCRIPTS = pforth
 data_DATA = beetle/pforth.img
-noinst_DATA = riscos/pforth.img
+noinst_DATA = riscos/pforth-base.img
 
-EXTRA_DIST = $(portable_SRCS) $(riscos_SRCS) $(beetle_SRCS) \
-	pforth.in beetle/pforth.img riscos/pforth.img
-CLEANFILES = pforth beetle/pforth.img riscos/pforth.img
+EXTRA_DIST = $(portable_SRCS) $(riscos_SRCS) $(beetle_SRCS)                     \
+	make.fs beetle/make.fs							\
+	pforth.in beetle/pforth-base.img riscos/pforth-base.img
+CLEANFILES = pforth
+DISTCLEANFILES = beetle/pforth-base.img beetle/pforth.img riscos/pforth-base.img
 
 beetle_SRCS = beetle/assembler.fs beetle/bracket-does.fs			\
 	beetle/compiler1.fs beetle/compiler.fs beetle/compiler-postpone.fs	\
@@ -26,29 +28,40 @@ riscos_SRCS = riscos/assembler.fs riscos/bracket-does.fs			\
 
 portable_SRCS = compiler2.fs compiler4.fs compiler5.fs control1.fs	\
 	control2.fs defining.fs does.fs highlevel.fs interpreter4.fs	\
-	make.fs resolver.fs vocabulary.fs
+	make-base.fs resolver.fs vocabulary.fs
 
-do_build = \
+do_build_prep = \
 	if test $(srcdir) != $(builddir); then \
-	    for i in $^; do \
-		$(LN_S) "$$i" . ; \
+	    $(MKDIR_P) $$flavour; \
+	    cd $$flavour; \
+	    for i in $$srcs; do \
+		$(LN_S) -f $(abs_srcdir)/"$$i" . ; \
 	    done; \
 	else \
-	    cd $(abs_builddir)/$$flavour; \
-	fi; \
-	$(BEETLE) $(abs_srcdir)/beetle/pforth.img make.fs
+	    cd $(abs_srcdir)/$$flavour; \
+	fi
 
-beetle/pforth.img: $(portable_SRCS) $(beetle_SRCS)
-	export flavour=beetle; $(do_build) && \
+beetle/pforth.img: beetle/pforth-base.img $(portable_SRCS) $(beetle_SRCS) make.fs
+	export flavour=beetle srcs="$(beetle_SRCS) beetle/make.fs"; $(do_build_prep) && \
+	$(BEETLE) $(abs_srcdir)/beetle/pforth-base.img make.fs && \
+	mv pforth-img pforth.img
+
+beetle/pforth-base.img: $(portable_SRCS) $(beetle_SRCS)
+	export flavour=beetle srcs="$(beetle_SRCS)"; $(do_build_prep) && \
+	$(BEETLE) $(abs_srcdir)/beetle/pforth-base.img make-base.fs && \
 	mv pforth-new pforth-new-0 && \
-	$(BEETLE) $(abs_srcdir)/beetle/pforth-new-0 make.fs && \
+	$(BEETLE) pforth-new-0 make-base.fs && \
 	cmp pforth-new pforth-new-0 && \
-	mv pforth-new pforth.img && \
+	mv pforth-new pforth-base.img && \
 	rm pforth-new-0
 
-riscos/pforth.img: $(portable_SRCS) $(riscos_SRCS)
-	export flavour=riscos; $(do_build) && \
-	mv pforth-new pforth.img
+# FIXME: Do idempotency test
+riscos/pforth-base.img: $(portable_SRCS) $(riscos_SRCS)
+	export flavour=riscos srcs="$(riscos_SRCS)"; $(do_build_prep) && \
+	$(BEETLE) $(abs_srcdir)/beetle/pforth-base.img make-base.fs && \
+	mv pforth-new pforth-base.img
+
+# FIXME: Build extended RISC OS image
 
 do_subst = sed -e 's,[@]datadir[@],$(datadir),g' \
 	-e 's,[@]BEETLE[@],$(BEETLE),g'
