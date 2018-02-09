@@ -10,16 +10,24 @@ EXTRA_DIST = $(portable_SRCS) $(riscos_SRCS) $(beetle_SRCS)                     
 CLEANFILES = pforth
 DISTCLEANFILES = beetle/pforth-base.img beetle/pforth.img riscos/pforth-base.img
 
-beetle_SRCS = beetle/assembler.fs beetle/bracket-does.fs			\
-	beetle/compiler1.fs beetle/compiler.fs beetle/compiler-postpone.fs	\
+beetle_SRCS = beetle/compiler2.fs beetle/compiler4.fs beetle/compiler5.fs	\
+	beetle/control1.fs beetle/control2.fs beetle/defining.fs		\
+	beetle/does.fs beetle/highlevel.fs beetle/interpreter4.fs		\
+	beetle/make-base.fs beetle/resolver.fs beetle/vocabulary.fs		\
+	beetle/assembler.fs beetle/bracket-does.fs beetle/compiler1.fs		\
+	beetle/compiler.fs beetle/compiler-postpone.fs				\
 	beetle/does-resolver.fs beetle/fileio.fs beetle/initialize.fs		\
 	beetle/os-compiler.fs beetle/os.fs beetle/platform.fs			\
 	beetle/primitives.fs beetle/save.fs beetle/target-forth.fs		\
 	beetle/target-util.fs beetle/terminal.fs beetle/throw-contents.fs	\
 	beetle/util.fs
 
-riscos_SRCS = riscos/assembler.fs riscos/bracket-does.fs			\
-	riscos/compiler1.fs riscos/compiler.fs riscos/compiler-postpone.fs	\
+riscos_SRCS = riscos/compiler2.fs riscos/compiler4.fs riscos/compiler5.fs	\
+	riscos/control1.fs riscos/control2.fs riscos/defining.fs		\
+	riscos/does.fs riscos/highlevel.fs riscos/interpreter4.fs		\
+	riscos/make-base.fs riscos/resolver.fs riscos/vocabulary.fs		\
+	riscos/assembler.fs riscos/bracket-does.fs riscos/compiler1.fs		\
+	riscos/compiler.fs riscos/compiler-postpone.fs				\
 	riscos/does-resolver.fs riscos/fileio.fs riscos/initialize.fs		\
 	riscos/os-compiler.fs riscos/os.fs riscos/platform.fs			\
 	riscos/primitives.fs riscos/save.fs riscos/target-forth.fs		\
