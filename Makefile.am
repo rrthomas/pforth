@@ -2,6 +2,8 @@
 
 SUBDIRS = src
 
+EXTRA_DIST = README.md
+
 release: distcheck
 	git diff --exit-code && \
 	git tag -a -m "Release tag" "v$(VERSION)" && \
