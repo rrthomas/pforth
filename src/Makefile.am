@@ -53,8 +53,7 @@ do_build_prep = \
 
 beetle/pforth.img: beetle/pforth-base.img $(portable_SRCS) $(beetle_SRCS) make.fs
 	export flavour=beetle srcs="$(beetle_SRCS) beetle/make.fs"; $(do_build_prep) && \
-	$(BEETLE) $(abs_srcdir)/beetle/pforth-base.img make.fs && \
-	mv pforth-img pforth.img
+	$(BEETLE) $(abs_srcdir)/beetle/pforth-base.img make.fs
 
 beetle/pforth-base.img: $(portable_SRCS) $(beetle_SRCS)
 	export flavour=beetle srcs="$(beetle_SRCS)"; $(do_build_prep) && \
