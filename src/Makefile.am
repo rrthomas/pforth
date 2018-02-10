@@ -10,6 +10,8 @@ EXTRA_DIST = $(portable_SRCS) $(riscos_SRCS) $(beetle_SRCS)                     
 CLEANFILES = pforth
 DISTCLEANFILES = beetle/pforth-base.img beetle/pforth.img riscos/pforth-base.img
 
+beetle/highlevel.fs riscos/highlevel.fs: highlevel.fs
+
 beetle_SRCS = beetle/compiler2.fs beetle/compiler4.fs beetle/compiler5.fs	\
 	beetle/control1.fs beetle/control2.fs beetle/defining.fs		\
 	beetle/does.fs beetle/highlevel.fs beetle/interpreter4.fs		\

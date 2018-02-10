@@ -1105,29 +1105,47 @@ VARIABLE ARGC
 
 \ Initialisation and version number
 
-79 CONSTANT VERSION
+: VERSION   S" @VERSION@" ;
 INCLUDE" platform.fs"
-: %.   S>D  <# # # [CHAR] . HOLD #S #>  TYPE ;
 
+: HELP
+   ." Usage: @PACKAGE@ [OPTION...] [FILENAME...]" CR
+   CR
+   ." Run @PACKAGE_NAME@." CR
+   CR
+   ." --interact       enter interactive loop after evaluating" CR
+   ."                  command-line arguments."
+   ." --evaluate TEXT  evaluate the given text" CR
+   ." --help           display this help message and exit" CR
+   ." --version        display version information and exit" CR
+   ." FILE             evaluate FILE" CR
+   CR
+   ." Report bugs to @PACKAGE_BUGREPORT@." CR ;
+
+: BANNER
+   ." pForth for "  "PLATFORM TYPE ."  v" VERSION TYPE
+   CR ." (c) Reuben Thomas 1991-2018" CR ;
+
+FALSE VALUE INTERACT?
 : DO-START-OPTIONS
-   ARGC ?DUP IF
-      0 DO
-         I ARG  ?DUP IF
-            OVER C@  [CHAR] - =  IF  \ process option
-               \ FIXME: implement --help, --version, --evaluate, --interact
+   ARGC @ IF
+      BEGIN  NEXT-ARG OVER WHILE
+         OVER C@  [CHAR] - =  IF  \ process option
+            "CASE
+               S" --help"     "OF  HELP BYE           "ENDOF
+               S" --version"  "OF  BANNER BYE         "ENDOF
+               S" --evaluate" "OF  NEXT-ARG EVALUATE  "ENDOF
+               S" --interact" "OF  TRUE TO INTERACT?  "ENDOF
                ." unknown option " TYPE CR
-            ELSE                     \ or interpret file
-               INCLUDED
-            THEN
-         ELSE
-            DROP
+            "ENDCASE
+         ELSE                     \ or interpret file
+            INCLUDED
          THEN
-      LOOP
-      BYE                            \ exit if arguments given
+      REPEAT
+      INTERACT? INVERT IF  BYE  THEN
+   ELSE
+      BANNER
    THEN
-   ." pForth for "  "PLATFORM TYPE ."  v" VERSION %.
-   CR ." (c) Reuben Thomas 1991-2018" CR
-                                     \ display the start message
    (QUIT) ;
 
 : START
