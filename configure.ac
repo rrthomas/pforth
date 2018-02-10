@@ -10,5 +10,5 @@ AC_PROG_LN_S
 AC_PATH_PROG(BEETLE, beetle, AC_MSG_ERROR([Beetle not found]))
 
 dnl Generate output files
-AC_CONFIG_FILES([Makefile src/Makefile src/highlevel.fs])
+AC_CONFIG_FILES([Makefile src/Makefile src/highlevel.fs extras/Makefile])
 AC_OUTPUT
