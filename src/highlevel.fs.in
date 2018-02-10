@@ -984,7 +984,6 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 
 \ Environmental queries
 
-\ FIXME: Use a wordlist; remove "CASE
 : ENVIRONMENT?
    "CASE
       S" /COUNTED-STRING"    "OF  255             "ENDOF
