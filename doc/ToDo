@@ -1,3 +1,7 @@
+Add backtrace to error output.
+
+Add number input in other bases from Forth 2012.
+
 Add PAGE on Beetle (needs Beetle LIB routine).
 
 Support objects.
@@ -9,8 +13,6 @@ Add TIMES combinator and use in assembler and for REDEFINER.
 Make pForth case-insensitive for word lookup, or downcase it all.
 
 Add assembler to base image.
-
-Add number input in other bases from Forth 2012.
 
 Have consistent source copyright notices.
 
