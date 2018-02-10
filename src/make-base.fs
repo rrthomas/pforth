@@ -14,7 +14,7 @@ INCLUDE" assembler.fs"
 
 \ Meta-compiler utilities
 
-\ ARM-specific meta-compiler utilities (FIXME)
+\ RISC OS-specific meta-compiler utilities (FIXME)
 : '?   BL WORD FIND  0= IF  DROP 0  THEN ;
 
 VOCABULARY META  ALSO META DEFINITIONS
