@@ -78,8 +78,9 @@ do_subst = sed -e 's,[@]datadir[@],$(datadir),g' \
 pforth: pforth.in Makefile
 	$(do_subst) < $(srcdir)/pforth.in > pforth
 
-# FIXME
-#check-local: libbeetle.la
+check-local: beetle/pforth.img
+	cd $(top_srcdir)/extras && \
+	echo foobar | $(BEETLE) $(abs_builddir)/beetle/pforth.img tests.fs
 
 CLOC = cloc --force-lang="Forth",fs
 
