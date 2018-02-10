@@ -1,6 +1,6 @@
 # Top-level Makefile.am
 
-SUBDIRS = src extras
+SUBDIRS = src doc extras
 
 EXTRA_DIST = README.md
 
