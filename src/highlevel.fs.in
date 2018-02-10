@@ -1148,9 +1148,11 @@ FALSE VALUE INTERACT?
    (QUIT) ;
 
 : START
+   0 'FRAME !                        \ reset 'FRAME
    LIMIT                             \ get address of end of memory
    /BLOCK-BUFFER -                   \ reserve block buffer,
    #FILE-BUFFERS /FILE-BUFFER * -    \ file buffers,
+   0 FILE-BUFFER# !                  \ reset FILE-BUFFER#
    256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
    DUP R0 !  DUP RP!                 \ set R0 and RP
    CELLS/R CELLS -                   \ make room for return stack
