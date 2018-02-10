@@ -1091,6 +1091,18 @@ INCLUDE" save.fs"
    'FORTH -ROT  ALIGN HERE 'FORTH - -ROT  SAVE-OBJECT ;
 
 
+\ Command-line argument interface
+\ (Design copied from GForth)
+
+VARIABLE ARGC
+
+: INIT-ARGS   TOTAL-ARGS ARGC ! ;
+
+: ARG   TOTAL-ARGS ARGC @ -  +  ABSOLUTE-ARG ;
+: SHIFT-ARGS   ARGC @ 1-  0 MAX  ARGC ! ;
+: NEXT-ARG   0 ARG  SHIFT-ARGS ;
+
+
 \ Initialisation and version number
 
 79 CONSTANT VERSION
@@ -1131,4 +1143,5 @@ INCLUDE" platform.fs"
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
+   INIT-ARGS
    DO-START-OPTIONS ;                \ process command-line args

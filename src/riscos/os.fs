@@ -50,5 +50,5 @@ END-SUB
 
 
 \ FIXME: Stubs; implement by parsing *-command (R0 from OS_GetEnv in INITIALIZE)
-: ARGC   ( -- u )   0 ;
-: ARG   ( -- c-addr u )   0 0 ;
+: TOTAL-ARGS   ( -- u )   0 ;
+: ABSOLUTE-ARG   ( -- c-addr u )   0 0 ;
