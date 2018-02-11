@@ -461,6 +461,7 @@ VARIABLE 'RETURN
 
 : .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
 
+: ERROR-PREFIX   S" @PACKAGE@: " TYPE ;
 
 INCLUDE" compiler2.fs"
 INCLUDE" interpreter4.fs"
@@ -1032,7 +1033,8 @@ VARIABLE CURSORX   \ cursor x position during WORDS
          R>RESTORE-INPUT             \ reset input source
          R> 'FRAME !                 \ set pointer to next frame
       ELSE
-         HANDLE-ERROR HALT           \ if no frame, print any message & halt
+         ERROR-PREFIX HANDLE-ERROR   \ if no frame, print any message,
+         HALT                        \ and halt
       THEN
    THEN ;
 
@@ -1135,7 +1137,7 @@ FALSE VALUE INTERACT?
                S" --version"  "OF  BANNER BYE         "ENDOF
                S" --evaluate" "OF  NEXT-ARG EVALUATE  "ENDOF
                S" --interact" "OF  TRUE TO INTERACT?  "ENDOF
-               ." unknown option " TYPE CR
+               ERROR-PREFIX ." unknown option " TYPE CR
             "ENDCASE
          ELSE                     \ or interpret file
             INCLUDED
