@@ -143,9 +143,10 @@ VARIABLE CURRENT
 
 INCLUDE" os-compiler.fs"   \ words necessary for the machine
 INCLUDE" compiler.fs"
-' COMPILE, <'FORTH VECTOR CURRENT-COMPILE,
+DEFER CURRENT-COMPILE,  ' COMPILE, <'FORTH IS CURRENT-COMPILE,
 INCLUDE" compiler1.fs"
 INCLUDE" compiler-postpone.fs"
+INCLUDE" defer-fetch-store.fs"
 
 
 \ Strings #2
@@ -426,9 +427,9 @@ VARIABLE 'RETURN
    RESTORE-INPUT DROP                \ set input specification
    'RETURN @ >R ;                    \ restore return address
 
-0 VECTOR SCAN-TEST
+DEFER SCAN-TEST
 : SCAN   ( char xt -- c-addr u )
-   TO SCAN-TEST
+   IS SCAN-TEST
    SOURCE CHARS                      \ get input source
    OVER +                            \ end of input buffer + 1
    SWAP >IN @ CHARS +                \ start of parse area
@@ -578,7 +579,7 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
 : GET-ORDER   #ORDER @  DUP IF  DUP >R  CELLS  CONTEXT TUCK + CELL-  DO
    I @  -CELL +LOOP  R>  THEN ;
 
-0 VECTOR VISIBLE?   \ word visibility test
+DEFER VISIBLE?   \ word visibility test
 : ALL-VISIBLE   ( wid xt n -- true )   2DROP DROP  TRUE ;
 \ VISIBLE? must be set before VET-WORDLIST is called, with a word whose
 \ stack effect is [ wid xt n -- f ], where wid is the word list and xt the
@@ -609,10 +610,10 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
    2DROP  R> DROP                    \ get rid of c-addr, u and wid,
    0 ;                               \ and set flag to 0
 : SEARCH-WORDLIST   ( c-addr u wid -- 0 | xt 1 | xt -1 )
-   ['] ALL-VISIBLE TO VISIBLE?  VET-WORDLIST ;
+   ['] ALL-VISIBLE IS VISIBLE?  VET-WORDLIST ;
 
 : SELECT   ( a-addr1 xt -- a-addr2 n )
-   TO VISIBLE?                       \ set up visibility selector
+   IS VISIBLE?                       \ set up visibility selector
    >R  GET-ORDER  R> SWAP            \ get search order
    ?DUP IF                           \ if search order non-empty
       1 SWAP DO                      \ for each word list in order
@@ -627,7 +628,7 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
    0 ;                               \ if not found leave string & 0 flag
 : FIND   ( c-addr -- a-addr n )   ['] ALL-VISIBLE SELECT ;
 
-' LITERAL <'FORTH VECTOR CURRENT-LITERAL
+DEFER CURRENT-LITERAL  ' LITERAL <'FORTH IS CURRENT-LITERAL
 \ FIXME: The definition of POSTPONE should not call the metacompiler's POSTPONE
 : POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
    CURRENT-COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ;
