@@ -21,12 +21,13 @@ duplication was unintentional.)
 pForth comes pre-compiled for the Beetle VM (`src/beetle/pforth`)
 and for RISC OS 3 (`!pForth`). Beetle is a portable C program.
 
+See `doc/pforth.pdf` for ANSI conformance information.
+
 
 ## Copyright and Disclaimer
 
 The package is distributed under the GNU Public License version 3, or, at
-your option, any later version. A copy is available from my web page (address
-above).
+your option, any later version. See the file COPYING.
 
 THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER'S RISK.
 
@@ -43,15 +44,17 @@ From an unpacked release tarball, run:
 ./configure && make && [sudo] make install
 ```
 
-See `./configure --help` for more options.
+See the file `INSTALL` or the output of `./configure --help` for more
+information.
 
 ### Building from git
 
-To build from a git checkout, GNU autotools (autoconf and automake) are also required. Run:
+To build from a git checkout, GNU autotools (autoconf and automake) are also
+required. Run:
 
 ```
 git submodule update --init --recursive
-autoreconf -i
+./bootstrap
 ```
 
 and then proceed as above for a release build.
