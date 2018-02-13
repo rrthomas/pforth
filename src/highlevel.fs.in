@@ -660,7 +660,7 @@ IMMEDIATE COMPILING
    HERE TUCK >R                      \ beginning of name field
    DUP ALLOT                         \ reserve space for name field
    CMOVE                             \ write name in name field
-   BL CALIGN                         \ pad with nulls to next cell boundary
+   BL CALIGN                         \ pad with spaces to next cell boundary
    LAST ,                            \ store link to last word
    GET-CURRENT DUP                   \ get CURRENT word list chain
    R> COUNT ROT THREAD  DUP @ ,      \ store link to last word
