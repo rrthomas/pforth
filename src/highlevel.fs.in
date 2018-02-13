@@ -461,7 +461,11 @@ VARIABLE 'RETURN
 
 : .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
 
-: ERROR-PREFIX   S" @PACKAGE@: " TYPE ;
+\ Set default PROGRAM-NAME in case for some reason there is no ARG 0
+HERE <'FORTH VALUE "PROGRAM-NAME  S" @PACKAGE@" ",
+
+: ERROR-PREFIX   "PROGRAM-NAME COUNT TYPE  S" : " TYPE ;
+
 
 INCLUDE" compiler2.fs"
 INCLUDE" interpreter4.fs"
@@ -1118,7 +1122,7 @@ VARIABLE ARGC
 INCLUDE" platform.fs"
 
 : HELP
-   ." Usage: @PACKAGE@ [OPTION...] [FILENAME...]" CR
+   ." Usage: "  "PROGRAM-NAME COUNT TYPE  ."  [OPTION...] [FILENAME...]" CR
    CR
    ." Run @PACKAGE_NAME@." CR
    CR
@@ -1137,10 +1141,13 @@ INCLUDE" platform.fs"
 
 FALSE VALUE INTERACT?
 : DO-START-OPTIONS
-   SHIFT-ARGS                     \ skip program name
+   ARGC @ IF
+      HERE TO "PROGRAM-NAME          \ update "PROGRAM-NAME
+      NEXT-ARG ",                    \ save new name
+   THEN
    ARGC @ IF
       BEGIN  NEXT-ARG OVER WHILE
-         OVER C@  [CHAR] - =  IF  \ process option
+         OVER C@  [CHAR] - =  IF     \ process option
             "CASE
                S" --help"     "OF  HELP BYE           "ENDOF
                S" --version"  "OF  BANNER BYE         "ENDOF
@@ -1148,7 +1155,7 @@ FALSE VALUE INTERACT?
                S" --interact" "OF  TRUE TO INTERACT?  "ENDOF
                ERROR-PREFIX ." unknown option " TYPE CR
             "ENDCASE
-         ELSE                     \ or interpret file
+         ELSE                        \ or interpret file
             INCLUDED
          THEN
       REPEAT
