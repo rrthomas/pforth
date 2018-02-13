@@ -511,30 +511,38 @@ VARIABLE HELD
       LOOP
       DUP R> >-<                     \ construct u'
    THEN ;
+: SKIP-CHAR   ( c-addr u -- c-addr+1 u-1)   1- SWAP  CHAR+ SWAP ;
 : NUMBER   ( c-addr -- d true | n false )
    DUP >R                            \ save address of string
    0. ROT                            \ make accumulator for >NUMBER
    COUNT                             \ count the string
-   OVER C@                           \ get the first character
+   BASE @ >R                         \ save BASE
+   CASE  OVER C@                     \ set base if leading #, $ or %
+      [CHAR] # OF  10 BASE !  SKIP-CHAR  ENDOF
+      [CHAR] $ OF  16 BASE !  SKIP-CHAR  ENDOF
+      [CHAR] % OF   2 BASE !  SKIP-CHAR  ENDOF
+   ENDCASE
+   OVER C@                           \ get the leading character
    [CHAR] - =  DUP >R  IF            \ skip first character if it's
-      1- SWAP  CHAR+ SWAP            \ a minus and save the flag
+      SKIP-CHAR                      \ a minus and save the flag
    THEN
    FALSE >R                          \ save false flag
    BEGIN
       >NUMBER                        \ convert up to non-digit
       ?DUP WHILE                     \ if the string's not finished,
       OVER C@ 4 / 11 <> IF           \ is the non-digit punctuation?
-                                     \ FIXME: Tighten up parsing
+         R> DROP                     \ FIXME: Tighten up parsing
          2R> 2DROP  R> UNDEFINED     \ if not, then not a number
       THEN
       R> DROP  TRUE >R               \ if so, set double no. flag
-      SWAP CHAR+  SWAP CHAR-         \ and skip the punctuation
+      SKIP-CHAR                      \ and skip the punctuation
    REPEAT
    DROP                              \ drop string address
-   2R> >R                            \ retrieve first character
+   2R> >R                            \ retrieve leading minus flag
    IF  DNEGATE  THEN                 \ if leading minus, negate no.
    R@ INVERT IF  D>S  THEN           \ return single or double no.
    R>                                \ and flag as appropriate
+   R> BASE !                         \ restore BASE
    R> DROP ;                         \ drop address of string
 
 
