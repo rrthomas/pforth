@@ -1137,6 +1137,7 @@ INCLUDE" platform.fs"
 
 FALSE VALUE INTERACT?
 : DO-START-OPTIONS
+   SHIFT-ARGS                     \ skip program name
    ARGC @ IF
       BEGIN  NEXT-ARG OVER WHILE
          OVER C@  [CHAR] - =  IF  \ process option
