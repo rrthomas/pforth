@@ -15,7 +15,7 @@ INCLUDE" assembler.fs"
 \ Meta-compiler utilities
 
 \ RISC OS-specific meta-compiler utilities (FIXME)
-: '?   BL WORD FIND  0= IF  DROP 0  THEN ;
+: '?   BL WORD FIND  0= IF  DROP 0  ELSE <'FORTH  THEN ;
 
 VOCABULARY META  ALSO META DEFINITIONS
 FOREIGN  ' NON-META? TO 'SELECTOR \ build meta-compiler using native compiler
