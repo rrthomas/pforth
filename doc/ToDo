@@ -1,7 +1,5 @@
 Add backtrace to error output.
 
-Add number input in other bases from Forth 2012.
-
 Add PAGE on Beetle (needs Beetle LIB routine).
 
 Support objects.

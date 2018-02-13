@@ -30,7 +30,7 @@
 
 \title{The pForth Forth compiler}
 \author{Reuben Thomas}
-\date{4th July 2016}
+\date{13th February 2018}
 \maketitle
 
 
@@ -41,6 +41,8 @@ pForth is a Forth compiler which complies with the ANSI Forth standard~\cite{ANS
 Because it is designed to be easily understood and ported, the compiler is
 simple, using few optimisations, and with little error checking. It does not
 implement the whole of the ANSI standard, notably omitting floating point arithmetic.
+
+In addition to the ANSI standard, it implements the Forth 2012 syntax for decimal, hex and binary number input using respectively the {\tt \#}, {\tt \$} and {\tt \%} prefixes~\cite[section 3.4.1.3 “Text interpreter input number conversion”]{forth2012}.
 
 
 \section{Documentation required by the ANSI standard}
