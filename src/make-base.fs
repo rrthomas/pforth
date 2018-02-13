@@ -80,12 +80,13 @@ INCLUDE" compiler2.fs"
 INCLUDE" interpreter3.fs"
 INCLUDE" compiler4.fs"
 INCLUDE" compiler5.fs"
+INCLUDE" defer-fetch-store.fs"
 INCLUDE" defining.fs"
 INCLUDE" vocabulary.fs"
 INCLUDE" resolver.fs"
 
 DOES>-RESOLVER (VALUE) WILL-DO VALUE
-DOES>-RESOLVER (VECTOR) WILL-DO VECTOR
+DOES>-RESOLVER (DEFER) WILL-DO DEFER
 DOES>-RESOLVER (VOCABULARY) WILL-DO VOCABULARY
 3 REDEFINER >COMPILERS<
 
@@ -134,7 +135,7 @@ HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
    \ patch FORTH wordlist
 1  ' KERNEL >NAME 8 -  !   \ patch #WORDLISTS
 ' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
-' VECTOR >DOES> RESOLVES (VECTOR)
+' DEFER >DOES> RESOLVES (DEFER)
 ' VOCABULARY >DOES> RESOLVES (VOCABULARY)
 ' NEW-FORTH >BODY @ @  PREVIOUS  DUP RELOCATE   \ relocate the new dictionary
    \ leave initial branch target on the stack
