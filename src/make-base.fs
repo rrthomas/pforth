@@ -77,7 +77,7 @@ ALSO FORTH  META DEFINITIONS FOREIGN  PREVIOUS
 INCLUDE" control1.fs"
 INCLUDE" control2.fs"
 INCLUDE" compiler2.fs"
-INCLUDE" interpreter4.fs"
+INCLUDE" interpreter3.fs"
 INCLUDE" compiler4.fs"
 INCLUDE" compiler5.fs"
 INCLUDE" defining.fs"
