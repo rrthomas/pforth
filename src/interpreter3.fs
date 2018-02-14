@@ -1,3 +1,3 @@
-\ Interpreter #4
+\ Interpreter #3
 
 : ABORT"   POSTPONE C"  POSTPONE (ABORT") ; IMMEDIATE COMPILING

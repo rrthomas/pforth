@@ -133,7 +133,7 @@ VARIABLE CURRENT
 : SMUDGE   ( f -- )   LAST  SMUDGE! ;
 
 
-\ Interpreter #2
+\ Interpreter #1
 
 : PAD   R0 @ 256 + ;
 : TOKEN   R0 @ 512 + ;
@@ -161,7 +161,7 @@ INCLUDE" compiler-postpone.fs"
 INCLUDE" terminal.fs"   \ terminal I/O words
 
 
-\ Interpreter #3
+\ Interpreter #2
 
 : ABORT   -1 THROW ;
 : QUIT   -56 THROW ;
@@ -464,7 +464,7 @@ HERE <'FORTH VALUE "PROGRAM-NAME  S" @PACKAGE@" ",
 
 
 INCLUDE" compiler2.fs"
-INCLUDE" interpreter4.fs"
+INCLUDE" interpreter3.fs"
 
 
 \ Numeric conversion
@@ -685,7 +685,7 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
    0 ;                               \ leave OK flag
 
 
-\ Interpreter #5
+\ Interpreter #4
 
 : FOREIGN?   ( wid -- f )   2 CELLS + @  1023 > ;
 : LOCAL?   ( wid xt n -- f )
