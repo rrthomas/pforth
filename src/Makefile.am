@@ -65,7 +65,7 @@ beetle/pforth-base.img: $(portable_SRCS) $(beetle_SRCS)
 	rm pforth-new-0
 
 # FIXME: Do idempotency test
-riscos/pforth-base.img: $(portable_SRCS) $(riscos_SRCS)
+riscos/pforth-base.img: $(portable_SRCS) $(riscos_SRCS) beetle/pforth-base.img
 	export flavour=riscos srcs="$(riscos_SRCS)"; $(do_build_prep) && \
 	$(BEETLE) $(abs_srcdir)/beetle/pforth-base.img make-base.fs && \
 	mv pforth-new pforth-base.img
