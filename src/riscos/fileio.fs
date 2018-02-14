@@ -3,11 +3,9 @@
 
 
 : BIN ; IMMEDIATE
-HEX
-: R/O   40 ;
-: W/O   C0 ;
-: R/W   C0 ;
-DECIMAL
+: R/O   $40 ;
+: W/O   $C0 ;
+: R/W   $C0 ;
 
 \ Convert between RISC OS and POSIX file names:
 \ Exchange . and /
@@ -32,8 +30,7 @@ CREATE FILE-NAME   256 ALLOT
    [ 2 1 ] OS" OS_Find"  DUP 0= IF  -1  ELSE 0  THEN ;
 : CLOSE-FILE   ( fid -- ior )   0  [ 2 0 ] OS" OS_Find"  0 ;
 
-: CREATE-FILE   ( c-addr u fam -- fid ior )   DROP
-   [ HEX ] 80 [ DECIMAL ] OPEN-FILE ;
+: CREATE-FILE   ( c-addr u fam -- fid ior )   DROP  $80 OPEN-FILE ;
 : RENAME-FILE   ( c-addr1 u1 c-addr2 u2 -- ior )   >FILE-NAME< C0END -ROT
    >FILE-NAME< C0END  25 [ 3 0 ] OS" OS_FSControl"  0 ;
 : DELETE-FILE   ( c-addr u -- ior )   >FILE-NAME< C0END

@@ -126,12 +126,10 @@ VARIABLE CURRENT
 : >NAME   DUP >INFO 3 + C@  31 AND 1+ CHARS ALIGNED  SWAP >LINK  >-< ;
 : >COMPILE   >NAME CELL- ;
 
-HEX
-: IMMEDIATE   LAST >INFO  DUP @  80000000 OR  SWAP !  LAST DUP >COMPILE ! ;
-: COMPILING   LAST >INFO  DUP @  40000000 OR  SWAP ! ;
-: SMUDGE!   ( f a-addr -- )   >INFO  TUCK @  20000000 DUP INVERT  ROT AND
+: IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP !  LAST DUP >COMPILE ! ;
+: COMPILING   LAST >INFO  DUP @  $40000000 OR  SWAP ! ;
+: SMUDGE!   ( f a-addr -- )   >INFO  TUCK @  $20000000 DUP INVERT  ROT AND
    -ROT AND  OR  SWAP ! ;
-DECIMAL
 : SMUDGE   ( f -- )   LAST  SMUDGE! ;
 
 
@@ -291,12 +289,11 @@ CELL+ CONSTANT /BLOCK-BUFFER   \ uses value saved above
 : 'BUFFER   R0 @  1280 + ;   \ address of block buffer
 : >BLOCK   CELL+ ;
 
-HEX
-: UPDATE   'BUFFER  DUP @ 80000000 OR  SWAP ! ;
+: UPDATE   'BUFFER  DUP @ $80000000 OR  SWAP ! ;
 : UPDATED?   ( -- f )   'BUFFER @  0< ;
 : (BUFFER)   ( u -- c-addr f )
    'BUFFER                           \ address of block buffer
-   TUCK @ 7FFFFFFF AND  OVER = IF    \ if the current block was requested,
+   TUCK @ $7FFFFFFF AND  OVER = IF    \ if the current block was requested,
       DROP >BLOCK  TRUE EXIT         \ leave address and true flag, and exit
    THEN
    UPDATED? IF                       \ was the last block updated?
@@ -304,7 +301,6 @@ HEX
    THEN
    OVER !                            \ set new block no., & clear update flag
    >BLOCK  FALSE ;                   \ leave address and false flag
-DECIMAL
 : BUFFER   ?DUP IF  (BUFFER) DROP  THEN ;
 : BLOCK   ?DUP IF  DUP (BUFFER) IF  NIP  ELSE DUP ROT @BLOCK  THEN  THEN ;
 
@@ -596,7 +592,7 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
       2OVER ROT COUNT                \ COUNT the strings
       COMPARE 0= IF                  \ if the name matches
          DUP >INFO @                 \ and the word is not SMUDGEd
-         [ HEX ] 20000000 [ DECIMAL ] AND 0= IF
+         $20000000 AND 0= IF
             R@ OVER                  \ get wid and xt of word
             DUP >INFO @ 0< 2* INVERT \ get immediacy flag
             DUP >R                   \ save flag
@@ -714,7 +710,7 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
       DUP IF                         \ if word found in dictionary
          STATE @ 0= IF               \ if interpreting, execute it
             DROP                     \ drop found flag
-            DUP >INFO @ [ HEX ] 40000000 [ DECIMAL ] AND
+            DUP >INFO @ $40000000 AND
             IF  -14 THROW  THEN
             EXECUTE
          ELSE
@@ -831,14 +827,12 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
 
 : LOAD   SAVE-INPUT>R  BLK !  0 >IN !  INTERPRET  R>RESTORE-INPUT ;
 : THRU   1+ SWAP DO  I LOAD  LOOP ;
-HEX
 : SAVE-BUFFERS
    UPDATED? IF                       \ if the buffer was updated
-      'BUFFER  DUP @ 7FFFFFFF AND    \ get the block number
+      'BUFFER  DUP @ $7FFFFFFF AND   \ get the block number
       OVER >BLOCK OVER !BLOCK        \ save the block
       SWAP !                         \ mark the buffer as not updated
    THEN ;
-DECIMAL
 : EMPTY-BUFFERS   0 'BUFFER ! ;
 : FLUSH   SAVE-BUFFERS EMPTY-BUFFERS ;
 
@@ -1058,9 +1052,7 @@ INCLUDE" resolver.fs"
 
 \ >DOES>, given the xt of a defining word, returns the address of the DOES>
 \ code.
-HEX
-: >DOES>   ( xt -- 'does )   DUP >INFO @ FFFF AND CELLS  + ;
-DECIMAL
+: >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
 
 \ WILL-DO makes a defining word compile a DOES>-RESOLVER rather than its
 \ normal code. Use as DOES>-RESOLVER X WILL-DO Y, where Y must be a defining

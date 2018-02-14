@@ -6,22 +6,21 @@ CR .( ARM assembler )
 
 
 VOCABULARY ASSEMBLER  ALSO ASSEMBLER DEFINITIONS
-HEX
 
 
 \ Utility words
 
 : OR!   TUCK @  OR SWAP ! ;
-: LROTATE   2DUP LSHIFT  -ROT 20 >-< RSHIFT  OR ;
-: RROTATE   2DUP RSHIFT  -ROT 20 >-< LSHIFT  OR ;
+: LROTATE   2DUP LSHIFT  -ROT 32 >-< RSHIFT  OR ;
+: RROTATE   2DUP RSHIFT  -ROT 32 >-< LSHIFT  OR ;
 : BITCOUNT   ( x -- #1s )   0 SWAP  BEGIN  ?DUP WHILE  DUP 1- AND
    SWAP 1+ SWAP  REPEAT ;
 
-: ?INVERT   ( x1 -- x2 f )   DUP BITCOUNT 10 > TUCK IF  INVERT  THEN SWAP ;
+: ?INVERT   ( x1 -- x2 f )   DUP BITCOUNT 16 > TUCK IF  INVERT  THEN SWAP ;
 : MINIMIZE   ( x1 -- x2 u )   \ minimize unsigned value of x1 by rotation
-   DUP 100 U< IF  0 EXIT  THEN       \ stop if already a usable constant
+   DUP $100 U< IF  0 EXIT  THEN      \ stop if already a usable constant
    0 SWAP  DUP                       \ rotation and minimum value found so far
-   10 1 DO                           \ try each rotation
+   16 1 DO                           \ try each rotation
       2 LROTATE  2DUP U> IF
          NIP NIP  I SWAP  DUP
       THEN
@@ -30,19 +29,19 @@ HEX
 
 : CONSTB   ( const1 -- const2 op-field )
    DUP MINIMIZE                      \ pack constant
-   SWAP FF AND SWAP                  \ make byte
+   SWAP $FF AND SWAP                 \ make byte
    2DUP  8 LSHIFT OR                 \ make op-field
    >R 2* RROTATE XOR R> ;            \ make new constant
 : +CONSTB   ( const1 -- const2 op-field )
    MINIMIZE OVER                     \ pack constant
-   DUP 100 AND IF                    \ according to ninth bit
-      NEGATE FF AND                  \ calculate constant byte
+   DUP $100 AND IF                   \ according to ninth bit
+      NEGATE $FF AND                 \ calculate constant byte
       DUP SWAP
-      2400000                        \ SUB ?,#?
+      $2400000                       \ SUB ?,#?
    ELSE
-      FF AND                         \ same as above when ninth bit clear
+      $FF AND                        \ same as above when ninth bit clear
       DUP NEGATE SWAP
-      2800000                        \ ADD ?,#?
+      $2800000                       \ ADD ?,#?
    THEN
    SWAP 3 PICK  8 LSHIFT OR OR       \ make op-field
    >R ROT +  SWAP 2* RROTATE R> ;    \ make new constant
@@ -53,12 +52,12 @@ VARIABLE INST   \ holds the instruction being built up
 
 \ Condition codes
 
-: COND   CREATE , DOES> @ 1C LSHIFT INST @ FFFFFFF AND OR  INST ! ;
-: CONDS   0F 0 DO   I COND   LOOP ;
+: COND   CREATE , DOES> @ 28 LSHIFT INST @ $FFFFFFF AND OR  INST ! ;
+: CONDS   15 0 DO   I COND   LOOP ;
 CONDS  EQ NE CS CC MI PL VS VC HI LS GE LT GT LE AL
 3 COND LO  2 COND HS
 
-: REVERSE  INST @  10000000 XOR  INST ! ;
+: REVERSE  INST @  $10000000 XOR  INST ! ;
 
 
 : RESET   0 INST !  AL ;   \ (re)initialise assembler
@@ -66,7 +65,7 @@ CONDS  EQ NE CS CC MI PL VS VC HI LS GE LT GT LE AL
 
 \ Registers
 
-: REGS   10 0 DO  I CONSTANT  LOOP ;
+: REGS   16 0 DO  I CONSTANT  LOOP ;
 REGS R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12 R13 R14 R15
 R15 CONSTANT PC  R14 CONSTANT LR  R13 CONSTANT RP
 R12 CONSTANT SP  R11 CONSTANT TOP
@@ -74,56 +73,56 @@ R12 CONSTANT SP  R11 CONSTANT TOP
 
 \ Data operations
 
-: (OP)   INST @  OR OR  SWAP 10 LSHIFT OR  SWAP C LSHIFT OR  CODE,  RESET ;
+: (OP)   INST @  OR OR  SWAP 16 LSHIFT OR  SWAP 12 LSHIFT OR  CODE,  RESET ;
 : OP   CREATE , DOES> @ (OP) ;
-: OPS   10 0 DO  I 15 LSHIFT OP  LOOP ;
+: OPS   16 0 DO  I 21 LSHIFT OP  LOOP ;
 OPS AND, EOR, SUB, RSB, ADD, ADC, SBC, RSC, xx1 xx2 xx3 xx4 ORR, xx5 BIC, xx6
 
-: SET   100000 INST OR! ;
+: SET   $100000 INST OR! ;
 
 : TST,   R0 -ROT SET xx1 ;      : TEQ,   R0 -ROT SET xx2 ;
 : CMP,   R0 -ROT SET xx3 ;      : CMN,   R0 -ROT SET xx4 ;
 : MOV,   R0 SWAP xx5 ;          : MVN,   R0 SWAP xx6 ;
 
-: MUL,   8 LSHIFT INST @ 90 OR OR OR SWAP 10 LSHIFT OR CODE,  RESET ;
-: MLA,   C LSHIFT 200090 OR INST OR! MUL, ;
+: MUL,   8 LSHIFT INST @ $90 OR OR OR SWAP 16 LSHIFT OR CODE,  RESET ;
+: MLA,   12 LSHIFT $200090 OR INST OR! MUL, ;
 
 
 \ Shifts
 
-: LSL   8 LSHIFT 10 OR  INST OR! ;   : ASL   LSL ;
-: #LSL   7 LSHIFT       INST OR! ;   : #ASL   #LSL ;
-: LSR   8 LSHIFT 30 OR  INST OR! ;
-: #LSR   7 LSHIFT 20 OR INST OR! ;
-: ASR   8 LSHIFT 50 OR  INST OR! ;
-: #ASR   7 LSHIFT 40 OR INST OR! ;
-: ROR   8 LSHIFT 70 OR  INST OR! ;
-: #ROR   7 LSHIFT 60 OR INST OR! ;   : RRX   0 #ROR ;
+: LSL   8 LSHIFT $10 OR  INST OR! ;   : ASL   LSL ;
+: #LSL   7 LSHIFT        INST OR! ;   : #ASL   #LSL ;
+: LSR   8 LSHIFT $30 OR  INST OR! ;
+: #LSR   7 LSHIFT $20 OR INST OR! ;
+: ASR   8 LSHIFT $50 OR  INST OR! ;
+: #ASR   7 LSHIFT $40 OR INST OR! ;
+: ROR   8 LSHIFT $70 OR  INST OR! ;
+: #ROR   7 LSHIFT $60 OR INST OR! ;   : RRX   0 #ROR ;
 
 
 \ Immediate constants
 
-: IMM   INST  DUP @ 2000000 XOR  SWAP ! ;
-: #   MINIMIZE  OVER FF U> ABORT" immediate constant too large"  IMM  8 LSHIFT
+: IMM   INST  DUP @ $2000000 XOR  SWAP ! ;
+: #   MINIMIZE  OVER $FF U> ABORT" immediate constant too large"  IMM  8 LSHIFT
    INST OR! ;
 
 
 \ Branches
 
-: >BRANCH   ( from to -- offset )   >-<  2 RSHIFT 2 -  00FFFFFF AND ;
+: >BRANCH   ( from to -- offset )   >-<  2 RSHIFT 2 -  $00FFFFFF AND ;
 
 : (B)   HERE ROT >BRANCH  INST @  OR OR CODE,  RESET ;
-: B,    A000000 (B) ;
-: BL,    B000000 (B) ;
+: B,    $A000000 (B) ;
+: BL,    $B000000 (B) ;
 
 
 \ Addressing modes
 
-: @- ; IMMEDIATE               : @+     800000 INST OR! ;
-: -@    1000000 INST OR! ;     : +@    1800000 INST OR! ;
-: -@!   1200000 INST OR! ;     : +@!   1A00000 INST OR! ;
+: @- ; IMMEDIATE                : @+     $800000 INST OR! ;
+: -@    $1000000 INST OR! ;     : +@    $1800000 INST OR! ;
+: -@!   $1200000 INST OR! ;     : +@!   $1A00000 INST OR! ;
 
-: OFFSET   DUP FFF U> ABORT" immediate offset too large"  IMM  INST OR!  0 ;
+: OFFSET   DUP $FFF U> ABORT" immediate offset too large"  IMM  INST OR!  0 ;
 : #@-    OFFSET @- ;              : #@+    OFFSET @+ ;
 : #-@    OFFSET -@ ;              : #+@    OFFSET +@ ;
 : #-@!   OFFSET -@! ;             : #+@!   OFFSET +@! ;
@@ -132,34 +131,34 @@ OPS AND, EOR, SUB, RSB, ADD, ADC, SBC, RSC, xx1 xx2 xx3 xx4 ORR, xx5 BIC, xx6
 
 \ Loading and storing
 
-: BYTE   400000 INST OR! ;
-: LDR,   IMM 4100000 (OP) ;
-: STR,   IMM 4000000 (OP) ;
+: BYTE   $400000 INST OR! ;
+: LDR,   IMM $4100000 (OP) ;
+: STR,   IMM $4000000 (OP) ;
 
-: PCR   HERE 8 + -  DUP ABS FFF > ABORT" address out of range"
+: PCR   HERE 8 + -  DUP ABS $FFF > ABORT" address out of range"
   DUP 0< IF  NEGATE #-@  ELSE #+@  THEN  PC SWAP ;
 
 : PUSH,   4 #-@! STR, ;
 : POP,   4 #@+ LDR, ;
 
-: MODES   4 0 DO  I 17 LSHIFT  CONSTANT  LOOP ;
-: STACKS   4 0 DO  I 17 LSHIFT  8000000 OR  CONSTANT  LOOP ;
+: MODES   4 0 DO  I 23 LSHIFT  CONSTANT  LOOP ;
+: STACKS   4 0 DO  I 23 LSHIFT  $8000000 OR  CONSTANT  LOOP ;
 MODES  DA IA DB IB
 STACKS ED EA FD FA
 
-: @!   200000 INST OR! ;
-: ^   400000 INST OR! ;
-: (LDSTM)   INST @  OR OR OR  SWAP 10 LSHIFT OR CODE,  RESET ;
-: LDM,   DUP 8000000 AND IF  1800000 XOR  THEN  8100000 (LDSTM) ;
-: STM,   8000000 (LDSTM) ;
-: {   20 ;
-: }   0  BEGIN  OVER 20 <> WHILE  1 ROT LSHIFT OR  REPEAT  NIP ;
+: @!   $200000 INST OR! ;
+: ^   $400000 INST OR! ;
+: (LDSTM)   INST @  OR OR OR  SWAP 16 LSHIFT OR CODE,  RESET ;
+: LDM,   DUP $8000000 AND IF  $1800000 XOR  THEN  $8100000 (LDSTM) ;
+: STM,   $8000000 (LDSTM) ;
+: {   32 ;
+: }   0  BEGIN  OVER 32 <> WHILE  1 ROT LSHIFT OR  REPEAT  NIP ;
 
 
 \ SWIs
 
-: SWI,   INST @ F000000 OR OR CODE,  RESET ;
-: X   20000 INST OR! ;
+: SWI,   INST @ $F000000 OR OR CODE,  RESET ;
+: X   $20000 INST OR! ;
 : SWI"   [CHAR] " PARSE OS# ;
 : SWI,"   SWI"  SWI, ;
    :NONAME   SWI"  POSTPONE LITERAL  POSTPONE SWI, ;IMMEDIATE
@@ -169,7 +168,7 @@ STACKS ED EA FD FA
 
 \ FIXME: Following three words are copied from arm/compiler.fs; when
 \ assembler is merged into base system, de-duplicate
-: >BRANCH   ( from to -- offset )   >-<  2 RSHIFT 2 -  00FFFFFF AND ;
+: >BRANCH   ( from to -- offset )   >-<  2 RSHIFT 2 -  $00FFFFFF AND ;
 : !BRANCH   ( at from to op-mask -- )   -ROT  >BRANCH  OR  SWAP CODE! ;
 : JOIN   ( from to -- )   OVER TUCK @ !BRANCH ;
 
@@ -211,14 +210,14 @@ VARIABLE 'NEXTB
    2 PICK -ROT  R@ (OP)              \ write first instruction
    2R> (#OP,) ;                      \ write following instructions
 
-: #ORR,   ORING  1800000 #OP, ;
-: #EOR,   ORING  0200000 #OP, ;
+: #ORR,   ORING  $1800000 #OP, ;
+: #EOR,   ORING  $0200000 #OP, ;
 
 : #ADD,   ( dest src const -- )   ADDING
    0 ( +CONSTB takes care of opcode ) #OP, ;
 : #SUB,   NEGATE #ADD, ;
 
-: #AND,   ( dest src const -- )  ORING  ?INVERT IF  1C00000  ELSE 0000000
+: #AND,   ( dest src const -- )  ORING  ?INVERT IF  $1C00000  ELSE $0000000
    THEN  #OP, ;
 : #BIC,   INVERT #AND, ;
 
@@ -226,7 +225,7 @@ VARIABLE 'NEXTB
   into the given destination )
 : #MOV,   ( dest const -- )
    ORING
-   ?INVERT IF  3E00000  ELSE 3A00000  THEN
+   ?INVERT IF  $3E00000  ELSE $3A00000  THEN
                                      \ invert const and choose opcode
    SWAP NEXTB                        \ get first byte
    2SWAP SWAP DUP  DUP >R  2SWAP     ( d op c b -- c d d b op )
@@ -247,4 +246,4 @@ PREVIOUS  DEFINITIONS  ALSO ASSEMBLER
 : END-SUB   RET,  PREVIOUS ;
 
 
-PREVIOUS DECIMAL
+PREVIOUS

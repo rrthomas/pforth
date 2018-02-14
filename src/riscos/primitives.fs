@@ -454,7 +454,7 @@ R0 0 # MOV,
 R1 PC 4 #+@ LDR,
 R2 1 # MOV, \ FIXME: Take error code on stack, truncate to range 0..Sys$RCLimit
 SWI," XOS_Exit"
-HEX 58454241 DECIMAL , \ "ABEX"
+$58454241 , \ "ABEX"
 END-CODE
 
 

@@ -127,14 +127,12 @@ INCLUDE" highlevel.fs"
 INCLUDE" initialize.fs"
 
 HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
-HEX
 ' NEW-FORTH >BODY @ @ <'FORTH  ' FORTH >BODY @ >'FORTH  !
    \ patch root wordlist
 ' FORTH >BODY @ CELL+  ' CHAIN >BODY  !   \ patch CHAIN
 ' FORTH >NAME 8 -  'FORTH <'FORTH CELL+ OVER !  4 -  0 OVER !  4 -  0 SWAP !
    \ patch FORTH wordlist
 1  ' KERNEL >NAME 8 -  !   \ patch #WORDLISTS
-DECIMAL
 ' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
 ' VECTOR >DOES> RESOLVES (VECTOR)
 ' VOCABULARY >DOES> RESOLVES (VOCABULARY)
