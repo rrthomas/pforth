@@ -1,3 +1,7 @@
+Add startup script support using environment variable PFORTH_INIT (needs
+getenv), and use this to replace extended image building (works for RISC OS
+too!).
+
 Add backtrace to error output.
 
 Add PAGE on Beetle (needs Beetle LIB routine).
