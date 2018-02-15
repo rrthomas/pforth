@@ -42,12 +42,12 @@ Because it is designed to be easily understood and ported, the compiler is
 simple, using few optimisations, and with little error checking. It does not
 implement the whole of the ANSI standard, notably omitting floating point arithmetic.
 
-In addition to the ANSI standard, it implements the Forth 2012 syntax for decimal, hex and binary number input using respectively the {\tt \#}, {\tt \$} and {\tt \%} prefixes~\cite[section 3.4.1.3 “Text interpreter input number conversion”]{forth2012}.
+pForth also implements parts of the draft Forth 2012 standard. See section~\ref{forth2012} for details.
 
 
 \section{Documentation required by the ANSI standard}
 
-Section \ref{labelling} contains the ANS labelling for pForth; the other
+Section~\ref{labelling} contains the ANS labelling for pForth; the other
 sections give the documentation required in \cite[section 4.1]{ANSIforth},
 laid out like the corresponding sections in the standard.
 
@@ -209,6 +209,20 @@ glossary entries of the relevant words in the standard.
 \begin{itemize}
 \item[--]No multiprogramming system is provided, so there are no additional restrictions on the use of buffer addresses.
 \item[--]The number of blocks available depends on the system configuration.
+\end{itemize}
+
+
+\section{Forth 2012}
+\label{forth2012}
+
+pForth implements some parts of the Forth 2012 standard. In the future, the documentation may be fully updated relative to that standard; until then, this section documents features and words that are part of the later standard.
+
+pForth implements the Forth 2012 syntax for decimal, hex and binary number input using respectively the {\tt \#}, {\tt \$} and {\tt \%} prefixes~\cite[section 3.4.1.3 “Text interpreter input number conversion”]{forth2012}.
+
+pForth
+\vspace{-3mm}
+\begin{itemize}
+\item[]provides {\tt DEFER}, {\tt DEFER!}, {\tt DEFER@}, {\tt IS} and {\tt ACTION-OF} from the Core Extensions word set.
 \end{itemize}
 
 
