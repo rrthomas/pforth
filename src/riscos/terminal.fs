@@ -19,11 +19,6 @@ END-SUB
 : CR?   13 = ;
 : EOL   (S")  [ 1 C, 10 C, ALIGN ] ;
 
-\ GET-LINE behaves like ACCEPT except that the line terminator is appended to
-\ the string, so that +n1-1 is the maximum possible length of the string
-: GET-LINE   ( c-addr +n1 -- +n2 )   >R >R  255 32 R> R> SWAP
-   [ 4 2 ] OS" OS_ReadLine"  DROP ;
-
 : AT-XY   31 EMIT  SWAP EMIT EMIT ;
 
 77 CONSTANT WIDTH   \ width of display

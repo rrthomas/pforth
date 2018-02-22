@@ -238,20 +238,23 @@ INCLUDE" fileio.fs"
    TUCK                              \ save no. of chars read
    EOL SEARCH  ROT DROP              \ search for EOL; drop address
    IF                                \ if found,
-      R@ FILE-POSITION               \ get the current file position
-      ?DUP IF                        \ if an error occurred
-         >R 2DROP DROP  FALSE R>     \ clear up, leave false flag
-         R> DROP  EXIT               \ and ior, and exit
+      TUCK -  SWAP                   \ calculate length, save it
+      EOL NIP - ?DUP IF              \ if not at the end of the line,
+         R@ FILE-POSITION            \ get the current file position
+         ?DUP IF                     \ if an error occurred
+            >R 2DROP DROP  FALSE R>  \ clear up, leave false flag
+            R> DROP  EXIT            \ and ior, and exit
+         THEN
+         ROT U>UD D-                 \ set pointer to just after EOL
+         R@ REPOSITION-FILE
+         ?DUP IF                     \ if there was an error
+            FALSE SWAP  EXIT         \ exit with error code
+         THEN
       THEN
-      2 PICK EOL NIP -  U>UD D-      \ set pointer to just after EOL
-      R> REPOSITION-FILE
-      ?DUP IF                        \ if there was an error
-         NIP  FALSE SWAP  EXIT       \ exit with error code
-      THEN
-      -                              \ make length
    ELSE
-      DROP  R> DROP                  \ else u2=u1; drop fid
+      DROP                           \ else u2=u1
    THEN
+   R> DROP                           \ drop fid
    TRUE 0 ;                          \ leave true flag, ior=0
 : WRITE-LINE   ( c-addr u fid -- ior )
    >R                                \ save fid
@@ -318,34 +321,7 @@ VARIABLE FILE-BUFFER#  0 ' FILE-BUFFER# >BODY !   \ next file buffer to use
 
 \ Terminal input/output #2
 
-\ FIXME: Improve editing, by proxying readline/GET-LINE etc.
-: ACCEPT   ( c-addr +n1 -- +n2 )
-   >R                                \ save count
-   DUP BEGIN
-      KEY                            \ get key
-      DUP DEL? IF                    \ if Delete
-         DROP                        \ get rid of key
-         2DUP < IF                   \ if there's room to delete,
-            CHAR-  DEL               \ decrement pointer & emit DEL
-         THEN
-      ELSE
-         DUP CR? IF                  \ if end of line then
-            R> 2DROP                 \ drop max. length & character,
-            BL EMIT                  \ emit a space
-            >-<                      \ get the length of the input
-            EXIT                     \ and exit
-         ELSE
-            -ROT  2DUP >-<           \ if another key, check there's
-            R@ < IF                  \ room for it,
-               ROT DUP EMIT          \ print it,
-               OVER C!               \ store it
-               CHAR+                 \ and increment the pointer
-            ELSE
-               ROT DROP              \ otherwise drop the character
-            THEN
-         THEN
-      THEN
-   AGAIN ;
+INCLUDE" accept.fs"
 
 VARIABLE >IN
 
