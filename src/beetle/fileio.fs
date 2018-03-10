@@ -24,7 +24,7 @@
 : FILE-POSITION   ( fid -- ud ior )   9 LIB ;
 : REPOSITION-FILE   ( ud fid -- ior )   10 LIB ;
 
-\ FIXME: FILE-SIZE   ( fid -- ud ior ) ;
-\ FIXME: RESIZE-FILE   ( ud fid -- ior ) ;
+: FILE-SIZE   ( fid -- ud ior )  14 LIB ;
+: RESIZE-FILE   ( ud fid -- ior )  15 LIB ;
 
-\ FIXME: FILE-STATUS   ( c-addr u -- x ior ) ;
+: FILE-STATUS   ( c-addr u -- x ior )  16 LIB ;
