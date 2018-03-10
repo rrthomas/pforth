@@ -751,6 +751,7 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
       -11 OF  ." quotient too large"  ENDOF
       -13 OF  'THROWN @ COUNT TYPE  ."  ?"  ENDOF
       -14 OF  ." compilation only"  ENDOF
+      -20 OF  ." write to a read-only location"  ENDOF
       -23 OF  -23 HALT  ENDOF
       -56 OF  ( QUIT )  ENDOF
       ." exception " DUP . ." raised"
