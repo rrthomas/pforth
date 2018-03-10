@@ -18,10 +18,10 @@ pdf-local: $(LATEX_PDFS)
 MAINTAINERCLEANFILES = $(LATEX_PDFS)
 
 clean-local:
-	$(RUBBER) --clean $(LATEX_SRCS)
+	$(LATEXMK) -C $(LATEX_SRCS)
 
 EXTRA_DIST = $(LATEX_SRCS) $(LATEX_PDFS) \
 	InputStack OOF PartialEval Threading ToDo
 
 .tex.pdf:
-	$(RUBBER) --pdf --inplace $<
+	$(LATEXMK) -pdf $<

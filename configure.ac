@@ -11,7 +11,7 @@ AC_PROG_MKDIR_P
 AC_PROG_LN_S
 AC_PATH_PROG(BEETLE, beetle, AC_MSG_ERROR([Beetle not found]))
 AC_PATH_PROG(BEETLEI, beetlei, AC_MSG_ERROR([beetlei not found]))
-AC_PATH_PROG(RUBBER, rubber, true)
+AC_PATH_PROG(LATEXMK, latexmk, true)
 gl_INIT
 
 dnl Generate output files
