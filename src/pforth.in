@@ -1,2 +1,2 @@
 #!/bin/sh
-@BEETLE@ @datadir@/pforth.img "$@"
+@BEETLEI@ @datadir@/pforth.img "$@"

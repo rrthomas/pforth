@@ -73,7 +73,7 @@ riscos/pforth-base.img: $(portable_SRCS) $(riscos_SRCS) beetle/pforth-base.img
 # FIXME: Build extended RISC OS image
 
 do_subst = sed -e 's,[@]datadir[@],$(datadir),g' \
-	-e 's,[@]BEETLE[@],$(BEETLE),g'
+	-e 's,[@]BEETLEI[@],$(BEETLEI),g'
 
 pforth: pforth.in Makefile
 	$(do_subst) < $(srcdir)/pforth.in > pforth
