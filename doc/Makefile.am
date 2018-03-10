@@ -24,4 +24,4 @@ EXTRA_DIST = $(LATEX_SRCS) $(LATEX_PDFS) \
 	InputStack OOF PartialEval Threading ToDo
 
 .tex.pdf:
-	$(RUBBER) --pdf --inplace $<
+	$(LATEXMK) -pdf $<
