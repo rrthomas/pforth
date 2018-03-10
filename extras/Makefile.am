@@ -1,1 +1,1 @@
-EXTRA_DIST = armfpasm.fs DoubleARM.txt redefinition.fs tests.fb tests.fs
+EXTRA_DIST = armfpasm.fs DoubleARM.txt redefinition.fs string.fs tests.fb tests.fs
