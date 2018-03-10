@@ -1,1 +1,1 @@
-: ACCEPT   ( c-addr +n1 -- +n2 )   2 LIB ( FIXME: STDIN ) READ-LINE  2DROP ;
+: ACCEPT   ( c-addr +n1 -- +n2 )   STDIN READ-LINE  2DROP ;
