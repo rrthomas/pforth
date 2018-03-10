@@ -159,6 +159,7 @@ INCLUDE" defer-fetch-store.fs"
    CHAR+ SWAP ;
 
 
+INCLUDE" fileio.fs"
 INCLUDE" terminal.fs"   \ terminal I/O words
 
 
@@ -222,8 +223,6 @@ INCLUDE" control2.fs"
 
 
 \ Mass storage input/output #1
-
-INCLUDE" fileio.fs"
 
 : READ-LINE   ( c-addr u1 fid -- u2 flag ior )
    >R  OVER SWAP                     \ save fid and copy c-addr
