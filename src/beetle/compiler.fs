@@ -5,7 +5,7 @@
 
 \ System variables
 
-: LIMIT   4 @ ;
+: LIMIT   $FFFFFFF8 @ ;
 
 
 \ Branches
