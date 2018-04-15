@@ -1072,7 +1072,7 @@ INCLUDE" save.fs"
 
 VARIABLE ARGC
 
-: INIT-ARGS   TOTAL-ARGS ARGC ! ;
+: INITIALIZE-ARGS   TOTAL-ARGS ARGC ! ;
 
 : ARG   TOTAL-ARGS ARGC @ -  +  ABSOLUTE-ARG ;
 : SHIFT-ARGS   ARGC @ 1-  0 MAX  ARGC ! ;
@@ -1143,5 +1143,5 @@ FALSE VALUE INTERACT?
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
-   INIT-ARGS
+   INITIALIZE-ARGS
    DO-START-OPTIONS ;                \ process command-line args
