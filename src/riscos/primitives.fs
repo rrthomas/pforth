@@ -6,7 +6,7 @@ CR .( Assembler words )
 
 \ Compiler #1
 
-HERE 4 ALLOT  >COMPILERS< TO 'THROW-CONTENTS >COMPILERS<   \ space for 'THROW's contents
+VARIABLE 'THROW
 
 
 \ Stack manipulation
@@ -261,7 +261,12 @@ END-CODE
 COMPILING
 
 CODE THROW
-PC 'THROW-CONTENTS PCR LDR,
+PC ' 'THROW >BODY PCR LDR,
+END-CODE
+
+CODE 'THROW!
+TOP ' 'THROW >BODY PCR STR,
+TOP SP POP,
 END-CODE
 
 

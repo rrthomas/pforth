@@ -11,7 +11,6 @@ CR .( pForth high level words )
 
 \ System variables
 
-'THROW-CONTENTS <'FORTH CONSTANT 'THROW
 DUP VALUE 'FORTH   \ value is put on stack by make.fs
 VALUE TARGET-'FORTH
 : <'FORTH   'FORTH -  TARGET-'FORTH + ;
@@ -1134,7 +1133,7 @@ FALSE VALUE INTERACT?
    256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
    DUP 'BUFFERS !                    \ set 'BUFFERS
    [ INCLUDE" initialize-stacks.fs" ]
-   [ ' (THROW) <'FORTH ] LITERAL 'THROW !
+   [ ' (THROW) <'FORTH ] LITERAL 'THROW!
                                      \ set 'THROW
    'BUFFERS @  LIMIT  OVER -  ERASE  \ erase buffers
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume

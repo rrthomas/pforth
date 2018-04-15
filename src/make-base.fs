@@ -96,8 +96,6 @@ PREVIOUS
 \ Constants
 
 32 1024 * CONSTANT SIZE
-INCLUDE" throw-contents.fs"
-
 
 NATIVE  ' LOCAL? TO 'SELECTOR \ now meta-compiler is built, allow it to run
 

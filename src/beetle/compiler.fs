@@ -3,11 +3,6 @@
 \ Reuben Thomas
 
 
-\ System variables
-
-: LIMIT   $FFFFFFF8 @ ;
-
-
 \ Branches
 
 \ FIXME: once assembler "built-in", remove the following
