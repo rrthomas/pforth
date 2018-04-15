@@ -12,10 +12,6 @@ CR .( pForth high level words )
 \ System variables
 
 'THROW-CONTENTS <'FORTH CONSTANT 'THROW
-VARIABLE S0
-4096 CONSTANT CELLS/S
-VARIABLE R0
-4096 CONSTANT CELLS/R
 DUP VALUE 'FORTH   \ value is put on stack by make.fs
 VALUE TARGET-'FORTH
 : <'FORTH   'FORTH -  TARGET-'FORTH + ;
@@ -34,7 +30,7 @@ VALUE TARGET-'FORTH
 : 2R>   R>  R> R> SWAP  ROT >R ; COMPILING
 : 2R@   R>  R> R>  2DUP >R >R  SWAP  ROT >R ; COMPILING
 
-: DEPTH   SP@ S0 @ >-< CELL/ ;
+: DEPTH   SP@ S0 >-< CELL/ ;
 
 
 \ Characters
@@ -135,10 +131,11 @@ VARIABLE CURRENT
 
 \ Interpreter #1
 
-: PAD   R0 @ 256 + ;
-: TOKEN   R0 @ 512 + ;
-: S"B   R0 @ 768 + ;
-: SCRATCH   R0 @ 1024 + ;
+VARIABLE 'BUFFERS
+: PAD   'BUFFERS @ 256 + ;
+: TOKEN   'BUFFERS @ 512 + ;
+: S"B   'BUFFERS @ 768 + ;
+: SCRATCH   'BUFFERS @ 1024 + ;
 
 
 INCLUDE" os-compiler.fs"   \ words necessary for the machine
@@ -289,7 +286,7 @@ VARIABLE SCR
    R@ REPOSITION-FILE DROP  /BLOCK R@ WRITE-FILE DROP  R> CLOSE-FILE DROP ;
 
 CELL+ CONSTANT /BLOCK-BUFFER   \ uses value saved above
-: 'BUFFER   R0 @  1280 + ;   \ address of block buffer
+: 'BUFFER   'BUFFERS @  1280 + ;   \ address of block buffer
 : >BLOCK   CELL+ ;
 
 : UPDATE   'BUFFER  DUP @ $80000000 OR  SWAP ! ;
@@ -330,7 +327,7 @@ VARIABLE EVALUAND
 VARIABLE #EVALUAND
 
 VARIABLE #TIB
-: TIB   R0 @ ;
+: TIB   'BUFFERS @ ;
 
 VARIABLE #FIB
 0 VALUE FIB
@@ -757,10 +754,10 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
    ENDCASE ;
 : (QUIT)
    BEGIN
-      R0 @ RP!
+      R0 RP!
       ['] REPL CATCH                 \ cannot return normally
       DUP HANDLE-ERROR
-      -56 <> IF  S0 @ SP!  THEN
+      -56 <> IF  S0 SP!  THEN
    AGAIN ;
 
 
@@ -964,37 +961,37 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 
 : ENVIRONMENT?
    "CASE
-      S" /COUNTED-STRING"    "OF  255             "ENDOF
-      S" /HOLD"              "OF  256             "ENDOF
-      S" /PAD"               "OF  256             "ENDOF
-      S" ADDRESS-UNIT-BITS"  "OF  8               "ENDOF
-      S" BLOCK"              "OF  TRUE            "ENDOF
-      S" BLOCK-EXT"          "OF  TRUE            "ENDOF
-      S" CORE"               "OF  TRUE            "ENDOF
-      S" CORE-EXT"           "OF  FALSE           "ENDOF
-      S" DOUBLE"             "OF  FALSE           "ENDOF
-      S" DOUBLE-EXT"         "OF  FALSE           "ENDOF
-      S" EXCEPTION"          "OF  TRUE            "ENDOF
-      S" EXCEPTION-EXT"      "OF  TRUE            "ENDOF
-      S" FACILITY"           "OF  FALSE           "ENDOF
-      S" FACILITY-EXT"       "OF  FALSE           "ENDOF
-      S" FILE"               "OF  TRUE            "ENDOF
-      S" FILE-EXT"           "OF  TRUE            "ENDOF
-      S" FLOORED"            "OF  TRUE            "ENDOF
-      S" MAX-CHAR"           "OF  255             "ENDOF
-      S" MAX-D"              "OF  -1 1RSHIFT S>D  "ENDOF
-      S" MAX-N"              "OF  -1 1RSHIFT      "ENDOF
-      S" MAX-U"              "OF  -1              "ENDOF
-      S" MAX-UD"             "OF  -1 0            "ENDOF
-      S" RETURN-STACK-CELLS" "OF  CELLS/R         "ENDOF
-      S" SEARCH-ORDER"       "OF  TRUE            "ENDOF
-      S" SEARCH-ORDER-EXT"   "OF  TRUE            "ENDOF
-      S" STACK-CELLS"        "OF  CELLS/S         "ENDOF
-      S" STRING"             "OF  TRUE            "ENDOF
-      S" STRING-EXT"         "OF  TRUE            "ENDOF
-      S" TOOLS"              "OF  FALSE           "ENDOF
-      S" TOOLS-EXT"          "OF  FALSE           "ENDOF
-      S" WORDLISTS"          "OF  8               "ENDOF
+      S" /COUNTED-STRING"    "OF  255                "ENDOF
+      S" /HOLD"              "OF  256                "ENDOF
+      S" /PAD"               "OF  256                "ENDOF
+      S" ADDRESS-UNIT-BITS"  "OF  8                  "ENDOF
+      S" BLOCK"              "OF  TRUE               "ENDOF
+      S" BLOCK-EXT"          "OF  TRUE               "ENDOF
+      S" CORE"               "OF  TRUE               "ENDOF
+      S" CORE-EXT"           "OF  FALSE              "ENDOF
+      S" DOUBLE"             "OF  FALSE              "ENDOF
+      S" DOUBLE-EXT"         "OF  FALSE              "ENDOF
+      S" EXCEPTION"          "OF  TRUE               "ENDOF
+      S" EXCEPTION-EXT"      "OF  TRUE               "ENDOF
+      S" FACILITY"           "OF  FALSE              "ENDOF
+      S" FACILITY-EXT"       "OF  FALSE              "ENDOF
+      S" FILE"               "OF  TRUE               "ENDOF
+      S" FILE-EXT"           "OF  TRUE               "ENDOF
+      S" FLOORED"            "OF  TRUE               "ENDOF
+      S" MAX-CHAR"           "OF  255                "ENDOF
+      S" MAX-D"              "OF  -1 1RSHIFT S>D     "ENDOF
+      S" MAX-N"              "OF  -1 1RSHIFT         "ENDOF
+      S" MAX-U"              "OF  -1                 "ENDOF
+      S" MAX-UD"             "OF  -1 0               "ENDOF
+      S" RETURN-STACK-CELLS" "OF  RETURN-STACK-CELLS "ENDOF
+      S" SEARCH-ORDER"       "OF  TRUE               "ENDOF
+      S" SEARCH-ORDER-EXT"   "OF  TRUE               "ENDOF
+      S" STACK-CELLS"        "OF  STACK-CELLS        "ENDOF
+      S" STRING"             "OF  TRUE               "ENDOF
+      S" STRING-EXT"         "OF  TRUE               "ENDOF
+      S" TOOLS"              "OF  FALSE              "ENDOF
+      S" TOOLS-EXT"          "OF  FALSE              "ENDOF
+      S" WORDLISTS"          "OF  8                  "ENDOF
       2DROP FALSE EXIT
    "ENDCASE
    TRUE ;
@@ -1130,16 +1127,16 @@ FALSE VALUE INTERACT?
 
 : START
    0 'FRAME !                        \ reset 'FRAME
+   0 FILE-BUFFER# !                  \ reset FILE-BUFFER#
    LIMIT                             \ get address of end of memory
    /BLOCK-BUFFER -                   \ reserve block buffer,
    #FILE-BUFFERS /FILE-BUFFER * -    \ file buffers,
-   0 FILE-BUFFER# !                  \ reset FILE-BUFFER#
    256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
-   DUP R0 !  DUP RP!                 \ set R0 and RP
-   CELLS/R CELLS -                   \ make room for return stack
-   DUP S0 !  SP!                     \ set S0 and SP
+   DUP 'BUFFERS !                    \ set 'BUFFERS
+   [ INCLUDE" initialize-stacks.fs" ]
    [ ' (THROW) <'FORTH ] LITERAL 'THROW !
-   R0 @  LIMIT  OVER -  ERASE        \ erase buffers
+                                     \ set 'THROW
+   'BUFFERS @  LIMIT  OVER -  ERASE  \ erase buffers
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
