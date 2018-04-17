@@ -1,11 +1,6 @@
 \ Terminal input/output
 
 \ I/O streams
-: STDIN   2 LIB ;
-: STDOUT   3 LIB ;
-: STDERR   4 LIB ;
-
-
 CREATE IO-BUFFER  CELL ALLOT
 
 : EMIT   IO-BUFFER  TUCK C!  1  STDOUT WRITE-FILE  DROP ;
