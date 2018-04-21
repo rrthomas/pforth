@@ -29,7 +29,8 @@ VALUE TARGET-'FORTH
 : 2R>   R>  R> R> SWAP  ROT >R ; COMPILING
 : 2R@   R>  R> R>  2DUP >R >R  SWAP  ROT >R ; COMPILING
 
-: DEPTH   SP@ S0 >-< CELL/ ;
+: STACK-DIRECTION   SP@ SP@ - 0<  NEGATE 2* 1- ;
+: DEPTH   SP@ S0 -  CELL/  STACK-DIRECTION * ;
 
 
 \ Characters
