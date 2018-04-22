@@ -1,3 +1,6 @@
+Have SIGINT handler in interpreter loop, so Ctrl+C first escapes execution,
+and only quits if typed in ACCEPT.
+
 Add startup script support using environment variable PFORTH_INIT (needs
 getenv), and use this to replace extended image building (works for RISC OS
 too!).
