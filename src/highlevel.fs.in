@@ -35,6 +35,7 @@ VALUE TARGET-'FORTH
 
 \ Characters
 
+\ FIXME: Add SYNONYM
 : +CHAR   1 ;
 : -CHAR   -1 ;
 : CHAR+   1+ ;
