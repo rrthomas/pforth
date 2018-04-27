@@ -4,8 +4,8 @@ bin_SCRIPTS = pforth
 data_DATA = beetle/pforth.img
 noinst_DATA = riscos/pforth-base.img
 
-EXTRA_DIST = $(portable_SRCS) $(riscos_SRCS) $(beetle_SRCS)                     \
-	make.fs beetle/make.fs							\
+EXTRA_DIST = $(portable_SRCS) $(beetle_SRCS) $(riscos_SRCS)                     \
+	make.fs beetle/make.fs riscos/make.fs					\
 	pforth.in beetle/pforth-base.img riscos/pforth-base.img
 CLEANFILES = pforth
 DISTCLEANFILES = beetle/pforth-base.img beetle/pforth.img riscos/pforth-base.img
