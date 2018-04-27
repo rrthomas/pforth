@@ -12,7 +12,7 @@ addons:
       - texlive-latex-extra
       - texlive-fonts-recommended
       - texlive-fonts-extra
-      - rubber
+      - latexmk
       - gcc-5
 
 # env:
