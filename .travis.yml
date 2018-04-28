@@ -8,13 +8,14 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages: &default_deps
-      - help2man
       - texlive-latex-extra
+      - texlive-science
       - texlive-fonts-recommended
       - texlive-fonts-extra
+      - help2man
       - latexmk
+      - hevea
       - gcc-5
-
 # env:
 #   global:
 #     - VERBOSE=1
