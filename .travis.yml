@@ -41,6 +41,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install help2man ; fi
   - git clone https://github.com/rrthomas/beetle.git
   - cd beetle
+  - git submodule update --init --recursive
   - ./bootstrap && ./configure --enable-silent-rules && make check && sudo make install
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ldconfig ; fi
   - cd ..
