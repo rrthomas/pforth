@@ -9,8 +9,6 @@ Document the compiler relative to the Forth 2012 standard.
 
 Add backtrace to error output.
 
-Add PAGE on Beetle (needs Beetle LIB routine).
-
 Support objects.
 
 Support locals.
