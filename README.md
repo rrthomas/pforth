@@ -36,7 +36,8 @@ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER'S RISK.
 
 Beetle is required (see above).
 
-To build the documentation, a comprehensive TeX system such as TeXLive is required.
+To build the documentation, a comprehensive TeX system such as TeXLive is
+required.
 
 ### Building a release
 
