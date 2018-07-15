@@ -18,8 +18,8 @@ to someone.
 (I am aware that there are other Forth compilers called pForth; the
 duplication was unintentional.)
 
-pForth comes pre-compiled for the Beetle VM (`src/beetle/pforth`)
-and for RISC OS 3 (`!pForth`). Beetle is a portable C program.
+pForth comes pre-compiled for the Beetle VM (`src/beetle/pforth.img`)
+and for RISC OS 3 (`!pForth`).
 
 See `doc/pforth.pdf` for ANSI conformance information.
 
