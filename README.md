@@ -34,7 +34,14 @@ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER'S RISK.
 
 ## Installation
 
-Beetle is required (see above).
+Beetle or RISC OS is required (see above). If the native build architecture
+is not supported, Beetle is automatically searched for.
+
+To choose the host and/or build system manually, pass the `--host=ARCH` or
+`--build=ARCH` arguments to `configure`.
+
+To give the path to a VM executor, set the `ac_cv_path_HOST_EXECUTOR` or
+`ac_cv_path_BUILD_EXECUTOR` environment variables.
 
 To build the documentation, a comprehensive TeX system such as TeXLive is
 required.

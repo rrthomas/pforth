@@ -1,0 +1,26 @@
+# Source Makefile.am
+
+noinst_DATA = pforth-base.img
+EXTRA_DIST = $(host_SRCS) pforth-base.img make.fs
+DISTCLEANFILES = pforth-base.img
+BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/../$(build)/pforth-base.img
+
+highlevel.fs: $(srcdir)/../highlevel.fs.in
+	cd $(top_builddir); ./config.status --file=src/highlevel.fs
+
+include $(srcdir)/../host_src.am
+
+# Triple test (if building on host)
+pforth-base.img: $(host_SRCS)
+	export srcs="$(host_SRCS) make.fs"; $(do_build_prep) && \
+	$(BUILD_PFORTH) make-base.fs && \
+	if test "$(host)" = "$(build)" -a "$(target)" = "$(host)"; then \
+		mv pforth-new pforth-new-0 && \
+		$(BUILD_EXECUTOR) pforth-new-0 make-base.fs && \
+		cmp pforth-new pforth-new-0 && \
+		rm pforth-new-0; \
+	fi && \
+	mv pforth-new $@
+
+loc-local:
+	$(CLOC) $(host_SRCS)
