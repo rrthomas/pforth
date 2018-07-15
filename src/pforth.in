@@ -1,2 +1,2 @@
 #!/bin/sh
-@BEETLEI@ @datadir@/pforth.img "$@"
+@HOST_EXECUTOR@ @datadir@/pforth.img "$@"

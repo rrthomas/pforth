@@ -7,13 +7,55 @@ AC_CONFIG_MACRO_DIR(m4)
 
 dnl Check for programs
 gl_EARLY
-AC_PROG_MKDIR_P
 AC_PROG_LN_S
-AC_PATH_PROG(BEETLE, beetle, AC_MSG_ERROR([Beetle not found]))
-AC_PATH_PROG(BEETLEI, beetlei, AC_MSG_ERROR([beetlei not found]))
 AC_PATH_PROG(LATEXMK, latexmk, true)
 gl_INIT
 
+dnl Check build and host types (native or VM)
+AC_DEFUN([PFORTH_BUILD_EXECUTOR],
+  [AC_PATH_PROG(BUILD_EXECUTOR, [$1],
+    AC_MSG_ERROR([Could not find executor $1 in PATH]))])
+
+AS_CASE([$build],
+  [arm*-riscos], [BUILD_EXECUTOR=""],
+  [beetle*], [PFORTH_BUILD_EXECUTOR([beetle])],
+  [AC_PATH_PROGS(BUILD_EXECUTOR, [beetle],
+    [AC_MSG_ERROR([No build executor found for pForth])])
+    build=`basename $BUILD_EXECUTOR`])
+AC_SUBST([build])
+AC_SUBST([BUILD_EXECUTOR])
+
+AS_IF([test "$HOST_EXECUTOR" = ""],
+  AS_CASE([$host],
+    [""], [HOST_EXECUTOR=$BUILD_EXECUTOR; host=$build],
+    [arm*-riscos], [HOST_EXECUTOR=""],
+    [beetle*], [HOST_EXECUTOR="beetle"],
+    [AC_MSG_ERROR([pForth does not support host $host])]))
+AC_SUBST([host])
+AC_SUBST([HOST_EXECUTOR])
+
+AC_MSG_NOTICE([Building system: $build])
+AS_IF([test "$BUILD_EXECUTOR" != ""],
+  AC_MSG_NOTICE([using VM: $BUILD_EXECUTOR]))
+AC_MSG_NOTICE([Building to install on host: $host])
+AS_IF([test "$HOST_EXECUTOR" != ""],
+  AC_MSG_NOTICE([using VM: $HOST_EXECUTOR]))
+
+dnl Code counting
+AM_EXTRA_RECURSIVE_TARGETS([loc])
+AC_PATH_PROG(CLOC, cloc, true)
+CLOC_OPTS=--force-lang="Forth",fs
+AC_SUBST([CLOC_OPTS])
+
 dnl Generate output files
-AC_CONFIG_FILES([Makefile lib/Makefile src/Makefile src/highlevel.fs doc/Makefile extras/Makefile])
+AC_CONFIG_FILES([
+  Makefile
+  lib/Makefile
+  src/Makefile
+  src/beetle/Makefile
+  src/riscos/Makefile
+  src/highlevel.fs
+  doc/Makefile
+  extras/Makefile
+])
 AC_OUTPUT

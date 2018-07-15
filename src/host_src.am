@@ -1,0 +1,16 @@
+# Fragment needed in both src/Makefile.am and host.am
+
+host_SRCS = accept.fs compiler2.fs compiler4.fs compiler5.fs control1.fs	\
+	control2.fs defer-fetch-store.fs defining.fs does.fs highlevel.fs	\
+	interpreter3.fs make-base.fs resolver.fs vocabulary.fs assembler.fs	\
+	bracket-does.fs compiler1.fs compiler.fs compiler-postpone.fs		\
+	does-resolver.fs fileio.fs initialize.fs initialize-stacks.fs		\
+	os-compiler.fs os.fs platform.fs primitives.fs save.fs			\
+	target-forth.fs target-util.fs terminal.fs util.fs
+
+do_build_prep = \
+	if test $(srcdir) != $(builddir); then \
+	    for i in $$srcs; do \
+		$(LN_S) -f $(abs_top_srcdir)/src/$(host)/"$$i" . ; \
+	    done; \
+	fi
