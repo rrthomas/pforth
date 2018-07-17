@@ -283,7 +283,7 @@ VARIABLE SCR
 16 DUP CONSTANT LINES/BLOCK
 * DUP CONSTANT /BLOCK   \ save value for later
 : OPEN-BLOCKS   ( fam -- fid )   "BLOCK ?DUP IF  COUNT ROT OPEN-FILE
-   ABORT" blocks file can't be opened"  ELSE ." no blocks file" ABORT  THEN ;
+   ABORT" blocks file can't be opened"  ELSE TRUE ABORT" no blocks file"  THEN ;
 : @BLOCK   ( c-addr u -- )   R/O OPEN-BLOCKS  >R  1- 10 LSHIFT U>UD
    R@ REPOSITION-FILE DROP  /BLOCK R@ READ-FILE 2DROP  R> CLOSE-FILE DROP ;
 : !BLOCK   ( c-addr u -- )   W/O OPEN-BLOCKS  >R  1- 10 LSHIFT U>UD
@@ -741,7 +741,7 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
    BEGIN  CR REFILL WHILE
       INTERPRET  ?STACK  STATE @ 0= IF  ." ok"  THEN
    REPEAT
-   ." parse area empty" ABORT ;
+   TRUE ABORT" parse area empty" ;
 : HANDLE-ERROR ( n -- )
    CASE
       -1 OF  ( ABORT )  ENDOF
@@ -843,7 +843,7 @@ INCLUDE" compiler4.fs"
    TO SOURCE-ID  0 BLK !             \ set up new input source
    ALLOCATE-BUFFER IF                \ allocate new file buffer
       SOURCE-ID CLOSE-FILE
-      ." no more file buffers"  ABORT
+      TRUE ABORT" no more file buffers"
    THEN
    TO FIB
    REFILL DUP IF                     \ check for #! line at start of file
@@ -870,8 +870,8 @@ INCLUDE" compiler4.fs"
 : INCLUDED   ( i*x c-addr u -- j*x )
    2DUP  R/O OPEN-FILE IF            \ open file; if error,
       DROP                           \ get rid of bad fid
-      TYPE ."  can't be INCLUDED"    \ give error message
-      ABORT                          \ and abort
+      \ TYPE FIXME: include file name in error message
+      TRUE ABORT" file can't be INCLUDED" \ abort with error message
    THEN
    >R                                \ save fid
    2DROP                             \ drop c-addr u
@@ -1038,8 +1038,9 @@ VARIABLE CURSORX   \ cursor x position during WORDS
          R>  SWAP >R  SP!  R>        \ reset data stack, keep exception no.
          R>RESTORE-INPUT             \ reset input source
          R> 'FRAME !                 \ set pointer to next frame
-      ELSE
-         ERROR-PREFIX HANDLE-ERROR   \ if no frame, print any message,
+      ELSE                           \ if no frame,
+         ERROR-PREFIX                \ print any message
+         DUP HANDLE-ERROR CR
          HALT                        \ and halt
       THEN
    THEN ;
