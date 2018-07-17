@@ -7,7 +7,8 @@ by Reuben Thomas <rrt@sc3d.org>
 pForth is a simple ANS Forth compiler, intended for portability and study.
 It has been principally used as an environment for building other Forth
 compilers: metacompiling itself for the
-[Beetle](https://github.com/rrthomas/beetle) portable virtual machine and
+[Beetle](https://github.com/rrthomas/beetle) and
+[SMite](https://github.com/rrthomas/smite) portable virtual machines and
 the ARM-based [RISC OS](https://www.riscosopen.org/); compiling a cut-down
 version called mForth (now defunct) for RISC OS and Beetle, and building
 [Machine Forth](https://rrt.sc3d.org/Software/Forth) systems.
@@ -18,8 +19,8 @@ to someone.
 (I am aware that there are other Forth compilers called pForth; the
 duplication was unintentional.)
 
-pForth comes pre-compiled for the Beetle VM (`src/beetle/pforth.img`)
-and for RISC OS 3 (`!pForth`).
+pForth comes pre-compiled for the Beetle VM (`src/beetle/pforth.img`), the
+SMite VM (`src/smite/pforth.img`), and for RISC OS 3 (`!pForth`).
 
 See `doc/pforth.pdf` for ANSI conformance information.
 

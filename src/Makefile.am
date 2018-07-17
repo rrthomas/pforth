@@ -1,6 +1,6 @@
 # Source Makefile.am
 
-SUBDIRS = beetle riscos
+SUBDIRS = beetle riscos smite
 
 bin_SCRIPTS = pforth
 if HAVE_RLWRAP

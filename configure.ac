@@ -19,7 +19,8 @@ AC_DEFUN([PFORTH_BUILD_EXECUTOR],
 AS_CASE([$build],
   [arm*-riscos], [BUILD_EXECUTOR=""],
   [beetle*], [PFORTH_BUILD_EXECUTOR([beetle])],
-  [AC_PATH_PROGS(BUILD_EXECUTOR, [beetle],
+  [smite*], [PFORTH_BUILD_EXECUTOR([smite])],
+  [AC_PATH_PROGS(BUILD_EXECUTOR, [beetle smite],
     [AC_MSG_ERROR([No build executor found for pForth])])
     build=`basename $BUILD_EXECUTOR`])
 AC_SUBST([build])
@@ -30,6 +31,7 @@ AS_IF([test "$HOST_EXECUTOR" = ""],
     [""], [HOST_EXECUTOR=$BUILD_EXECUTOR; host=$build],
     [arm*-riscos], [HOST_EXECUTOR=""],
     [beetle*], [HOST_EXECUTOR="beetle"],
+    [smite*], [HOST_EXECUTOR="smite"],
     [AC_MSG_ERROR([pForth does not support host $host])]))
 AC_SUBST([host])
 AC_SUBST([HOST_EXECUTOR])
@@ -59,6 +61,7 @@ AC_CONFIG_FILES([
   src/pforthi
   src/beetle/Makefile
   src/riscos/Makefile
+  src/smite/Makefile
   src/highlevel.fs
   doc/Makefile
   extras/Makefile
