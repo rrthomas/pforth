@@ -1,0 +1,5 @@
+#!/bin/sh
+# Run @PACKAGE_NAME@ with command-line completion and history
+# (c) Reuben Thomas 2018
+
+@RLWRAP@ --complete-filenames --history-filename $HOME/.@PACKAGE@_history pforth "$@"

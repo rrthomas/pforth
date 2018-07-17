@@ -41,6 +41,10 @@ AC_MSG_NOTICE([Building to install on host: $host])
 AS_IF([test "$HOST_EXECUTOR" != ""],
   AC_MSG_NOTICE([using VM: $HOST_EXECUTOR]))
 
+dnl Readline wrapper
+AC_PATH_PROG(RLWRAP, rlwrap)
+AM_CONDITIONAL([HAVE_RLWRAP], [test -n "$ac_cv_path_RLWRAP"])
+
 dnl Code counting
 AM_EXTRA_RECURSIVE_TARGETS([loc])
 AC_PATH_PROG(CLOC, cloc, true)
@@ -52,6 +56,7 @@ AC_CONFIG_FILES([
   Makefile
   lib/Makefile
   src/Makefile
+  src/pforthi
   src/beetle/Makefile
   src/riscos/Makefile
   src/highlevel.fs

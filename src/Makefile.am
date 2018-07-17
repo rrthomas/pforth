@@ -3,6 +3,9 @@
 SUBDIRS = beetle riscos
 
 bin_SCRIPTS = pforth
+if HAVE_RLWRAP
+bin_SCRIPTS += pforthi
+endif
 data_DATA = $(host)/pforth.img
 BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/$(build)/pforth-base.img
 
