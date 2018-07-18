@@ -19,6 +19,7 @@ VALUE TARGET-'FORTH
 
 \ Arithmetic #1
 
+PROVIDE: <>   = INVERT ; [THEN]
 PROVIDE: 0<   0 < ; [THEN]
 PROVIDE: 0>   0 > ; [THEN]
 PROVIDE: 0=   0 = ; [THEN]
