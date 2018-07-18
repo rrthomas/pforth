@@ -135,6 +135,8 @@ HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
 ' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
 ' DEFER >DOES> RESOLVES (DEFER)
 ' VOCABULARY >DOES> RESOLVES (VOCABULARY)
+' ABORT <'FORTH TO SCAN-TEST
+' ABORT <'FORTH TO VISIBLE?
 ' NEW-FORTH >BODY @ @  PREVIOUS  DUP RELOCATE   \ relocate the new dictionary
    \ leave initial branch target on the stack
 >COMPILERS<
