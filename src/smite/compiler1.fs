@@ -22,7 +22,7 @@ PREVIOUS
 IMMEDIATE COMPILING
 
 \ Leave UNLINK, in next cell where it can be patched by DOES>
-: CREATE,   LINK,  $42 C,  $23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
+: CREATE,   LINK,  $42 C,  $1C C,  $1E C,  NOPALIGN  UNLINK,  NOPALIGN ;
 : >BODY   2 CELLS + ;
 ( >DOES given an execution token returns the address of the branch to the
 DOES> code. There is always at least an aligned cell after this address free

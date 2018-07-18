@@ -19,6 +19,11 @@ VALUE TARGET-'FORTH
 
 \ Arithmetic #1
 
+PROVIDE: 1+   1 + ; [THEN]
+PROVIDE: 1-   1 - ; [THEN]
+PROVIDE: CELL+   CELL + ; [THEN]
+PROVIDE: CELL-   CELL - ; [THEN]
+
 PROVIDE: <>   = INVERT ; [THEN]
 PROVIDE: 0<   0 < ; [THEN]
 PROVIDE: 0>   0 > ; [THEN]
