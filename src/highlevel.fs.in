@@ -17,6 +17,14 @@ VALUE TARGET-'FORTH
 : >'FORTH   'FORTH +  TARGET-'FORTH - ;
 
 
+\ Arithmetic #1
+
+PROVIDE: 0<   0 < ; [THEN]
+PROVIDE: 0>   0 > ; [THEN]
+PROVIDE: 0=   0 = ; [THEN]
+PROVIDE: 0<>   0 <> ; [THEN]
+
+
 \ Stack manipulation
 
 : 2DUP   OVER OVER ;
@@ -44,7 +52,7 @@ VALUE TARGET-'FORTH
 : CHAR/ ; IMMEDIATE
 
 
-\ Arithmetic
+\ Arithmetic #2
 
 PROVIDE: MIN   2DUP > IF  SWAP THEN  DROP ; [THEN]
 PROVIDE: MAX   2DUP < IF  SWAP THEN  DROP ; [THEN]

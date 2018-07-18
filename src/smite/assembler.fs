@@ -37,8 +37,8 @@ ASSEMBLER DEFINITIONS
 
 $07 $00 0OPS  BNEXT00 BDUP    BDROP   BSWAP   BOVER   BROT    B-ROT   BTUCK
 $0F $08 0OPS  BNIP    BPICK   BROLL   B?DUP   B>R     BR>     BR@     B<
-$17 $10 0OPS  B>      B=      B<>     B0<     B0>     B0=     B0<>    BU<
-$1F $18 0OPS  BU>     B0      B1      B-1     BCELL   B-CELL  B+      B-
+$12 $10 0OPS  B>      B=      B<>
+$1F $17 0OPS  BU<     BU>     B0      B1      B-1     BCELL   B-CELL  B+      B-
 $27 $20 0OPS  B>-<    B1+     B1-     BCELL+  BCELL-  B*      B/      BMOD
 $2E $28 0OPS  B/MOD   BU/MOD  BS/REM  B2/     BCELLS  BABS    BNEGATE
 $37 $31 0OPS          BINVERT BAND    BOR     BXOR    BLSHIFT BRSHIFT B1LSHIFT
