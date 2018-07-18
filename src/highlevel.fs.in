@@ -1025,8 +1025,8 @@ VARIABLE CURSORX   \ cursor x position during WORDS
       S" FILE-EXT"           "OF  TRUE               "ENDOF
       S" FLOORED"            "OF  TRUE               "ENDOF
       S" MAX-CHAR"           "OF  255                "ENDOF
-      S" MAX-D"              "OF  -1 1RSHIFT S>D     "ENDOF
-      S" MAX-N"              "OF  -1 1RSHIFT         "ENDOF
+      S" MAX-D"              "OF  -1 1 RSHIFT S>D    "ENDOF
+      S" MAX-N"              "OF  -1 1 RSHIFT        "ENDOF
       S" MAX-U"              "OF  -1                 "ENDOF
       S" MAX-UD"             "OF  -1 0               "ENDOF
       S" RETURN-STACK-CELLS" "OF  RETURN-STACK-CELLS "ENDOF

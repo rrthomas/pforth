@@ -42,8 +42,8 @@ $1F $17 0OPS  BU<     BU>     B0      B1      B-1     BCELL   B-CELL  B+      B-
 $20     OPLESS B>-<
 $27 $25 0OPS  B*      B/      BMOD
 $2E $28 0OPS  B/MOD   BU/MOD  BS/REM  B2/     BCELLS  BABS    BNEGATE
-$37 $31 0OPS          BINVERT BAND    BOR     BXOR    BLSHIFT BRSHIFT B1LSHIFT
-$3F $38 0OPS  B1RSHIFT B@     B!      BC@     BC!     B+!     BSP@    BSP!
+$36 $31 0OPS          BINVERT BAND    BOR     BXOR    BLSHIFT BRSHIFT
+$3F $39 0OPS          B@      B!      BC@     BC!     B+!     BSP@    BSP!
 $47 $40 0OPS  BRP@    BRP!    BEP@    BS0@    B#S     BR0@    B#R     B'THROW@
 $4B $48 0OPS  B'THROW! BMEMORY@ B'BAD@ B-ADDRESS@
 $4E $4C BOPS  BBRANCH  B?BRANCH
