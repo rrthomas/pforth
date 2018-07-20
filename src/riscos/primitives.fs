@@ -4,11 +4,6 @@
 CR .( Assembler words )
 
 
-\ Compiler #1
-
-VARIABLE 'THROW
-
-
 \ Stack manipulation
 
 CODE DUP
@@ -250,7 +245,21 @@ TOP R0 TOP MUL,
 END-SUB
 
 
-\ Compiler #2
+\ Defining
+
+CODE (CREATE)
+TOP SP PUSH,
+TOP LR 252 24 LSHIFT # BIC,
+UNLINK,
+END-CODE
+COMPILING
+
+INCLUDE" bracket-does.fs"
+
+
+\ Compiler
+
+VARIABLE 'THROW
 
 CODE (LITERAL)
 TOP SP PUSH,
@@ -514,18 +523,6 @@ R0 TOP MOV,
 TOP SP POP,
 PC R0 0@ LDR,
 END-CODE
-
-
-\ Defining
-
-CODE (CREATE)
-TOP SP PUSH,
-TOP LR 252 24 LSHIFT # BIC,
-UNLINK,
-END-CODE
-COMPILING
-
-INCLUDE" bracket-does.fs"
 
 
 \ Stack pointers
