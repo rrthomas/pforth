@@ -28,7 +28,7 @@ DISTCLEANFILES = $(host)/pforth.img
 
 portable_SRCS = compiler2.fs compiler4.fs compiler5.fs control1.fs		\
 	control2.fs defer-fetch-store.fs defining.fs does.fs highlevel.fs	\
-	interpreter3.fs make-base.fs resolver.fs vocabulary.fs
+	interpreter3.fs make-base.fs resolver.fs vocabulary.fs will-do.fs
 
 # FIXME: Add support for HOST_EXECUTORI
 do_subst = sed -e 's,[@]datadir[@],$(datadir),g' \
