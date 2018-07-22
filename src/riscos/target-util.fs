@@ -43,7 +43,6 @@ IMMEDIATE COMPILING
 : OS"   ( name )   ( regs-in regs-out -- )   [CHAR] " PARSE OS#
    POSTPONE OS ; IMMEDIATE COMPILING
 
-\ FIXME: "os-primitives" does not really describe the following
 \ STUB FOO creates an empty word if FOO doesn't exist.
 \ This is used to POSTPONE target words that don't exist
 \ on the host.
