@@ -39,8 +39,7 @@ $07 $00 0OPS  BNEXT00 BDUP    BDROP   BSWAP   BOVER   BROT    B-ROT   BTUCK
 $0F $08 0OPS  BNIP    BPICK   BROLL   B?DUP   B>R     BR>     BR@     B<
 $11 $10 0OPS  B>      B=
 $18 $17 0OPS  BU<     BU>
-$1F $1E 0OPS  B+      B-
-$20     OPLESS B>-<
+$1E     OPLESS B+
 $27 $25 0OPS  B*      B/      BMOD
 $2A $28 0OPS  B/MOD   BU/MOD  BS/REM
 $2E     OPLESS BNEGATE
