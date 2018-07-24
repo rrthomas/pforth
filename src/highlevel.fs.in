@@ -45,6 +45,8 @@ PROVIDE: 0<>   0 <> ; [THEN]
 
 \ Stack manipulation
 
+PROVIDE: ?DUP   DUP IF  DUP  THEN ; [THEN]
+
 : 2DUP   OVER OVER ;
 : 2DROP   DROP DROP ;
 : 2SWAP   3 ROLL  3 ROLL ;
