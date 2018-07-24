@@ -44,8 +44,9 @@ $27 $25 0OPS  B*      B/      BMOD
 $2A $28 0OPS  B/MOD   BU/MOD  BS/REM
 $2E     OPLESS BNEGATE
 $36 $31 0OPS          BINVERT BAND    BOR     BXOR    BLSHIFT BRSHIFT
-$3F $39 0OPS          B@      B!      BC@     BC!     B+!     BSP@    BSP!
-$47 $40 0OPS  BRP@    BRP!    BEP@    BS0@    B#S     BR0@    B#R     B'THROW@
+$3C $39 0OPS  B@      B!      BC@     BC!
+$41 $3E 0OPS  BSP@    BSP!    BRP@    BRP!
+$47 $42 0OPS  BEP@    BS0@    B#S     BR0@    B#R     B'THROW@
 $4B $48 0OPS  B'THROW! BMEMORY@ B'BAD@ B-ADDRESS@
 $4E $4C BOPS  BBRANCH  B?BRANCH
 $51 $50 0OPS  BEXECUTE B@EXECUTE

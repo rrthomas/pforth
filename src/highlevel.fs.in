@@ -59,6 +59,11 @@ PROVIDE: 0<>   0 <> ; [THEN]
 : DEPTH   SP@ S0 -  CELL/  STACK-DIRECTION * ;
 
 
+\ Memory #1
+
+PROVIDE: +!   TUCK @  +  SWAP ! ; [THEN]
+
+
 \ Characters
 
 \ FIXME: Add SYNONYM
@@ -202,7 +207,7 @@ INCLUDE" terminal.fs"   \ terminal I/O words
 INCLUDE" control1.fs"
 
 
-\ Memory
+\ Memory #2
 
 : 2@   DUP CELL+ @  SWAP @ ;
 : 2!   TUCK !  CELL+ ! ;
