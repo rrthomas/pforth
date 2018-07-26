@@ -1,3 +1,5 @@
+1 CONSTANT #INITIAL-BRANCH-CELLS
+
 \ Convert SWI names to numbers
 \ ad-hoc list for metacompiling
 : OS#   ( c-addr n -- u )
