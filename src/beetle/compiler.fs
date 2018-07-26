@@ -3,7 +3,7 @@
 \ Reuben Thomas
 
 
-\ Branches
+\ Packing opcodes into cells
 
 \ FIXME: once assembler "built-in", remove the following
 : FITS   ( x addr -- flag )   DUP ALIGNED >-<  DUP IF  8 * 1-  1 SWAP LSHIFT
