@@ -1,8 +1,8 @@
 \ Forward branches
 
 \ RESOLVERs allow forward branches. Define a resolver, use it in definitions
-\ and then use RESOLVE: or RESOLVES to resolve it. RESOLVERs may be POSTPONEd
-\ but the code to POSTPONE the RESOLVER will not itself be resolved.
+\ and then use RESOLVES to resolve it. RESOLVERs may be POSTPONEd but the
+\ code to POSTPONE the RESOLVER will not itself be resolved.
 : (RESOLVER)   ( name )
    CREATE IMMEDIATE COMPILING        \ create RESOLVER
    ,                                 \ end-of-list marker (left by caller)
@@ -19,8 +19,7 @@
    1 (RESOLVER) ;
 
 \ RESOLVE resolves all occurrences of the RESOLVER whose execution token is
-\ from with calls to to. RESOLVE must not be used directly, but via RESOLVE:
-\ or RESOLVES.
+\ from with calls to to. RESOLVE must not be used directly, but via RESOLVES.
 : RESOLVE   ( from to -- )
    SWAP >BODY @                      \ get first address in branch list
    DUP 1 AND >R                      \ get and save call/branch flag
@@ -38,13 +37,3 @@
 
 \ RESOLVES is used to resolve WILL-DO defining words (see WILL-DO).
 : RESOLVES   ( name )   ( a-addr -- )   '  SWAP RESOLVE ;
-
-\ RESOLVE: is used to supply the definition of a RESOLVER; the branch list is
-\ resolved to calls to the new definition.
-: RESOLVE:   ( name )
-   BL WORD                           \ get name
-   DUP FIND 0= IF  UNDEFINED  THEN   \ get RESOLVER's execution token
-   TRUE OVER SMUDGE!                 \ remove RESOLVER from search order
-   SWAP HEADER  TRUE SMUDGE          \ start creating new definition
-   HERE RESOLVE                      \ resolve calls to new definition
-   LINK,  ] ;                        \ add link code and start compiling
