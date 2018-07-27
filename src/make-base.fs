@@ -97,7 +97,7 @@ PREVIOUS
 
 \ Constants
 
-32 1024 * CONSTANT SIZE
+64 1024 * CONSTANT SIZE
 
 NATIVE  ' LOCAL? TO 'SELECTOR \ now meta-compiler is built, allow it to run
 
