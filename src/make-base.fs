@@ -163,7 +163,7 @@ TUCK + -ROT +   \ ( s l 'FORTH+(#T+n)CELLS H+(#T+n)CELLS )
 OVER #INITIAL-BRANCH-CELLS CELLS + CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+(n CELLS) )
 #THREADS CELLS MOVE   \ copy threads ( s l )
 
-OVER TUCK DUP 2ROT  + 'FORTH -  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
+OVER SWAP 2SWAP 'FORTH ROT  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
 
 S" pforth-new" SAVE-OBJECT   \ write system image
 
