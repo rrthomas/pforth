@@ -3,6 +3,12 @@
 \ Reuben Thomas   started 15/4/96
 
 MARKER DISPOSE
+
+\ Halt immediately on exception, for easier debugging
+: HALT-HANDLER   HALT ;
+' HALT-HANDLER 'THROW!
+
+
 DEPTH VALUE INITIAL-DEPTH   \ Note initial stack depth
 INCLUDE" platform.fs"
 CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
