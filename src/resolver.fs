@@ -1,39 +1,26 @@
 \ Forward branches
 
+INCLUDE" resolver-branch.fs"
+
+
 \ RESOLVERs allow forward branches. Define a resolver, use it in definitions
 \ and then use RESOLVES to resolve it. RESOLVERs may be POSTPONEd but the
 \ code to POSTPONE the RESOLVER will not itself be resolved.
-: (RESOLVER)   ( name )
+: RESOLVER   ( name )
    CREATE IMMEDIATE COMPILING        \ create RESOLVER
-   ,                                 \ end-of-list marker (left by caller)
+   0 ,                               \ end-of-list marker (left by caller)
    DOES>
       HERE                           \ address of branch to resolve
-      SWAP DUP @  DUP 1 AND          \ get previous branch address & type flag
-      SWAP ,                         \ compile previous branch address & flag
-      ROT OR SWAP ! ;                \ record next branch in list
-                                     \ with call/branch flag in LSB
-: RESOLVER   ( name )
-   0 (RESOLVER) ;
-\ A RESOLVER which compiles branches instead of calls
-: BRANCH-RESOLVER   ( name )
-   1 (RESOLVER) ;
-
-\ RESOLVE resolves all occurrences of the RESOLVER whose execution token is
-\ from with calls to to. RESOLVE must not be used directly, but via RESOLVES.
-: RESOLVE   ( from to -- )
-   SWAP >BODY @                      \ get first address in branch list
-   DUP 1 AND >R                      \ get and save call/branch flag
-   BEGIN  1 INVERT AND ?DUP WHILE    \ chain down list until null marker,
-                                     \ clearing call/branch flag
-      DUP @                          \ get next address in list
-      -ROT  2DUP SWAP  R@ IF         \ compile the call or branch
-         BRANCH
-      ELSE
-         CALL
-      THEN
-      SWAP
-   REPEAT
-   R> 2DROP ;                        \ drop to and flag
+      OVER @ ,                       \ compile previous branch address
+      SWAP ! ;                       \ record next branch in list
 
 \ RESOLVES is used to resolve WILL-DO defining words (see WILL-DO).
-: RESOLVES   ( name )   ( a-addr -- )   '  SWAP RESOLVE ;
+: RESOLVES   ( name )   ( a-addr -- )
+   '
+   >BODY @                           \ get first address in branch list
+   BEGIN  ?DUP WHILE                 \ chain down list until null marker
+      DUP @                          \ get next address in list
+      -ROT 2DUP SWAP RESOLVER-BRANCH \ compile the call or branch
+      SWAP
+   REPEAT
+   DROP ;                            \ drop to

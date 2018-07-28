@@ -1099,7 +1099,6 @@ INCLUDE" resolver.fs"
 : >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
 
 INCLUDE" will-do.fs"
-INCLUDE" does-resolver.fs"
 
 \ REDEFINERs swap the execution semantics of WILL-DOs between the old and
 \ new semantics. u is the number of words to swap.
