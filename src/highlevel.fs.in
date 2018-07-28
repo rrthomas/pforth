@@ -340,7 +340,7 @@ CELL+ CONSTANT /BLOCK-BUFFER   \ uses value saved above
 : UPDATED?   ( -- f )   'BUFFER @  0< ;
 : (BUFFER)   ( u -- c-addr f )
    'BUFFER                           \ address of block buffer
-   TUCK @ $7FFFFFFF AND  OVER = IF    \ if the current block was requested,
+   TUCK @ $7FFFFFFF AND  OVER = IF   \ if the current block was requested,
       DROP >BLOCK  TRUE EXIT         \ leave address and true flag, and exit
    THEN
    UPDATED? IF                       \ was the last block updated?
