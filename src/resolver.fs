@@ -11,7 +11,7 @@ INCLUDE" resolver-branch.fs"
    0 ,                               \ end-of-list marker (left by caller)
    DOES>
       HERE                           \ address of branch to resolve
-      OVER @ ,                       \ compile previous branch address
+      OVER @  ALIGN  ,               \ compile previous branch address
       SWAP ! ;                       \ record next branch in list
 
 \ RESOLVES is used to resolve WILL-DO defining words (see WILL-DO).
@@ -19,7 +19,7 @@ INCLUDE" resolver-branch.fs"
    '
    >BODY @                           \ get first address in branch list
    BEGIN  ?DUP WHILE                 \ chain down list until null marker
-      DUP @                          \ get next address in list
+      DUP  ALIGNED @                 \ get next address in list
       -ROT 2DUP SWAP RESOLVER-BRANCH \ compile the call or branch
       SWAP
    REPEAT
