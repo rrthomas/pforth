@@ -11,4 +11,7 @@
 
 \ Data structures
 
-: CREATE,   LINK,  NOPALIGN  POSTPONE (CREATE)  UNLINK,  NOPALIGN ;
+\ FIXME: Hack to change CALL to BRANCH; instead, want POSTPONE that does
+\ BRANCH (including version in make-base.fs)
+: CREATE,   $42 C, POSTPONE (CREATE) $4C HERE 7 - C! ;
+: (DOES)   POSTPONE (CREATE) ; IMMEDIATE COMPILING

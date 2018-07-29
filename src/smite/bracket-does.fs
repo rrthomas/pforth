@@ -1,1 +1,1 @@
-: (DOES) ; IMMEDIATE COMPILING
+\ (DOES) is in compiler-postpone.fs
