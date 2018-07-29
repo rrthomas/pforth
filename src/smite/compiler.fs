@@ -6,8 +6,6 @@
 \ Branches
 
 \ FIXME: once assembler "built-in", remove the following
-: FITS   ( x addr -- flag )   DUP ALIGNED >-<  DUP IF  8 * 1-  1 SWAP LSHIFT
-   SWAP DUP 0< IF  INVERT  THEN  U>  ELSE NIP  THEN ;
 : FIT,   ( x -- )   HERE DUP ALIGNED >-<  0 ?DO  DUP C,  8 RSHIFT  LOOP
    DROP ;
 : NOPALIGN   0 FIT, ;
