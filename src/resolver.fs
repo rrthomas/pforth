@@ -23,4 +23,4 @@ INCLUDE" resolver-branch.fs"
       -ROT 2DUP SWAP RESOLVER-BRANCH \ compile the call or branch
       SWAP
    REPEAT
-   DROP ;                            \ drop to
+   DROP ;                            \ drop a-addr

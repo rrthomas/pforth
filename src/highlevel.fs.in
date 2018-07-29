@@ -186,8 +186,11 @@ VARIABLE 'BUFFERS
 
 
 INCLUDE" os-compiler.fs"   \ words necessary for the machine
+: CODE-MOVE   CELLS OVER + SWAP ?DO  DUP @  I CODE!  CELL+
+   CELL +LOOP  DROP ;
 INCLUDE" compiler.fs"
 DEFER CURRENT-COMPILE,  ' COMPILE, <'FORTH IS CURRENT-COMPILE,
+INCLUDE" branch-cells.fs" CONSTANT #BRANCH-CELLS
 INCLUDE" compiler1.fs"
 INCLUDE" compiler-postpone.fs"
 INCLUDE" defer-fetch-store.fs"
@@ -1087,38 +1090,6 @@ VARIABLE CURSORX   \ cursor x position during WORDS
          HALT                        \ and halt
       THEN
    THEN ;
-
-
-INCLUDE" resolver.fs"
-
-
-\ Redefinition
-
-\ >DOES>, given the xt of a defining word, returns the address of the DOES>
-\ code.
-: >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
-
-INCLUDE" will-do.fs"
-
-\ REDEFINERs swap the execution semantics of WILL-DOs between the old and
-\ new semantics. u is the number of words to swap.
-: REDEFINER   ( name )   ( old1 new1...oldu newu u -- )
-   CREATE  DUP ,                     \ write the no. of words to redefine
-   0 ?DO                             \ for each word
-      OVER ,                         \ record the old xt
-      HERE 0 ,                       \ compile a branch (FIXME: do this portably)
-      -ROT BRANCH                    \ from the old word to the new
-   LOOP
-   DOES>
-      DUP @                          \ no. of words to redefine
-      CELLS 2*  SWAP CELL+           \ get start address and offset of data
-      TUCK + SWAP ?DO
-         I CELL+ @                   \ get code to patch word with
-         I @                         \ get address to patch
-         DUP @                       \ get old contents of cell to patch
-         I CELL+ !                   \ save old contents
-         CODE!                       \ patch word
-      [ 2 CELLS ] LITERAL +LOOP ;
 
 
 INCLUDE" os.fs"   \ include OS access words

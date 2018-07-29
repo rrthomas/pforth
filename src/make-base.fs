@@ -14,6 +14,41 @@ INCLUDE" platform.fs"
 CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
 
 
+INCLUDE" resolver.fs"
+
+\ Redefinition
+
+\ >DOES>, given the xt of a defining word, returns the address of the DOES>
+\ code.
+: >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
+
+INCLUDE" will-do.fs"
+
+\ REDEFINERs swap the execution semantics of WILL-DOs between the old and
+\ new semantics. u is the number of words to swap.
+VARIABLE REDEFINER-BUFFER  #BRANCH-CELLS CELLS ALLOT
+: REDEFINER   ( name )   ( old1 new1...oldu newu u -- )
+   CREATE  DUP ,                     \ write the no. of words to redefine
+   0 ?DO                             \ for each word
+      OVER ,                         \ record the old xt
+      HERE                           \ address of branch we're about to compile
+      #BRANCH-CELLS CELLS ALLOT      \ allow space for branch
+      -ROT BRANCH                    \ compile branch from old word to the new
+   LOOP
+   DOES>
+      DUP @                          \ no. of words to redefine
+      CELLS #BRANCH-CELLS 1+ *       \ size of patch data
+      SWAP CELL+                     \ start address of patch data
+      TUCK + SWAP ?DO
+         I CELL+  DUP                \ address of code to patch word with
+         I @  DUP                    \ get address to patch
+         #BRANCH-CELLS CELLS >R      \ number of bytes to patch
+         REDEFINER-BUFFER R@ CMOVE   \ save old code temporarily
+         #BRANCH-CELLS CODE-MOVE     \ patch code
+         REDEFINER-BUFFER SWAP R> CMOVE
+                                     \ save old code
+      #BRANCH-CELLS 1+ CELLS  +LOOP ;
+
 INCLUDE" target-util.fs"
 INCLUDE" assembler.fs"
 
@@ -83,6 +118,7 @@ NATIVE ALSO FORTH DEFINITIONS
 : POSTPONE   BL WORD FIND ?DUP 0= IF UNDEFINED THEN 0> IF >COMPILE @
    CURRENT-COMPILE, ELSE C" (POSTPONE)" FIND-AND-COMPILE, ALIGN <'FORTH , THEN ;
 IMMEDIATE COMPILING
+
 PREVIOUS   \ use META POSTPONE and LINK,
 INCLUDE" bracket-create.fs"
 INCLUDE" bracket-does.fs"
