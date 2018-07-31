@@ -19,6 +19,13 @@ VALUE TARGET-'FORTH
 0 VALUE LIMIT
 
 
+\ Stack manipulation #1
+
+PROVIDE: -ROT   ROT ROT ; [THEN]
+PROVIDE: TUCK   SWAP OVER ; [THEN]
+PROVIDE: NIP   SWAP DROP ; [THEN]
+
+
 \ Arithmetic #1
 
 PROVIDE: TRUE   -1 ; [THEN]
@@ -55,7 +62,7 @@ PROVIDE: 0<>   0 <> ; [THEN]
 INCLUDE" control1.fs"
 
 
-\ Stack manipulation
+\ Stack manipulation #2
 
 PROVIDE: ?DUP   DUP IF  DUP  THEN ; [THEN]
 
