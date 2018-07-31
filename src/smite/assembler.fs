@@ -35,8 +35,8 @@ $0F $0C 0OPS  B>R     BR>     BR@     B<
 $11     OPLESS B=
 $17     OPLESS BU<
 $1E     OPLESS B+
-$27 $25 0OPS  B*      B/      BMOD
-$2A $28 0OPS  B/MOD   BU/MOD  BS/REM
+$25     OPLESS B*
+$2A $29 0OPS   BUMOD/ BSREM/
 $2E     OPLESS BNEGATE
 $36 $31 0OPS          BINVERT BAND    BOR     BXOR    BLSHIFT BRSHIFT
 $3C $39 0OPS  B@      B!      BC@     BC!
