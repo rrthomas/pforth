@@ -1,0 +1,21 @@
+#!/bin/sh
+# Install executor (used for Travis build)
+
+HOST=$1
+
+cd $HOME
+
+case $HOST in
+    beetle)
+        git clone https://github.com/rrthomas/beetle.git
+        cd beetle
+        git submodule update --init --recursive
+        ./bootstrap && ./configure --enable-silent-rules && make check && sudo make install
+        ;;
+    smite)
+        git clone https://github.com/rrthomas/smite.git
+        cd smite
+        git submodule update --init --recursive
+        ./bootstrap && ./configure --enable-silent-rules && make check && sudo make install
+        ;;
+esac
