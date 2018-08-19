@@ -7,6 +7,10 @@ LATEX_SRCS = \
 LATEX_PDFS = \
 	pforth.pdf
 
+if HAVE_LATEXMK
+dist_doc_DATA = $(LATEX_PDFS)
+endif
+
 all: pdf
 
 pdf-local: $(LATEX_PDFS)

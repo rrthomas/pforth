@@ -7,6 +7,7 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 dnl Check for programs
 AC_PROG_LN_S
 AC_PATH_PROG(LATEXMK, latexmk, true)
+AM_CONDITIONAL([HAVE_LATEXMK], [test "$ac_cv_path_LATEXMK" != "true"])
 
 dnl Check build and host types (native or VM)
 AC_DEFUN([PFORTH_BUILD_EXECUTOR],
