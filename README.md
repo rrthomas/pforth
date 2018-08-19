@@ -65,7 +65,7 @@ required. Run:
 
 ```
 git submodule update --init --recursive
-./bootstrap
+autoreconf -fi
 ```
 
 and then proceed as above for a release build.

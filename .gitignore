@@ -6,5 +6,4 @@ Makefile.in
 /config.status
 /configure
 /INSTALL
-/lib
 /pforth-*.tar.gz

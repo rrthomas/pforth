@@ -1,10 +1,8 @@
 # Top-level Makefile.am
 
-SUBDIRS = lib src doc extras
+SUBDIRS = src doc extras
 
-ACLOCAL_AMFLAGS = -I m4
-
-EXTRA_DIST = README.md m4/gnulib-cache.m4
+EXTRA_DIST = README.md
 
 release: distcheck
 	git diff --exit-code && \
