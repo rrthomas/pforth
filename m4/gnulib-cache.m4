@@ -27,13 +27,22 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --local-dir=gl-mod/bootstrap --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --no-conditional-dependencies --no-libtool --macro-prefix=gl bootstrap gnu-make
+# gnulib-tool --import --local-dir=gl-mod/bootstrap \
+#  --lib=libgnu \
+#  --source-base=lib \
+#  --m4-base=m4 \
+#  --doc-base=doc \
+#  --tests-base=tests \
+#  --aux-dir=build-aux \
+#  --no-conditional-dependencies \
+#  --no-libtool \
+#  --macro-prefix=gl \
+#  bootstrap
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([gl-mod/bootstrap])
 gl_MODULES([
   bootstrap
-  gnu-make
 ])
 gl_AVOID([])
 gl_SOURCE_BASE([lib])
