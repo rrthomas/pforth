@@ -2,11 +2,6 @@
 \ Reuben Thomas
 
 
-\ System variables
-
-0 VALUE LIMIT \ FIXME: make it a constant
-
-
 \ Branches
 
 : NOPALIGN   ALIGN ; COMPILING

@@ -16,6 +16,8 @@ VALUE TARGET-'FORTH
 : <'FORTH   'FORTH -  TARGET-'FORTH + ;
 : >'FORTH   'FORTH +  TARGET-'FORTH - ;
 
+0 VALUE LIMIT
+
 
 \ Arithmetic #1
 
@@ -347,7 +349,7 @@ CELL+ CONSTANT /BLOCK-BUFFER   \ uses value saved above
 128 CONSTANT /FILE-BUFFER
 16 CONSTANT #FILE-BUFFERS
 VARIABLE FILE-BUFFER#  0 ' FILE-BUFFER# >BODY !   \ next file buffer to use
-: FIRST-FILE   LIMIT  #FILE-BUFFERS /FILE-BUFFER * - ;
+0 VALUE FIRST-FILE
 : ALLOCATE-BUFFER   ( -- c-addr ior )   FILE-BUFFER# @  DUP #FILE-BUFFERS
    = IF  -1  ELSE DUP 1+ FILE-BUFFER# !  /FILE-BUFFER *  FIRST-FILE +  0
    THEN ;
@@ -1186,17 +1188,17 @@ FALSE VALUE INTERACT?
    (QUIT) ;
 
 : START
-   0 'FRAME !                        \ reset 'FRAME
-   0 FILE-BUFFER# !                  \ reset FILE-BUFFER#
-   LIMIT                             \ get address of end of memory
-   /BLOCK-BUFFER -                   \ reserve block buffer,
-   #FILE-BUFFERS /FILE-BUFFER * -    \ file buffers,
-   256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
-   DUP 'BUFFERS !                    \ set 'BUFFERS
-   [ INCLUDE" initialize-stacks.fs" ]
+   DUP TO LIMIT                      \ set LIMIT
    [ ' (THROW) <'FORTH ] LITERAL 'THROW!
                                      \ set 'THROW
-   'BUFFERS @  LIMIT  OVER -  ERASE  \ erase buffers
+   0 'FRAME !                        \ reset 'FRAME
+   0 FILE-BUFFER# !                  \ reset FILE-BUFFER#
+   DUP /BLOCK-BUFFER -               \ reserve block buffer,
+   #FILE-BUFFERS /FILE-BUFFER * -    \ file buffers,
+   DUP TO FIRST-FILE
+   256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
+   'BUFFERS !                        \ set 'BUFFERS
+   'BUFFERS @  TUCK -  ERASE         \ erase buffers
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10

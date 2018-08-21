@@ -1,12 +1,18 @@
-\ Initialization code
-\ Reuben Thomas   15/4/96-15/3/99
+: INITIALIZE
+   DUP TO R0                         \ set R0 (RP already set)
+   RETURN-STACK-CELLS CELLS -        \ make room for return stack
+   DUP TO S0                         \ set S0 (SP already set)
+   STACK-CELLS CELLS -               \ make room for data stack
+   START ;
 
-CODE INITIALIZE
+CODE PRE-INITIALIZE
 SWI," OS_GetEnv"
-R2 PC 12 #+@ LDR,
-R1 R2 0@ STR,
 RP R1 MOV,
-SP RP 256 # SUB,
-' START 4 + B,
-' LIMIT 8 + <'FORTH ,
+SP RP 32 # SUB,                      \ temporary stack space
+' STACK-CELLS COMPILE,
+TOP TOP 2 #ASL MOV,
+SP RP TOP SUB,
+TOP SP PUSH,
+TOP R1 MOV,
+' INITIALIZE COMPILE,
 END-CODE
