@@ -276,7 +276,7 @@ END-CODE
 CODE 'THROW!
 TOP ' 'THROW >BODY PCR STR,
 TOP SP POP,
-END-CODE
+END-SUB
 
 
 \ Arithmetic and logical #2
