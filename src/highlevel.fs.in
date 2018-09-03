@@ -1187,6 +1187,8 @@ FALSE VALUE INTERACT?
    THEN
    (QUIT) ;
 
+INCLUDE" parse-command-line.fs"
+
 : START
    DUP TO LIMIT                      \ set LIMIT
    [ ' (THROW) <'FORTH ] LITERAL 'THROW!
@@ -1202,5 +1204,6 @@ FALSE VALUE INTERACT?
    ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
+   PARSE-COMMAND-LINE
    INITIALIZE-ARGS
    DO-START-OPTIONS ;                \ process command-line args

@@ -47,6 +47,12 @@ END-SUB
 : *"   CR  POSTPONE S"  POSTPONE CLI ; IMMEDIATE COMPILING
 
 
-\ FIXME: Stubs; implement by parsing *-command (R0 from OS_GetEnv in INITIALIZE)
-: TOTAL-ARGS   ( -- u )   0 ;
-: ABSOLUTE-ARG   ( -- c-addr u )   0 0 ;
+VARIABLE ARGV
+0 VALUE TOTAL-ARGS
+: ABSOLUTE-ARG   ( u1 -- c-addr u2 )
+   TOTAL-ARGS OVER > IF
+      TOTAL-ARGS >-< 1-
+      2* CELLS  ARGV @  +  2@
+   ELSE
+      DROP  0 0
+   THEN ;
