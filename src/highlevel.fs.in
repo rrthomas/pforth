@@ -1149,7 +1149,7 @@ INCLUDE" platform.fs"
    ." Run @PACKAGE_NAME@." CR
    CR
    ." --interact       enter interactive loop after evaluating" CR
-   ."                  command-line arguments."
+   ."                  command-line arguments" CR
    ." --evaluate TEXT  evaluate the given text" CR
    ." --help           display this help message and exit" CR
    ." --version        display version information and exit" CR
