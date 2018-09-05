@@ -45,6 +45,9 @@ PROVIDE: 0=   0 = ; [THEN]
 PROVIDE: 0<>   0 <> ; [THEN]
 
 
+INCLUDE" control1.fs"
+
+
 \ Stack manipulation
 
 PROVIDE: ?DUP   DUP IF  DUP  THEN ; [THEN]
@@ -208,7 +211,7 @@ INCLUDE" terminal.fs"   \ terminal I/O words
 : QUIT   -56 THROW ;
 
 
-INCLUDE" control1.fs"
+INCLUDE" control2.fs"
 
 
 \ Memory #2
@@ -258,7 +261,7 @@ INCLUDE" control1.fs"
    2DROP FALSE ;                     \ leave c-addr1 u1 false
 
 
-INCLUDE" control2.fs"
+INCLUDE" control3.fs"
 
 
 \ Mass storage input/output #1

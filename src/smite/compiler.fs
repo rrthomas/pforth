@@ -37,4 +37,4 @@
 
 : LINK, ;
 : UNLINK,   $54 C, ;
-: LEAVE,   $5A C,  $4C C, ;
+: LEAVE,   $4C C, ;

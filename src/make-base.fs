@@ -87,8 +87,8 @@ INCLUDE" will-do.fs"
 ALSO FORTH  META DEFINITIONS FOREIGN  PREVIOUS
 
 
-INCLUDE" control1.fs"
 INCLUDE" control2.fs"
+INCLUDE" control3.fs"
 INCLUDE" compiler2.fs"
 INCLUDE" interpreter3.fs"
 INCLUDE" compiler4.fs"

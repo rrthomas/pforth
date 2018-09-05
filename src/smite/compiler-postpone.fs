@@ -3,8 +3,10 @@
 
 \ Compiler
 
-\ FIXME: Common up with riscos, as defaults for platforms without special versions?
 : DO,   POSTPONE 2>R ; COMPILING
+: LOOP,   POSTPONE (LOOP)  POSTPONE IF  SWAP JOIN ; COMPILING
+: +LOOP,   POSTPONE (+LOOP)  POSTPONE IF  SWAP JOIN ; COMPILING
+: UNLOOP,   POSTPONE UNLOOP ; COMPILING
 
 
 \ Data structures
