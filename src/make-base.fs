@@ -14,6 +14,17 @@ INCLUDE" assembler.fs"
 
 \ Meta-compiler utilities
 
+\ STUB FOO creates an empty word.
+\ This is used to POSTPONE target words that may not exist on the host.
+: STUB   BL WORD  HEADER ;
+
+\ Create stubs for words that may not exist on host
+STUB (LITERAL)
+STUB (LOOP)
+STUB (+LOOP)
+STUB UNLOOP
+STUB (CREATE)
+
 \ RISC OS-specific meta-compiler utilities (FIXME)
 : '?   BL WORD FIND  0= IF  DROP 0  ELSE <'FORTH  THEN ;
 

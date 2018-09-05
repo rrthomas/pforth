@@ -42,21 +42,3 @@
 IMMEDIATE COMPILING
 : OS"   ( name )   ( regs-in regs-out -- )   [CHAR] " PARSE OS#
    POSTPONE OS ; IMMEDIATE COMPILING
-
-\ STUB FOO creates an empty word if FOO doesn't exist.
-\ This is used to POSTPONE target words that don't exist
-\ on the host.
-: STUB
-   BL WORD \ FIND  0= IF
-      HEADER  0 ,                \ reserve enough space for redefinition
-                                 \ FIXME: make portable; see REDEFINER
-\   ELSE
-\      DROP                       \ if found, discard xt
- (  THEN) ;
-
-\ Create stubs for words that may not exist on host
-STUB (LITERAL)
-STUB (LOOP)
-STUB (+LOOP)
-STUB UNLOOP
-STUB (CREATE)
