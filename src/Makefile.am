@@ -11,6 +11,18 @@ BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/$(build)/pforth-base.img
 
 include $(srcdir)/host_src.am
 
+!pForth/!TestBuild,feb: Makefile.am
+	echo "Dir src" > $@; \
+	echo "" >> $@; \
+	for i in $(SUBDIRS); do \
+		echo "Dir $$i" >> $@; \
+		echo "pforth make-base.fs" >> $@; \
+		echo "DiffN pforth-new pforth-base/img" >> $@; \
+		echo "Dir ^" >> $@; \
+		echo "" >> $@; \
+	done; \
+	echo "Dir ^" >> $@
+
 # Extended Forth image (if building on host)
 $(host)/pforth.img: $(host)/pforth-base.img $(host)/make.fs
 	if test "$(host)" = "$(build)"; then \
@@ -22,7 +34,8 @@ $(host)/pforth.img: $(host)/pforth-base.img $(host)/make.fs
 	fi
 
 EXTRA_DIST = $(portable_SRCS)							\
-	make.fs pforth.in
+	make.fs pforth.in							\
+	!pForth/!TestBuild,feb
 CLEANFILES = pforth
 DISTCLEANFILES = $(host)/pforth.img
 
