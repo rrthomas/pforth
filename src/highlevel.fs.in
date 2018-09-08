@@ -949,7 +949,7 @@ VARIABLE CURRENT-VOLUME
    #THREADS 0 DO  0 ,  LOOP  DOES>  CURRENT-VOLUME ! ;
 : #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ;
 ALIGN HERE <'FORTH   \ leave address of data structure
-'FORTH  #INITIAL-BRANCH-CELLS CELLS +  <'FORTH  ,   \ address of start of threads hash table
+'FORTH  #TARGET-BRANCH-CELLS CELLS +  <'FORTH  ,   \ address of start of threads hash table
 HERE <'FORTH  ' CODEX >BODY  DUP @ ,  !  0 ,
 : KERNEL   LITERAL ( address is HERE left earlier ) CURRENT-VOLUME ! ;
 
