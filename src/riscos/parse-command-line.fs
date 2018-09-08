@@ -28,8 +28,10 @@
          OVER SWAP
          \  FIXME: Deal with quoted arguments, respecting "" and |"
          ['] ISN'T-BL STRING-FILTER
+         -ROT TUCK  OVER -  2SWAP  SWAP
+      ELSE
+         DROP
       THEN
-      -ROT TUCK  OVER -  2SWAP  SWAP
    REPEAT
    DROP
    ALIGN  HERE ARGV !

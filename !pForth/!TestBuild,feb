@@ -2,15 +2,15 @@
 Dir src
 
 Dir riscos
-Run pForth:!RunImage make-base.fs
+pforth make-base.fs
 DiffN pforth-new pforth-base/img
 
 Dir ^.smite
-Run pForth:!RunImage make-base.fs
+pforth make-base.fs
 DiffN pforth-new pforth-base/img
 
 Dir ^.beetle
-Run pForth:!RunImage make-base.fs
+pforth make-base.fs
 DiffN pforth-new pforth-base/img
 
 Dir ^.^
