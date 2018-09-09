@@ -23,4 +23,4 @@ pforth-base.img: $(host_SRCS)
 	mv pforth-new $@
 
 loc-local:
-	$(CLOC) $(host_SRCS)
+	$(CLOC) $(CLOC_OPTS) $(host_SRCS)
