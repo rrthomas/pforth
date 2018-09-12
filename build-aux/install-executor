@@ -7,10 +7,9 @@ if test "$GITHUB_TOKEN" != ""; then
     OAUTH_PARAMETER="?access_token=$GITHUB_TOKEN"
 fi
 
-cd $HOME
-
 case $HOST in
     beetle)
+        cd $HOME
         # From https://gist.github.com/steinwaywhw/a4cd19cda655b8249d908261a62687f8
         LATEST_RELEASE=`curl https://api.github.com/repos/rrthomas/beetle/releases/latest$OAUTH_PARAMETER | grep tag_name | sed -e 's/.*tag_name": "\([^"]*\).*/\1/'`
         LATEST_RELEASE_NUMBER=`echo $LATEST_RELEASE | sed -e s/^v//`
@@ -20,7 +19,25 @@ case $HOST in
         cd beetle-$LATEST_RELEASE_NUMBER
         ./configure --enable-silent-rules && make check && sudo make install
         ;;
+    arm-riscos)
+        cd src/\!pForth
+        RPCEMU_VERSION=0.9.0
+        DIR=rpcemu-$RPCEMU_VERSION
+        FILE=$DIR.tar.gz
+        curl -L http://www.4corn.co.uk/archive//roms/riscos3_71.zip -o roms.zip
+        curl -L "http://www.marutan.net/rpcemu/cgi/download.php?sFName=$RPCEMU_VERSION/$FILE" -o $FILE
+        sha256sum --check SHA256SUMS
+        tar zxf $FILE
+        unzip roms.zip
+        mv risocs-3.71.rom $DIR/roms/rom # Typo in filename is intentional: it's mis-spelt in the zip!
+        cd $DIR
+        patch -p1 < ../rpcemu.patch
+        cd src/qt5
+        ./buildit.sh
+        make
+        ;;
     smite)
+        cd $HOME
         git clone https://github.com/rrthomas/smite.git
         cd smite
         git submodule update --init --recursive

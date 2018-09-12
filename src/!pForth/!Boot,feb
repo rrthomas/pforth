@@ -1,9 +1,9 @@
 IconSprites <Obey$Dir>.!Sprites
 
-Path pForth <Obey$Dir>.
+Set pForth$Path <Obey$Dir>.
 
 | N.B. The following line ends in a space.
-Alias pForth /pForth:!RunImage 
+Set Alias$pForth /pForth:!RunImage 
 
 Set File$Type_00F ForthBlk
 SetMacro Alias$@RunType_00F <Alias$@RunType_FFF>

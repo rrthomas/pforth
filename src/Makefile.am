@@ -11,16 +11,29 @@ BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/$(build)/pforth-base.img
 
 include $(srcdir)/host_src.am
 
+all-local: !pForth/!TestBuild,feb
+
 !pForth/!TestBuild,feb: Makefile.am
-	echo "Dir src" > $@; \
+	echo "Set TestBuild\$$ExitCode 0" > $@; \
+	echo "Dir src" >> $@; \
 	echo "" >> $@; \
 	for i in $(SUBDIRS); do \
 		echo "Dir $$i" >> $@; \
 		echo "pforth make-base.fs" >> $@; \
-		echo "DiffN pforth-new pforth-base/img" >> $@; \
+		echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
+		echo "diff pforth-new pforth-base.img" >> $@; \
+		echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
 		echo "Dir ^" >> $@; \
 		echo "" >> $@; \
 	done; \
+	echo "Dir riscos" >> $@; \
+	echo "Copy pforth-new pforth-new-0 ~C F" >> $@; \
+	echo "Run pforth-new-0 make-base.fs" >> $@; \
+	echo "If <Sys$ReturnCode> <> 0 Then Set TestBuild$ExitCode <Sys$ReturnCode>" >> $@; \
+	echo "diff pforth-new pforth-base.img" >> $@; \
+	echo "If <Sys$ReturnCode> <> 0 Then Set TestBuild$ExitCode <Sys$ReturnCode>" >> $@; \
+	echo "Dir ^" >> $@; \
+	echo "" >> $@; \
 	echo "Dir ^" >> $@
 
 # Extended Forth image (if building on host)

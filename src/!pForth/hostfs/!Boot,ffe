@@ -1,0 +1,14 @@
+| Build pForth (used for continuous integration)
+HostFS
+Dir $.!pForth
+Lib $
+| Don't rely on Filer having run !Boot
+Run !Boot
+Run !TestBuild
+BASIC
+REM R0="&0ff"; R1="exit"; R2=<TestBuild$ExitCode>
+len%=16
+DIM buf% len%
+SYS "OS_ReadVarVal","TestBuild$ExitCode",buf%,len%,0,3
+SYS "OS_ReadUnsigned",0,buf% TO ,,ret%
+SYS "OS_Reset",&46464F26,&74697865,ret%

@@ -4,4 +4,7 @@
 pforth.img
 pforth-new,ffd
 pforth-new,ff8
+pforth-new-0,ff8
 /!pForth/!TestBuild,feb
+/!pForth/rpcemu-*
+/!pForth/roms.zip

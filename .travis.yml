@@ -2,30 +2,50 @@ language: c
 
 dist: trusty
 
-addons:
-  apt:
-    packages:
-      - texlive-latex-extra
-      - texlive-science
-      - texlive-fonts-recommended
-      - texlive-fonts-extra
-      - help2man
-      - latexmk
-      - hevea
-
-env:
-  - HOST=beetle
-  - HOST=smite
-
-os:
-  - linux
-  - osx
+matrix:
+  include:
+    - os: linux
+      env:
+        - HOST=beetle
+      addons:
+        apt:
+          packages: &default_deps
+            - texlive-latex-extra
+            - texlive-science
+            - texlive-fonts-recommended
+            - texlive-fonts-extra
+            - help2man
+            - latexmk
+            - hevea
+    - os: linux
+      env:
+        - HOST=smite
+      addons:
+        apt:
+          packages:
+            - *default_deps
+    - os: linux
+      env:
+        - HOST=arm-riscos
+      addons:
+        apt:
+          packages:
+            - qtbase5-dev
+            - qtmultimedia5-dev
+            - libqt5multimedia5-plugins
+    - os: osx
+      env:
+        - HOST=beetle
+    - os: osx
+      env:
+        - HOST=smite
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install help2man ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install help2man; fi
   - ./build-aux/install-executor $HOST
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ldconfig ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ldconfig; fi
 
 script:
-  - autoreconf -i && ./configure --enable-silent-rules --host=$HOST
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make check ; else make distcheck ; fi
+  - autoreconf -i && ./configure --enable-silent-rules --build=$HOST
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make check; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if [[ "$HOST" == "arm-riscos" ]]; then cd src; make \!pForth/\!TestBuild,feb; cd \!pForth; ./run-rpcemu; else make distcheck; fi; fi

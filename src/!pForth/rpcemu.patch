@@ -1,0 +1,312 @@
+diff -ur rpcemu-0.9.0/src/arm_common.c rpcemu-0.9.0-rrt/src/arm_common.c
+--- rpcemu-0.9.0/src/arm_common.c	2018-05-05 21:04:49.000000000 +0100
++++ rpcemu-0.9.0-rrt/src/arm_common.c	2018-09-12 22:21:38.294212128 +0100
+@@ -34,9 +34,12 @@
+ #include "network.h"
+ #endif
+ 
++#define SWI_OS_WriteC		0x0
+ #define SWI_OS_Byte		0x6
+ #define SWI_OS_Word		0x7
+ #define SWI_OS_Mouse		0x1c
++#define SWI_OS_ReadSysInfo	0x58
++#define SWI_OS_Reset		0x6a
+ #define SWI_OS_CallASWI		0x6f
+ #define SWI_OS_CallASWIR12	0x71
+ 
+@@ -362,6 +365,32 @@
+ 		swinum = arm.reg[12] & 0xdffff;
+ 	}
+ 
++	/* Intercept OS_Reset to check for turning off
++	   https://www.riscosopen.org/wiki/documentation/show/OS_Reset
++	   Extension: if R1 is "exit", exit code is R2; otherwise 0
++	*/
++	if (swinum == SWI_OS_Reset) {
++		if (arm.reg[0] == 0x46464F26) { /* 0x0ff */
++			fprintf(stderr, "Power turned off with OS_Reset\n");
++			exit(arm.reg[1] == 0x74697865 ? arm.reg[2] : 0);
++		}
++	}
++
++	if (swinum == SWI_OS_ReadSysInfo && arm.reg[0] == 8) {
++		arm.reg[0] = 0; /* Unknown hardware platform */
++		arm.reg[1] = 0x08; /* Software control over PSU supported */
++		return;
++	}
++
++	if (headless) {
++		if (swinum == SWI_OS_WriteC) {
++			int c = arm.reg[0] & 0xff;
++			if ((c >= 32 && c != 127) || c == 10) /* hardwired isprint */
++				putchar(c);
++			goto exception;
++		}
++	}
++
+ 	/* Intercept RISC OS Portable SWIs to enable RPCEmu to sleep when
+ 	   RISC OS is idle */
+ 	if (config.cpu_idle) {
+@@ -377,40 +406,42 @@
+ 		}
+ 	}
+ 
+-	/* This is called regardless of whether or not we're in mousehack
+-	   as it allows 'fullscreen' or 'mouse capture mode' risc os mode changes
+-	   to have their boxes cached, allowing mousehack to work when you change
+-	   back to it */
+-	if (swinum == SWI_OS_Word && arm.reg[0] == 21 && mem_read8(arm.reg[1]) == 1) {
++	if (!headless) {
++		/* This is called regardless of whether or not we're in mousehack
++		   as it allows 'fullscreen' or 'mouse capture mode' risc os mode changes
++		   to have their boxes cached, allowing mousehack to work when you change
++		   back to it */
++		if (swinum == SWI_OS_Word && arm.reg[0] == 21 && mem_read8(arm.reg[1]) == 1) {
+ 			/* OS_Word 21, 1 Define Mouse Coordinate bounding box */
+ 			mouse_hack_osword_21_1(arm.reg[1]);
+ 			return;
+-	}
+-	
+-	if (mousehack && swinum == SWI_OS_Word && arm.reg[0] == 21) {
+-		if (mem_read8(arm.reg[1]) == 4) {
+-			/* OS_Word 21, 4 Read unbuffered mouse position */
+-			mouse_hack_osword_21_4(arm.reg[1]);
+-			return;
+-		} else if (mem_read8(arm.reg[1]) == 3) {
+-			/* OS_Word 21, 3 Move mouse */
+-			mouse_hack_osword_21_3(arm.reg[1]);
+-			return;
+-		} else {
+-			goto realswi;
+ 		}
++	
++		if (mousehack && swinum == SWI_OS_Word && arm.reg[0] == 21) {
++			if (mem_read8(arm.reg[1]) == 4) {
++				/* OS_Word 21, 4 Read unbuffered mouse position */
++				mouse_hack_osword_21_4(arm.reg[1]);
++				return;
++			} else if (mem_read8(arm.reg[1]) == 3) {
++				/* OS_Word 21, 3 Move mouse */
++				mouse_hack_osword_21_3(arm.reg[1]);
++				return;
++			} else {
++				goto realswi;
++			}
+ 
+-	} else if (mousehack && swinum == SWI_OS_Mouse) {
+-		/* OS_Mouse */
+-		mouse_hack_osmouse();
+-		arm.reg[cpsr] &= ~VFLAG;
++		} else if (mousehack && swinum == SWI_OS_Mouse) {
++			/* OS_Mouse */
++			mouse_hack_osmouse();
++			arm.reg[cpsr] &= ~VFLAG;
++		}
++	}
+ 
+-	} else if (swinum == ARCEM_SWI_HOSTFS) {
++	if (swinum == ARCEM_SWI_HOSTFS) {
+ 		ARMul_State state;
+ 
+ 		state.Reg = arm.reg;
+ 		hostfs(&state);
+-
+ 	}
+ #ifdef RPCEMU_NETWORKING
+ 	else if (swinum == ARCEM_SWI_NETWORK) {
+@@ -432,6 +463,7 @@
+ 			/* OS_Byte 106 Select pointer / activate mouse */
+ 			mouse_hack_osbyte_106(arm.reg[1]);
+ 		}
++exception:
+ 		exception(SUPERVISOR, 0xc, 4);
+ 	}
+ }
+diff -ur rpcemu-0.9.0/src/qt5/rpc-qt5.cpp rpcemu-0.9.0-rrt/src/qt5/rpc-qt5.cpp
+--- rpcemu-0.9.0/src/qt5/rpc-qt5.cpp	2018-05-05 21:04:49.000000000 +0100
++++ rpcemu-0.9.0-rrt/src/qt5/rpc-qt5.cpp	2018-09-12 22:21:38.294212128 +0100
+@@ -169,7 +169,7 @@
+ 	fprintf(stderr, "RPCEmu error: %s\n", buf);
+ 
+ 	// Handle displaying error to user in GUI
+-	if (gui_thread != NULL) {
++	if (!headless && gui_thread != NULL) {
+ 		if (QThread::currentThread() == gui_thread) {
+ 			// We're in the GUI thread display error here
+ 			pMainWin->error(buf);
+@@ -201,7 +201,7 @@
+ 	fprintf(stderr, "RPCEmu fatal error: %s\n", buf);
+ 
+ 	// If there is not a gui running, no more work to do
+-	if (gui_thread == NULL) {
++	if (headless || gui_thread == NULL) {
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+@@ -441,7 +441,8 @@
+ 	pMainWin = &main_window;
+ 
+ 	// Show Main Window
+-	main_window.show();
++	if (!headless)
++		main_window.show();
+ 
+ 	// Store a reference to the GUI thread
+ 	// Needed to handle displaying fatal() and error()
+diff -ur rpcemu-0.9.0/src/qt5/settings.cpp rpcemu-0.9.0-rrt/src/qt5/settings.cpp
+--- rpcemu-0.9.0/src/qt5/settings.cpp	2018-05-05 21:04:49.000000000 +0100
++++ rpcemu-0.9.0-rrt/src/qt5/settings.cpp	2018-09-12 22:24:02.139542481 +0100
+@@ -170,6 +170,13 @@
+ 
+ 	config->cpu_idle = 0;
+ 	config->cpu_idle = settings.value("cpu_idle", "0").toInt();
++
++	config->headlesson = 0;
++	sText = settings.value("headless", "").toString();
++	ba = sText.toUtf8();
++	p = ba.data();
++	if (strcmp(p, "1") == 0)
++		config->headlesson = 1;
+ }
+ 
+ 
+diff -ur rpcemu-0.9.0/src/rpcemu.c rpcemu-0.9.0-rrt/src/rpcemu.c
+--- rpcemu-0.9.0/src/rpcemu.c	2018-05-05 21:04:49.000000000 +0100
++++ rpcemu-0.9.0-rrt/src/rpcemu.c	2018-09-12 22:23:40.346737728 +0100
+@@ -89,6 +89,7 @@
+ 	0,			/* mousetwobutton */
+ 	NetworkType_Off,	/* network_type */
+ 	0,			/* cpu_idle */
++	0,			/* headlesson */
+ };
+ 
+ /* Performance measuring variables */
+diff -ur rpcemu-0.9.0/src/rpcemu.h rpcemu-0.9.0-rrt/src/rpcemu.h
+--- rpcemu-0.9.0/src/rpcemu.h	2018-05-05 21:04:49.000000000 +0100
++++ rpcemu-0.9.0-rrt/src/rpcemu.h	2018-09-12 22:23:22.474077038 +0100
+@@ -81,6 +81,9 @@
+   bugs*/
+ #define mousehack	(config.mousehackon)
+ 
++/* Run headless */
++#define headless	(config.headlesson)
++
+ /*This enables abort checking after every LDR/STR/LDM/STM instruction in the
+   recompiler. Disabling this makes the recompiler check after every block
+   instead - this doesn't appear to break RISC OS, but you never know...*/
+@@ -136,6 +139,7 @@
+ 	                             buttons, for mice with two buttons */
+ 	NetworkType network_type;
+ 	int cpu_idle;		/**< Attempt to reduce CPU usage */
++	int headlesson;         /**< Run without a display */
+ } Config;
+ 
+ extern Config config;
+diff -ur rpcemu-0.9.0/src/sound.c rpcemu-0.9.0-rrt/src/sound.c
+--- rpcemu-0.9.0/src/sound.c	2018-05-05 21:04:49.000000000 +0100
++++ rpcemu-0.9.0-rrt/src/sound.c	2018-09-13 22:11:47.140554466 +0100
+@@ -48,14 +48,16 @@
+ void
+ sound_init(void)
+ {
+-	/* Call the platform code to create a thread for handing sound updates */
+-	sound_thread_start();
++        if (!headless) {
++                /* Call the platform code to create a thread for handing sound updates */
++                sound_thread_start();
+ 
+-	/* The initial default sample rate for the Risc PC is not 44100 */
+-	samplefreq = 41666;
++                /* The initial default sample rate for the Risc PC is not 44100 */
++                samplefreq = 41666;
+ 
+-	/* Call the platform specific code to start the audio playing */
+-	plt_sound_init(BUFFERLENBYTES);
++                /* Call the platform specific code to start the audio playing */
++                plt_sound_init(BUFFERLENBYTES);
++        }
+ }
+ 
+ /**
+@@ -64,10 +66,12 @@
+ void
+ sound_restart(void)
+ {
+-	assert(config.soundenabled);
++        if (!headless) {
++                assert(config.soundenabled);
+ 
+-	/* Pass the call on to the platform specific code */
+-	plt_sound_restart();
++                /* Pass the call on to the platform specific code */
++                plt_sound_restart();
++        }
+ }
+ 
+ /**
+@@ -76,10 +80,12 @@
+ void
+ sound_pause(void)
+ {
+-	assert(!config.soundenabled);
++        if (!headless) {
++                assert(!config.soundenabled);
+ 
+-	/* Pass the call on to the platform specific code */
+-	plt_sound_pause();
++                /* Pass the call on to the platform specific code */
++                plt_sound_pause();
++        }
+ }
+ 
+ /**
+@@ -175,7 +181,7 @@
+ {
+ 	while (bigsoundbuffertail != bigsoundbufferhead) {
+ 		if(plt_sound_buffer_free() >= (BUFFERLENBYTES)) {
+-			if (config.soundenabled) {
++			if (!headless && config.soundenabled) {
+ 				plt_sound_buffer_play(samplefreq, (const char *) bigsoundbuffer[bigsoundbuffertail], BUFFERLENBYTES);  // write one buffer
+ 			}
+ 
+diff -ur rpcemu-0.9.0/src/vidc20.c rpcemu-0.9.0-rrt/src/vidc20.c
+--- rpcemu-0.9.0/src/vidc20.c	2018-05-05 21:04:49.000000000 +0100
++++ rpcemu-0.9.0-rrt/src/vidc20.c	2018-09-12 22:21:38.294212128 +0100
+@@ -134,6 +134,9 @@
+ void
+ initvideo(void)
+ {
++	if (headless)
++		return;
++
+ 	current_sizex = -1;
+ 	current_sizey = -1;
+ 	memset(&thr, 0, sizeof(thr));
+@@ -207,7 +210,8 @@
+ void
+ closevideo(void)
+ {
+-	vidcendthread();
++	if (!headless)
++		vidcendthread();
+ }
+ 
+ /**
+@@ -255,6 +259,17 @@
+ void
+ drawscr(int needredraw)
+ {
++	if (headless) {
++		/* Trigger vsync every 200 calls. This should give ~60fps if called every 20000 cycles (as suggested by execrpcemu()) */
++		static int vsynccounter=200;
++		if (!vsynccounter--) {
++			iomd_vsync(1);
++			vsynccounter=200;
++		} else
++			iomd_vsync(0);
++		return;
++	}
++
+ 	static int lastframeborder = 0;
+ 
+ 	/* Must get the mutex before altering the thread's state. */
