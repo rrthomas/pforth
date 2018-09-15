@@ -13,22 +13,25 @@
 
 \ Core compiler
 
-: AHEAD   HERE  $4C C,  NOPALIGN  0 , ; IMMEDIATE COMPILING
-: IF   HERE  $4E C,  NOPALIGN  0 , ; IMMEDIATE COMPILING
+: BRANCH-ALIGN   HERE 1+  CELL 1- AND  0= IF  0 C,  THEN ;
+: AHEAD   BRANCH-ALIGN  HERE  $5C C,  $4D C,  NOPALIGN  0 , ;
+IMMEDIATE COMPILING
+: IF   BRANCH-ALIGN  HERE  $5C C,  $4F C,  NOPALIGN  0 , ;
+IMMEDIATE COMPILING
 
-: !BRANCH   ( at from to opcode -- )   HERE >R  >R  ROT DP !  R> C,  NIP
-   NOPALIGN  <'FORTH ,  R> DP ! ;
+: !BRANCH   ( at from to opcode -- )   HERE >R  >R  ROT DP !
+   BRANCH-ALIGN  $5C C,  R> C,  NIP  NOPALIGN  <'FORTH ,  R> DP ! ;
 
-: BRANCH   ( at from to -- )   $4C !BRANCH ;
-: CALL   ( at from to -- )   $52 !BRANCH ;
+: BRANCH   ( at from to -- )   $4D !BRANCH ;
+: CALL   ( at from to -- )   $50 !BRANCH ;
 
 : JOIN   ( from to -- )   <'FORTH  SWAP  1+ ALIGNED  ! ;
 
-: ADR,   ( to opcode -- )   C,  NOPALIGN  <'FORTH , ;
-: CALL,   ( to -- )   $52 ADR, ;
+: ADR,   ( to opcode -- )   BRANCH-ALIGN  $5C C,  C,  NOPALIGN  <'FORTH , ;
+: CALL,   ( to -- )   $50 ADR, ;
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP C@ C,  1+  LOOP  DROP
    ELSE CALL,  THEN ;
 
 : LINK, ;
 : UNLINK,   $54 C, ;
-: LEAVE,   $4C C, ;
+: LEAVE,   BRANCH-ALIGN  $5C C,  $4D C, ;
