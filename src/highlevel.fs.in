@@ -21,6 +21,19 @@ VALUE TARGET-'FORTH
 
 \ Stack manipulation #1
 
+PROVIDE: ?DUP   DUP IF  DUP  THEN ; [THEN]
+PROVIDE: ROLL   DUP 1 + PICK  >R  DUP >R
+   BEGIN  ?DUP WHILE
+      SWAP  R> SWAP  >R >R
+      1 -
+   REPEAT
+   DROP
+   R> BEGIN  ?DUP WHILE
+      R> SWAP
+      1 -
+   REPEAT
+   R> ; [THEN]
+PROVIDE: ROT   2 ROLL ; [THEN]
 PROVIDE: -ROT   ROT ROT ; [THEN]
 PROVIDE: TUCK   SWAP OVER ; [THEN]
 PROVIDE: NIP   SWAP DROP ; [THEN]
@@ -82,8 +95,6 @@ INCLUDE" control1.fs"
 
 
 \ Stack manipulation #2
-
-PROVIDE: ?DUP   DUP IF  DUP  THEN ; [THEN]
 
 : 2DUP   OVER OVER ;
 : 2DROP   DROP DROP ;
