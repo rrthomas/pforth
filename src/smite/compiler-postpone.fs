@@ -13,5 +13,5 @@
 
 \ FIXME: Hack to change CALL to BRANCH; instead, want POSTPONE that does
 \ BRANCH (including version in make-base.fs)
-: CREATE,   $42 C,  POSTPONE (CREATE)  $4D HERE 6 - C! ;
+: CREATE,   $1D C,  POSTPONE (CREATE)  $1E HERE 6 - C! ;
 : (DOES)   POSTPONE (CREATE) ; IMMEDIATE COMPILING
