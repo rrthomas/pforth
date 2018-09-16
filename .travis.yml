@@ -6,7 +6,7 @@ matrix:
   include:
     - os: linux
       env:
-        - HOST=beetle
+        - BUILD=beetle
       addons:
         apt:
           packages: &default_deps
@@ -19,14 +19,14 @@ matrix:
             - hevea
     - os: linux
       env:
-        - HOST=smite
+        - BUILD=smite
       addons:
         apt:
           packages:
             - *default_deps
     - os: linux
       env:
-        - HOST=arm-riscos
+        - BUILD=arm-riscos
       addons:
         apt:
           packages:
@@ -35,17 +35,17 @@ matrix:
             - libqt5multimedia5-plugins
     - os: osx
       env:
-        - HOST=beetle
+        - BUILD=beetle
     - os: osx
       env:
-        - HOST=smite
+        - BUILD=smite
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install help2man; fi
-  - ./build-aux/install-executor $HOST
+  - ./build-aux/install-executor $BUILD
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ldconfig; fi
 
 script:
-  - autoreconf -i && ./configure --enable-silent-rules --build=$HOST
+  - autoreconf -i && ./configure --enable-silent-rules --build=$BUILD
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make check; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if [[ "$HOST" == "arm-riscos" ]]; then cd src; make \!pForth/\!TestBuild,feb; cd \!pForth; ./run-rpcemu; else make distcheck; fi; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if [[ "$BUILD" == "arm-riscos" ]]; then cd src; make \!pForth/\!TestBuild,feb; cd \!pForth; ./run-rpcemu; else make distcheck; fi; fi

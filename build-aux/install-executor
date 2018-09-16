@@ -1,13 +1,13 @@
 #!/bin/sh
 # Install executor (used for Travis build)
 
-HOST=$1
+BUILD=$1
 unset OAUTH_PARAMETER
 if test "$GITHUB_TOKEN" != ""; then
     OAUTH_PARAMETER="?access_token=$GITHUB_TOKEN"
 fi
 
-case $HOST in
+case $BUILD in
     beetle)
         cd $HOME
         # From https://gist.github.com/steinwaywhw/a4cd19cda655b8249d908261a62687f8
