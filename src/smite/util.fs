@@ -9,6 +9,6 @@
       CODE                       \ make an inline code word
       1 INLINE                   \ with one byte of code
       FIND DROP  EXECUTE         \ append the opcode
-      BEXIT                      \ append EXIT
+      BRET                       \ append RET
       END-CODE                   \ finish the definition
    LOOP ;
