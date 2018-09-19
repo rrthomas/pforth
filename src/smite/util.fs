@@ -1,4 +1,4 @@
-\ Create bForth assembler primitives
+\ Create SMite assembler primitives
 : PRIMITIVES   ( +n -- )
    0 DO
       [CHAR] B PAD CHAR+ C!      \ store "B" at start of name
