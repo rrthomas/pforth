@@ -120,6 +120,7 @@ NATIVE ALSO FORTH DEFINITIONS
 IMMEDIATE COMPILING
 
 PREVIOUS   \ use META POSTPONE and LINK,
+INCLUDE" util-postpone.fs"   \ like util.fs but requires POSTPONE
 INCLUDE" bracket-create.fs"
 INCLUDE" bracket-does.fs"
 INCLUDE" compiler-postpone.fs"
