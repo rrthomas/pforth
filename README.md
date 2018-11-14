@@ -35,8 +35,9 @@ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER'S RISK.
 
 ## Installation
 
-Beetle or RISC OS is required (see above). If the native build architecture
-is not supported, Beetle is automatically searched for.
+Beetle, SMite or RISC OS is required (see above). If the native build
+architecture is not supported, Beetle and SMite are automatically searched
+for, in that order.
 
 To choose the host and/or build system manually, pass the `--host=ARCH` or
 `--build=ARCH` arguments to `configure`.
@@ -47,12 +48,14 @@ To give the path to a VM executor, set the `ac_cv_path_HOST_EXECUTOR` or
 To build the documentation, a comprehensive TeX system such as TeXLive is
 required.
 
-### Building a release
+### Building from a release tarball
+
+(For building from git, first see below.)
 
 From an unpacked release tarball, run:
 
 ```
-./configure && make && [sudo] make install
+./configure && make && make check && [sudo] make install
 ```
 
 See the file `INSTALL` or the output of `./configure --help` for more
