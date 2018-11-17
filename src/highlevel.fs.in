@@ -1174,7 +1174,7 @@ INCLUDE" platform.fs"
    ." Report bugs to @PACKAGE_BUGREPORT@." CR ;
 
 : BANNER
-   ." pForth for "  "PLATFORM TYPE ."  v" VERSION TYPE
+   ." pForth v" VERSION TYPE ."  (platform: " "PLATFORM TYPE ." )"
    CR ." (c) Reuben Thomas 1991-2018" CR ;
 
 FALSE VALUE INTERACT?
