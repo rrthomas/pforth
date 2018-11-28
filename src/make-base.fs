@@ -5,6 +5,7 @@
 MARKER DISPOSE
 
 \ Halt immediately on exception, for easier debugging
+\ FIXME: Only halt on memory exceptions (or use core dump facility)
 : HALT-HANDLER   HALT ;
 ' HALT-HANDLER 'THROW!
 
