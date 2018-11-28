@@ -709,8 +709,10 @@ IMMEDIATE COMPILING
                                      bit 30 is COMPILING flag,
                                      bit 29 is SMUDGE flag,
                                      rest of MS byte is length of name field,
-                                     lower 3 bytes are number of bytes of code
+                                     byte 2 is number of bytes of code
                                      for an inline word
+                                     bytes 0 & 1 are offset to DOES> code for a
+                                     defining word
 )
 : HEADER   ( c-addr -- )
    ALIGN                             \ align DP for new definition
