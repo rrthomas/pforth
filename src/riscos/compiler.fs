@@ -17,7 +17,7 @@ IMMEDIATE COMPILING
 : BRANCH   ( at from to -- )   $EA000000 !BRANCH ;
 : CALL   ( at from to -- )   $EB000000 !BRANCH ;
 
-: JOIN   ( from to -- )   OVER TUCK @ !BRANCH ;
+: JOIN   ( from to -- )   OVER TUCK @  $FF000000 AND  !BRANCH ;
 
 : CALL,   ( to -- )   HERE  4 ALLOT  DUP ROT CALL ;
 : COMPILE,   CALL, ;

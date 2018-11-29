@@ -170,7 +170,7 @@ STACKS ED EA FD FA
 \ assembler is merged into base system, de-duplicate
 : >BRANCH   ( from to -- offset )   >-<  2 RSHIFT 2 -  $00FFFFFF AND ;
 : !BRANCH   ( at from to op-mask -- )   -ROT  >BRANCH  OR  SWAP CODE! ;
-: JOIN   ( from to -- )   OVER TUCK @ !BRANCH ;
+: JOIN   ( from to -- )   OVER TUCK @  $FF000000 AND  !BRANCH ;
 
 : AHEAD,   HERE  DUP 8 + B, ;
 : IF,   REVERSE AHEAD, ;
