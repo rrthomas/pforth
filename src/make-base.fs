@@ -101,17 +101,16 @@ DECIMAL
 ALSO ASSEMBLER
 
 INCLUDE" save.fs"
-INCLUDE" util.fs"
-
 INCLUDE" compiler.fs"
 INCLUDE" compiler1.fs"
+INCLUDE" util.fs"
 
 
 \ Special definition of POSTPONE, to cope with FOREIGN vocabularies
 
 : FIND-AND-COMPILE,   ( c-addr -- )
    FIND  0= IF  UNDEFINED  THEN  CURRENT-COMPILE, ;
-: (POSTPONE)   R> R>ADDRESS DUP CELL+ >R @ >NAME  FIND-AND-COMPILE, ;
+: (POSTPONE)   R> R>ADDRESS ALIGNED DUP CELL+ >R @ >NAME  FIND-AND-COMPILE, ;
 
 \ POSTPONE itself must be defined in FORTH, so that it can be run during the
 \ compilation of the rest of META, which is FOREIGN while it is being built.

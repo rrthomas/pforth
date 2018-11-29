@@ -10,8 +10,10 @@
 : IF   $E35B0000 CODE, $E49CB004 CODE,  HERE  $0A000000 CODE, ;
 IMMEDIATE COMPILING
 
-: >BRANCH   ( from to -- offset )   >-<  2 RSHIFT 2 -  $00FFFFFF AND ;
-: BRANCH>   ( offset from -- to )   2 +  8 LSHIFT 6 ARSHIFT  + ;
+: B>OFFSET   ( instruction -- offset )   $00FFFFFF AND ;
+: >BRANCH   ( from to -- offset )   >-<  2 RSHIFT 2 -  B>OFFSET ;
+: BRANCH>   ( from offset -- to )   2 +  8 LSHIFT 6 ARSHIFT  + ;
+: @BRANCH   ( from -- to )   DUP @  B>OFFSET  BRANCH> ;
 : !BRANCH   ( at from to op-mask -- )   -ROT  >BRANCH  OR  SWAP CODE! ;
 
 : BRANCH   ( at from to -- )   $EA000000 !BRANCH ;
@@ -24,4 +26,4 @@ IMMEDIATE COMPILING
 
 : LINK,   $E52DE004 CODE, ;
 : UNLINK,   $E49DF004 CODE, ;
-: LEAVE,   $E51FF004 CODE, ;
+: LEAVE, ;

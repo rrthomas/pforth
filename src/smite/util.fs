@@ -12,3 +12,14 @@
       BRET                       \ append RET
       END-CODE                   \ finish the definition
    LOOP ;
+
+\ Create SMite extra instructions
+: EXTRA-INSTRUCTION   ( +n -- )
+   CODE                       \ make a code word
+   LITERAL,                   \ compile the extra instruction code
+   BEXTRA                     \ +n EXTRA
+   BRET                       \ append RET
+   END-CODE ;                 \ finish the definition
+
+: EXTRA-INSTRUCTIONS   ( +n1 +n2 -- )
+   SWAP 1+ SWAP DO  I EXTRA-INSTRUCTION  LOOP ;

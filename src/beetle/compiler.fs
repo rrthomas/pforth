@@ -19,6 +19,7 @@
 : IF   HERE  $4E C,  NOPALIGN  0 , ; IMMEDIATE COMPILING
 
 : OFFSET   ( from to -- offset )   >-<  CELL/ 1-  $00FFFFFF AND ;
+: @BRANCH   ( from -- to )   1+ ALIGNED @ >'FORTH ;
 : !BRANCH   ( at from to opcode -- )   HERE >R  >R  ROT DP !  R> C,  OFFSET
    FIT,  R> DP ! ;
 
@@ -37,4 +38,4 @@
 
 : LINK, ;
 : UNLINK,   $54 C, ;
-: LEAVE,   $5A C,  $4C C, ;
+: LEAVE,   $5A C, ;
