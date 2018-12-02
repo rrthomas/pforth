@@ -1,7 +1,5 @@
 language: c
 
-dist: trusty
-
 matrix:
   include:
     - os: linux
