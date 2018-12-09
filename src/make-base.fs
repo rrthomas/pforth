@@ -94,7 +94,7 @@ DECIMAL
 \ Check stack is balanced
 : ??STACK
    DEPTH INITIAL-DEPTH <> IF
-      .S ." stack not balanced" CR
+      .S ." stack not balanced" CR  ABORT
    THEN ;
 
 
