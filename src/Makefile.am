@@ -39,7 +39,7 @@ $(host)/pforth: $(host)/pforth-base $(host)/make.fs
 		export srcs="$(host_SRCS) make.fs"; $(do_build_prep) && \
 		$(BUILD_PFORTH) make.fs; \
 	else \
-		cp $< $@; \
+		cp $(host)/pforth-base $@; \
 	fi
 
 EXTRA_DIST = $(portable_SRCS)							\
