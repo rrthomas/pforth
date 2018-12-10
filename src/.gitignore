@@ -1,7 +1,7 @@
 /highlevel.fs
-/pforth
 /pforthi
-pforth.img
+/pforthi.tmp
+/*/pforth
 pforth-new,ffd
 pforth-new,ff8
 pforth-new-0,ff8

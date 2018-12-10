@@ -2,12 +2,8 @@
 
 SUBDIRS = beetle riscos smite
 
-bin_SCRIPTS = pforth
-if HAVE_RLWRAP
-bin_SCRIPTS += pforthi
-endif
-data_DATA = $(host)/pforth.img
-BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/$(build)/pforth-base.img
+bin_SCRIPTS = $(host)/pforth
+BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/$(build)/pforth-base
 
 include $(srcdir)/host_src.am
 
@@ -21,7 +17,7 @@ all-local: !pForth/!TestBuild,feb
 		echo "Dir $$i" >> $@; \
 		echo "pforth make-base.fs" >> $@; \
 		echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
-		echo "diff pforth-new pforth-base.img" >> $@; \
+		echo "diff pforth-new pforth-base" >> $@; \
 		echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
 		echo "Dir ^" >> $@; \
 		echo "" >> $@; \
@@ -30,14 +26,14 @@ all-local: !pForth/!TestBuild,feb
 	echo "Copy pforth-new pforth-new-0 ~C F" >> $@; \
 	echo "Run pforth-new-0 make-base.fs" >> $@; \
 	echo "If <Sys$ReturnCode> <> 0 Then Set TestBuild$ExitCode <Sys$ReturnCode>" >> $@; \
-	echo "diff pforth-new pforth-base.img" >> $@; \
+	echo "diff pforth-new pforth-base" >> $@; \
 	echo "If <Sys$ReturnCode> <> 0 Then Set TestBuild$ExitCode <Sys$ReturnCode>" >> $@; \
 	echo "Dir ^" >> $@; \
 	echo "" >> $@; \
 	echo "Dir ^" >> $@
 
 # Extended Forth image (if building on host)
-$(host)/pforth.img: $(host)/pforth-base.img $(host)/make.fs
+$(host)/pforth: $(host)/pforth-base $(host)/make.fs
 	if test "$(host)" = "$(build)"; then \
 		cd $(host); \
 		export srcs="$(host_SRCS) make.fs"; $(do_build_prep) && \
@@ -47,24 +43,25 @@ $(host)/pforth.img: $(host)/pforth-base.img $(host)/make.fs
 	fi
 
 EXTRA_DIST = $(portable_SRCS)							\
-	make.fs pforth.in							\
+	make.fs									\
 	!pForth/!TestBuild,feb
 CLEANFILES = pforth
-DISTCLEANFILES = $(host)/pforth.img
+DISTCLEANFILES = $(host)/pforth
 
 portable_SRCS = compiler2.fs compiler4.fs compiler5.fs control1.fs		\
 	control2.fs control3.fs defer-fetch-store.fs defining.fs does.fs	\
 	highlevel.fs interpreter3.fs make-base.fs resolver.fs vocabulary.fs
 
-do_subst = sed -e 's,[@]datadir[@],$(datadir),g' \
-	-e 's,[@]HOST_EXECUTOR[@],$(HOST_EXECUTOR),g'
-
-pforth: pforth.in Makefile
-	$(do_subst) < $(srcdir)/pforth.in > pforth
+if HAVE_RLWRAP
+install-exec-hook:
+	export pforth_name=`echo pforth | sed '$(transform)'`; \
+	sed 's,@PFORTH@,'$$pforth_name',' < pforthi > pforthi.tmp; \
+	$(INSTALL_PROGRAM) pforthi.tmp $(DESTDIR)$(bindir)/`echo pforthi | sed '$(transform)'`
+endif
 
 loc-local:
 	$(CLOC) $(CLOC_OPTS) $(portable_SRCS)
 
-check-local: $(host)/pforth.img
+check-local: $(host)/pforth
 	cd $(top_srcdir)/extras && \
-	echo foobar | $(HOST_EXECUTOR) $(abs_builddir)/$(host)/pforth.img tests.fs
+	echo foobar | $(HOST_EXECUTOR) $(abs_builddir)/$(host)/pforth tests.fs

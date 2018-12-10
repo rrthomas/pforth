@@ -3,4 +3,4 @@
 
 INCLUDE" assembler.fs"
 
-S" pforth.img" SAVE-IMAGE   \ write system image
+S" pforth" SAVE-IMAGE   \ write system image
