@@ -31,8 +31,6 @@ away.
 
 The future of pForth:
 
-Port it to sMite.
-
 All the stuff below still applies if I feel like doing anything to the Forth
 system itself. Indeed, it may well provide a good starting point for many of
 the Tau structures, though I'll probably want to develop the language first.
@@ -46,10 +44,6 @@ unportable.
 Have proper escape and error handlers that throw an exception. Use exceptions
 in the file words instead of return codes (have a switch to go between
 returning codes and throwing exceptions).
-
-To make pForth threading-independent (provided some form of threading is used
-which occupies a cell) have words B@ and B! for fetching and storing branch
-addresses.
 
 Metacompilation: all defining words should be classes; then during
 metacompilation there's two versions of each class, one implemented by the
