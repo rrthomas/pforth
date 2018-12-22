@@ -100,10 +100,10 @@ DECIMAL
 
 ALSO ASSEMBLER
 
-INCLUDE" save.fs"
 INCLUDE" compiler.fs"
 INCLUDE" compiler1.fs"
 INCLUDE" util.fs"
+INCLUDE" save.fs"
 
 
 \ Special definition of POSTPONE, to cope with FOREIGN vocabularies
