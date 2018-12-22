@@ -41,6 +41,6 @@ case $BUILD in
         git clone https://github.com/rrthomas/smite.git
         cd smite
         git submodule update --init --recursive
-        ./bootstrap && ./configure --enable-silent-rules && make check && sudo make install
+        ./bootstrap && ./configure --enable-silent-rules WORD_SIZE=4 && make check && sudo make install
         ;;
 esac
