@@ -1,3 +1,5 @@
+Support CELL = 8
+
 Have SIGINT handler in interpreter loop, so Ctrl+C first escapes execution,
 and only quits if typed in ACCEPT.
 
