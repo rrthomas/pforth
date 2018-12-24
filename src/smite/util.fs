@@ -17,7 +17,7 @@
 : EXTRA-INSTRUCTION   ( +n -- )
    CODE                       \ make a code word
    LITERAL,                   \ compile the extra instruction code
-   BEXTRA                     \ +n EXTRA
+   0 LITERAL,  BEXTRA         \ +n 0 EXTRA
    BRET                       \ append RET
    END-CODE ;                 \ finish the definition
 
