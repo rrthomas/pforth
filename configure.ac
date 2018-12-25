@@ -18,7 +18,8 @@ AC_DEFUN([PFORTH_BUILD_EXECUTOR],
 AS_CASE([$build],
   [arm*-riscos], [BUILD_EXECUTOR=""],
   [beetle*], [PFORTH_BUILD_EXECUTOR([beetle])],
-  [smite*], [PFORTH_BUILD_EXECUTOR([smite])],
+  [smite*], [PFORTH_BUILD_EXECUTOR([smite])
+  BUILD_EXECUTOR="$BUILD_EXECUTOR --core-dump"],
   [AC_PATH_PROGS(BUILD_EXECUTOR, [beetle smite])
    AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
      AC_MSG_ERROR([No build executor found for pForth]))
