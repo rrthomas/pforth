@@ -4,7 +4,7 @@
 \ OS-specific file access
 
 \ Set the type of the file given by c-addr u2 to u1
-: TYPE-FILE   ( u1 c-addr u2 -- )   C0END  18  [ 3 0 8 ] OS ;
+: TYPE-FILE   ( u1 c-addr u2 -- )   SCRATCH-C0END  18  [ 3 0 8 ] OS ;
 
 
 \ OS function access
@@ -24,7 +24,7 @@ IMMEDIATE COMPILING
 
 CODE OS#
 R2 LR MOV,
-' C0END COMPILE,
+' SCRATCH-C0END COMPILE,
 R1 TOP MOV,
 SWI," OS_SWINumberFromString"
 TOP R0 MOV,
@@ -42,7 +42,7 @@ END-SUB
 
 \ Command-line access
 
-: CLI   ( c-addr -- )   C0END  [ 1 0 ] OS" OS_CLI" ;
+: CLI   ( c-addr -- )   SCRATCH-C0END  [ 1 0 ] OS" OS_CLI" ;
 : *(   CR  [CHAR] ) PARSE  CLI ;
 : *"   CR  POSTPONE S"  POSTPONE CLI ; IMMEDIATE COMPILING
 

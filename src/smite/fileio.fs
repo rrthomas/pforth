@@ -17,10 +17,10 @@ PREVIOUS
 8 CONSTANT BIN-MODE
 : BIN  BIN-MODE OR ;
 
-: OPEN-FILE   ( c-addr u fam -- fid ior )   -ROT C0END SWAP OPEN_FILE ;
-: RENAME-FILE   ( c-addr1 u1 c-addr2 u2 -- ior )   C0END -ROT C0END
+: OPEN-FILE   ( c-addr u fam -- fid ior )   -ROT SCRATCH-C0END SWAP OPEN_FILE ;
+: RENAME-FILE   ( c-addr1 u1 c-addr2 u2 -- ior )   SCRATCH-C0END -ROT HERE 256 C0END HERE
    SWAP RENAME_FILE ;
-: DELETE-FILE   ( c-addr u -- ior )   C0END DELETE_FILE ;
+: DELETE-FILE   ( c-addr u -- ior )   SCRATCH-C0END DELETE_FILE ;
 : CREATE-FILE   ( adr u fam -- fid ior )   CREATE-FAM OR  OPEN-FILE ;
 : ABSOLUTE-ARG   ( u1 -- c-addr u2 )
    TOTAL-ARGS OVER > IF \ u1
