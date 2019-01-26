@@ -41,6 +41,7 @@ case $BUILD in
         git clone https://github.com/rrthomas/smite.git
         cd smite
         git submodule update --init --recursive
-        ./bootstrap && ./configure --enable-silent-rules WORD_SIZE=4 && make check && sudo make install
+        # Make install before make check so Python ctypes's find_library can find libsmite
+        ./bootstrap && ./configure --enable-silent-rules WORD_SIZE=4 && sudo make install && make check
         ;;
 esac
