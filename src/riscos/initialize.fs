@@ -14,6 +14,6 @@ SP RP 32 # SUB,                      \ temporary stack space
 SP RP TOP SUB,                       \ set SP properly
 TOP SP PUSH,                         \ dummy top of stack
 TOP RP MOV,
-R0 SP PUSH,                          \ ( -- 'command R0 )
+R0 SP PUSH,                          \ ( 'command R0 )
 ' INITIALIZE COMPILE,
 END-CODE
