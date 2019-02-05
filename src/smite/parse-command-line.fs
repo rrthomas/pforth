@@ -1,1 +1,1 @@
-: PARSE-COMMAND-LINE ;
+../parse-command-line.fs

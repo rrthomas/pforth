@@ -1,5 +1,8 @@
 \ Control #1
 
+PROVIDE: EXIT   R> DROP ; [THEN]
+
+PROVIDE: J   R> R> R> R>  DUP  -ROT >R >R  -ROT >R >R ; [THEN]
 PROVIDE: (LOOP)   R>  R> 1+  DUP R@ =  SWAP >R  SWAP >R ; [THEN]
 PROVIDE: (+LOOP)   R> SWAP  R>  R@ OVER SWAP -  -ROT +  R@ OVER SWAP -
    SWAP >R  XOR 0<  SWAP >R ; [THEN]
