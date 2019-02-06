@@ -408,7 +408,7 @@ CELL+ CONSTANT /BLOCK-BUFFER   \ uses value saved above
 : BUFFER   ?DUP IF  (BUFFER) DROP  THEN ;
 : BLOCK   ?DUP IF  DUP (BUFFER) IF  NIP  ELSE DUP ROT @BLOCK  THEN  THEN ;
 
-128 CONSTANT /FILE-BUFFER
+1024 CONSTANT /FILE-BUFFER
 16 CONSTANT #FILE-BUFFERS
 VARIABLE FILE-BUFFER#  0 ' FILE-BUFFER# >BODY !   \ next file buffer to use
 0 VALUE FIRST-FILE
@@ -828,7 +828,7 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
          ENDOF
          -1 OF  FALSE  ENDOF         \ if a string, return false
          >R                          \ save switch
-         FIB 128 R@ READ-LINE        \ else read a line from file
+         FIB /FILE-BUFFER R@ READ-LINE \ else read a line from file
          ABORT" file read error during REFILL"
                                      \ if an exception occurred, abort
          SWAP #FIB !  0 >IN !        \ set no. of chars in line
