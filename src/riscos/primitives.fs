@@ -281,12 +281,8 @@ END-SUB
 
 \ Arithmetic and logical #2
 
-CODE (U/MOD)
+CODE ((U/MOD))
 R1 TOP SET MOV,                  \ copy divisor
-EQ IF,                           \ abort on divide by 0
-   ' (LITERAL) COMPILE,  -10 ,   \ -10 THROW
-   ' THROW COMPILE,
-THEN,
 R1 R0 16 #LSR CMP,               \ shift divisor left as far as possible
 R1 R1 16 #LSL LS MOV,            \ without exceeding dividend
 R1 R0 8 #LSR CMP,
@@ -307,16 +303,16 @@ BEGIN,
 LO UNTIL,                        \ divisor<original
 END-SUB
 
-CODE U/MOD
+CODE (U/MOD)
 R3 LR MOV,                       \ save link
 R0 SP 0@ LDR,                    \ get dividend
-' (U/MOD) COMPILE,
+' ((U/MOD)) COMPILE,
 R0 SP 0@ STR,                    \ push remainder
 TOP R2 MOV,                      \ get quotient
 PC R3 MOV,
 END-CODE
 
-CODE /MOD
+CODE (/MOD)
 R5 LR MOV,                       \ save link
 R0 SP 0@ LDR,                    \ get dividend
 R3 R0 TOP EOR,                   \ get signs of quotient
@@ -326,7 +322,7 @@ TOP 0 # CMP,                     \ ensure divisor is positive
 TOP TOP 0 # MI RSB,
 R0 0 # CMP,                      \ ensure dividend is positive
 R0 R0 0 # MI RSB,
-' (U/MOD) COMPILE,
+' ((U/MOD)) COMPILE,
 R3 1 31 LSHIFT # TST,            \ replace sign on quotient
 R2 R2 0 # NE RSB,
 R0 0 # NE CMP,                   \ if quotient is negative and
@@ -339,7 +335,7 @@ TOP R2 MOV,                      \ get quotient
 PC R5 MOV,
 END-CODE
 
-CODE S/REM
+CODE (S/REM)
 R4 LR MOV,                       \ save link
 R0 SP 0@ LDR,                    \ get dividend
 R3 R0 TOP EOR,                   \ get signs of quotient
@@ -349,27 +345,13 @@ TOP 0 # CMP,                     \ ensure divisor is positive
 TOP TOP 0 # MI RSB,
 R0 0 # CMP,                      \ ensure dividend is positive
 R0 R0 0 # MI RSB,
-' (U/MOD) COMPILE,
+' ((U/MOD)) COMPILE,
 R3 1 31 LSHIFT # TST,            \ replace sign on quotient
 R2 R2 0 # NE RSB,
 R3 1 30 LSHIFT # TST,            \ replace sign on remainder
 R0 R0 0 # NE RSB,
 R0 SP 0@ STR,                    \ push remainder
 TOP R2 MOV,                      \ get quotient
-PC R4 MOV,
-END-CODE
-
-CODE /
-R4 LR MOV,
-' /MOD COMPILE,                  \ do the division
-SP SP 4 # ADD,                   \ get rid of remainder
-PC R4 MOV,
-END-CODE
-
-CODE MOD
-R4 LR MOV,
-' /MOD COMPILE,                  \ do the division
-TOP SP POP,                      \ get remainder not quotient
 PC R4 MOV,
 END-CODE
 

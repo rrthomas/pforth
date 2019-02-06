@@ -80,6 +80,17 @@ PROVIDE: 0<>   0 <> ; [THEN]
 
 PROVIDE: ABS   DUP 0< IF  NEGATE  THEN ; [THEN]
 
+\ Allow division primitives without 0 divisor checking
+\ Assume that if S/REM is provided, so is U/MOD
+[PROVIDED] S/REM  INVERT [IF]
+   : CHECK-DIVISOR DUP 0= IF -10 THROW THEN ;
+   : S/REM CHECK-DIVISOR (S/REM) ;
+   : U/MOD CHECK-DIVISOR (U/MOD) ;
+   [PROVIDED] (/MOD) [IF]
+      : /MOD CHECK-DIVISOR (/MOD) ;
+   [THEN]
+[THEN]
+
 PROVIDE: /MOD   ( n1 n2 -- n3 n4 )
    DUP >R
    OVER OVER XOR -ROT
