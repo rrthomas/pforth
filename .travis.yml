@@ -29,13 +29,37 @@ matrix:
             - *default_deps
     - os: linux
       env:
-        - BUILD=arm-riscos
+        - BUILD=beetle
+        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
       addons:
         apt:
           packages:
+            - *default_deps
+    - os: linux
+      env:
+        - BUILD=smite
+        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
+      addons:
+        apt:
+          packages:
+            - *default_deps
+    - os: linux
+      env:
+        - BUILD=arm-riscos
+      addons:
+        apt:
+          packages: &riscos_deps
             - qtbase5-dev
             - qtmultimedia5-dev
             - libqt5multimedia5-plugins
+    - os: linux
+      env:
+        - BUILD=arm-riscos
+        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
+      addons:
+        apt:
+          packages:
+            - *riscos_deps
     - os: osx
       env:
         - BUILD=beetle
