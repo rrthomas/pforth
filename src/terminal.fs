@@ -14,4 +14,5 @@ CREATE IO-BUFFER  CELL ALLOT
 : CR?   DUP 13 =  SWAP 10 =  OR ;
 : EOL   (S")  [ 1 C, 10 C, ALIGN ] ;
 
+\ FIXME: implement GET-ENVIRONMENT-VARIABLE and use it to read $COLUMNS
 77 CONSTANT WIDTH   \ width of display
