@@ -1,7 +1,5 @@
 CR .( Required primitives )
 
-\ FIXME: Move 'THROW! and THROW to extra-primitives.fs
-
 ALSO ASSEMBLER \ For INLINE
 
 \ Stack primitives
@@ -9,7 +7,7 @@ ALSO ASSEMBLER \ For INLINE
 3 PRIMITIVES >R R> R@
 
 \ Stack management primitives
-6 PRIMITIVES SP@ SP! RP@ RP! 'THROW! MEMORY@
+5 PRIMITIVES SP@ SP! RP@ RP! MEMORY@
 CODE S0   BS0@ BEXIT END-CODE  1 INLINE
 CODE R0   BR0@ BEXIT END-CODE  1 INLINE
 CODE STACK-CELLS   B#S BEXIT END-CODE  1 INLINE
@@ -27,7 +25,6 @@ CODE RETURN-STACK-CELLS   B#R BEXIT END-CODE  1 INLINE
 2 PRIMITIVES LSHIFT RSHIFT
 
 \ Control primitives
-1 PRIMITIVES THROW
 INCLUDE" bracket-does.fs"
 
 \ System primitives
