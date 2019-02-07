@@ -56,6 +56,19 @@ PROVIDE: TUCK   SWAP OVER ; [THEN]
 PROVIDE: NIP   SWAP DROP ; [THEN]
 
 
+\ Exceptions #1
+
+[PROVIDED] THROW  INVERT [IF]
+   VARIABLE 'THROW
+   : 'THROW!   'THROW ! ;
+   : THROW   'THROW @EXECUTE ;
+[THEN]
+VARIABLE 'THROWN
+: (ABORT")   SWAP IF  'THROWN !  -2 THROW  ELSE DROP  THEN ;
+: UNDEFINED   ( c-addr -- )   'THROWN !  -13 THROW ;
+PROVIDE: BYE   0 HALT ; [THEN]
+
+
 \ Arithmetic #2
 
 PROVIDE: >-<   SWAP - ; [THEN]
@@ -174,19 +187,6 @@ PROVIDE: MAX   2DUP < IF  SWAP  THEN  DROP ; [THEN]
 : D*   D>S >R D>S R>  *  S>D ;
 : UD/MOD  UD>U >R UD>U R>  U/MOD  >R U>UD R> U>UD ;
 : DABS   IF  NEGATE  THEN  U>UD ;
-
-
-\ Exceptions #1
-
-[PROVIDED] THROW  INVERT [IF]
-   VARIABLE 'THROW
-   : 'THROW!   'THROW ! ;
-   : THROW   'THROW @EXECUTE ;
-[THEN]
-VARIABLE 'THROWN
-: (ABORT")   SWAP IF  'THROWN !  -2 THROW  ELSE DROP  THEN ;
-: UNDEFINED   ( c-addr -- )   'THROWN !  -13 THROW ;
-PROVIDE: BYE   0 HALT ; [THEN]
 
 
 \ Strings #1
