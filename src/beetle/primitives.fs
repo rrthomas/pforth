@@ -2,7 +2,7 @@ CR .( Required primitives )
 
 \ FIXME: Move 'THROW! and THROW to extra-primitives.fs
 
-ALSO ASSEMBLER
+ALSO ASSEMBLER \ For INLINE
 
 \ Stack primitives
 3 PRIMITIVES DROP PICK ROLL

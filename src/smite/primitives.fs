@@ -1,6 +1,6 @@
 CR .( Required primitives )
 
-ALSO ASSEMBLER
+ALSO ASSEMBLER \ For INLINE
 
 \ Stack primitives
 \ FIXME: Implement ROLL

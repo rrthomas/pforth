@@ -1,7 +1,5 @@
 CR .( Required primitives )
 
-\ FIXME: why do we not need ALSO ASSEMBLER here as in Beetle/SMite?
-
 \ Stack primitives
 
 CODE DROP
