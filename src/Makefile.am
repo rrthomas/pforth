@@ -57,6 +57,11 @@ install-exec-hook:
 	export pforth_name=`echo pforth | sed '$(transform)'`; \
 	sed 's,@PFORTH@,'$$pforth_name',' < pforthi > pforthi.tmp; \
 	$(INSTALL_PROGRAM) pforthi.tmp $(DESTDIR)$(bindir)/`echo pforthi | sed '$(transform)'`
+
+uninstall-hook:
+	rm $(DESTDIR)$(bindir)/`echo pforthi | sed '$(transform)'`
+
+DISTCLEANFILES += $(host)/pforthi pforthi.tmp
 endif
 
 loc-local:

@@ -19,6 +19,7 @@ matrix:
             - help2man
             - latexmk
             - hevea
+            - rlwrap
     - os: linux
       env:
         - BUILD=smite
