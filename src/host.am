@@ -10,17 +10,27 @@ highlevel.fs: $(srcdir)/../highlevel.fs.in
 
 include $(srcdir)/../host_src.am
 
-# Triple test (if building on host)
-pforth-base: $(host_SRCS)
+do_build = \
 	export srcs="$(host_SRCS) make.fs"; $(do_build_prep) && \
-	$(BUILD_PFORTH) make-base.fs && \
+	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make-base.fs && \
 	if test "$(host)" = "$(build)" -a "$(target)" = "$(host)"; then \
 		mv pforth-new pforth-new-0 && \
-		$(BUILD_EXECUTOR) pforth-new-0 make-base.fs && \
+		$(BUILD_EXECUTOR) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make-base.fs && \
 		cmp pforth-new pforth-new-0 && \
 		rm pforth-new-0; \
 	fi && \
 	mv pforth-new $@
+
+
+# Triple test (if building on host)
+pforth-base: $(host_SRCS)
+	$(do_build)
+
+# Build with minimal primitives
+pforth-base-minimal-primitives: $(host_SRCS) minimal-primitives.fs
+	export MINIMAL_PRIMITIVES="CREATE MINIMAL-PRIMITIVES"; \
+	echo $$MINIMAL_PRIMITIVES; \
+	$(do_build)
 
 loc-local:
 	$(CLOC) $(CLOC_OPTS) $(host_SRCS)

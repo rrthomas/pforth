@@ -1,50 +1,11 @@
-\ Kernel assembler words
-\ Reuben Thomas   15/4/96-13/7/99
+CR .( Required primitives )
 
-CR .( Assembler words )
+\ FIXME: why do we not need ALSO ASSEMBLER here as in Beetle/SMite?
 
-
-\ Stack manipulation
-
-CODE DUP
-TOP SP PUSH,
-END-SUB
+\ Stack primitives
 
 CODE DROP
 TOP SP POP,
-END-SUB
-
-CODE SWAP
-R0 SP 0@ LDR,
-TOP SP 0@ STR,
-TOP R0 MOV,
-END-SUB
-
-CODE OVER
-TOP SP PUSH,
-TOP SP 4 #+@ LDR,
-END-SUB
-
-CODE ROT
-R0 TOP MOV,
-SP @! { R1 TOP } FD LDM,
-SP @! { R0 R1 } FD STM,
-END-SUB
-
-CODE -ROT
-SP @! { R0 R1 } FD LDM,
-SP @! { R1 TOP } FD STM,
-TOP R0 MOV,
-END-SUB
-
-CODE TUCK
-R0 SP 0@ LDR,
-TOP SP 0@ STR,
-R0 SP 4 #-@! STR,
-END-SUB
-
-CODE NIP
-SP SP 4 # ADD,
 END-SUB
 
 CODE PICK
@@ -60,11 +21,6 @@ BEGIN,
    R1 R0 4 #+@ STR,
    R0 SP CMP,
 LO UNTIL,
-END-SUB
-
-CODE ?DUP
-TOP 0 # CMP,
-TOP SP NE PUSH,
 END-SUB
 
 CODE >R
@@ -86,20 +42,13 @@ END-SUB
 COMPILING
 
 
-\ Comparison
+\ Arithmetic and logical primitives #1
 
 CODE <
 R0 SP POP,
 R0 TOP CMP,
 TOP 0 # LT MVN,
 TOP 0 # GE MOV,
-END-SUB
-
-CODE >
-R0 SP POP,
-R0 TOP CMP,
-TOP 0 # GT MVN,
-TOP 0 # LE MOV,
 END-SUB
 
 CODE =
@@ -109,59 +58,10 @@ TOP 0 # EQ MVN,
 TOP 0 # NE MOV,
 END-SUB
 
-CODE <>
-R0 SP POP,
-TOP TOP R0 SET EOR,
-TOP 0 # NE MVN,
-END-SUB
-
-CODE 0<
-TOP TOP 31 #ASR MOV,
-END-SUB
-
-CODE 0>
-TOP TOP 0 # RSB,
-TOP TOP 31 #ASR MOV,
-END-SUB
-
-CODE 0=
-TOP TOP 1 # SET SUB,
-TOP TOP TOP SBC,
-END-SUB
-
-CODE 0<>
-TOP 0 # CMP,
-TOP 0 # NE MVN,
-END-SUB
-
 CODE U<
 R0 SP POP,
 TOP R0 TOP SET SUB,
 TOP TOP TOP SBC,
-END-SUB
-
-CODE U>
-R0 SP POP,
-TOP TOP R0 SET SUB,
-TOP TOP TOP SBC,
-END-SUB
-
-
-\ Arithmetic and logical #1
-
-CODE 0
-TOP SP PUSH,
-TOP 0 # MOV,
-END-SUB
-
-CODE 1
-TOP SP PUSH,
-TOP 1 # MOV,
-END-SUB
-
-CODE -1
-TOP SP PUSH,
-TOP 0 # MVN,
 END-SUB
 
 CODE CELL
@@ -174,56 +74,6 @@ TOP SP PUSH,
 TOP CELL 1- # MVN,
 END-SUB
 
-CODE TRUE
-TOP SP PUSH,
-TOP FALSE # MVN,
-END-SUB
-
-CODE FALSE
-TOP SP PUSH,
-TOP FALSE # MOV,
-END-SUB
-
-CODE 1+
-TOP TOP 1 # ADD,
-END-SUB
-
-CODE 1-
-TOP TOP 1 # SUB,
-END-SUB
-
-CODE CELL+
-TOP TOP CELL # ADD,
-END-SUB
-
-CODE CELL-
-TOP TOP CELL # SUB,
-END-SUB
-
-CODE 2*
-TOP TOP 1 #ASL MOV,
-END-SUB
-
-CODE 2/
-TOP TOP 1 #ASR MOV,
-END-SUB
-
-CODE CELLS
-TOP TOP 2 #ASL MOV,
-END-SUB
-
-CODE CELL/
-TOP TOP 2 #ASR MOV,
-END-SUB
-
-CODE 1LSHIFT
-TOP TOP 1 #LSL MOV,
-END-SUB
-
-CODE 1RSHIFT
-TOP TOP 1 #LSR MOV,
-END-SUB
-
 CODE +
 R0 SP 4 #@+ LDR,
 TOP TOP R0 ADD,
@@ -234,18 +84,13 @@ R0 SP 4 #@+ LDR,
 TOP R0 TOP SUB,
 END-SUB
 
-CODE >-<
-R0 SP 4 #@+ LDR,
-TOP TOP R0 SUB,
-END-SUB
-
 CODE *
 R0 SP 4 #@+ LDR,
 TOP R0 TOP MUL,
 END-SUB
 
 
-\ Defining
+\ Control primitives
 
 CODE (CREATE)
 TOP SP PUSH,
@@ -255,9 +100,6 @@ END-CODE
 COMPILING
 
 INCLUDE" bracket-does.fs"
-
-
-\ Compiler
 
 VARIABLE 'THROW
 
@@ -279,7 +121,7 @@ TOP SP POP,
 END-SUB
 
 
-\ Arithmetic and logical #2
+\ Arithmetic and logical primitives #2
 
 CODE ((U/MOD))
 R1 TOP SET MOV,                  \ copy divisor
@@ -355,23 +197,6 @@ TOP R2 MOV,                      \ get quotient
 PC R4 MOV,
 END-CODE
 
-CODE MAX
-R0 SP POP,
-R0 TOP CMP,
-TOP R0 GT MOV,
-END-SUB
-
-CODE MIN
-R0 SP POP,
-R0 TOP CMP,
-TOP R0 LT MOV,
-END-SUB
-
-CODE ABS
-TOP 0 # CMP,
-TOP TOP 0 # MI RSB,
-END-SUB
-
 CODE NEGATE
 TOP TOP 0 # RSB,
 END-SUB
@@ -406,7 +231,7 @@ TOP R0 TOP LSR MOV,
 END-SUB
 
 
-\ Memory
+\ Memory primitives
 
 CODE @
 TOP TOP 0@ LDR,
@@ -428,22 +253,8 @@ R0 TOP 0@ BYTE STR,
 TOP SP POP,
 END-SUB
 
-CODE +!
-R0 SP POP,
-R1 TOP 0@ LDR,
-R0 R0 R1 ADD,
-R0 TOP 0@ STR,
-TOP SP POP,
-END-SUB
 
-
-\ System
-
-CODE BYE
-R0 0 # MOV,
-R1 0 # MOV,
-SWI," XOS_Exit"
-END-CODE
+\ System primitives
 
 CODE HALT
 R0 0 # MOV,
@@ -454,18 +265,7 @@ $58454241 , \ "ABEX"
 END-CODE
 
 
-\ Control structures
-
-CODE J
-TOP SP PUSH,
-TOP RP 8 #+@ LDR,
-END-SUB
-COMPILING
-
-CODE EXIT
-UNLINK,
-END-CODE
-COMPILING
+\ Control primitives
 
 CODE (LOOP)
 RP { R0 R1 } FD LDM,             \ get the index and limit
@@ -489,25 +289,8 @@ TOP R1 31 #ASR MOV,              \ set flag TRUE if signs
 END-SUB                          \ different or FALSE if not
 COMPILING
 
-CODE UNLOOP
-RP RP 8 # ADD,
-END-SUB
-COMPILING
 
-CODE EXECUTE
-R0 TOP MOV,
-TOP SP POP,
-PC R0 MOV,
-END-CODE
-
-CODE @EXECUTE
-R0 TOP MOV,
-TOP SP POP,
-PC R0 0@ LDR,
-END-CODE
-
-
-\ Stack pointers
+\ Stack management primitives
 
 0 VALUE S0
 4096 CONSTANT STACK-CELLS
@@ -531,14 +314,4 @@ END-SUB
 CODE RP!
 RP TOP MOV,
 TOP SP POP,
-END-SUB
-
-
-\ Extras
-
-\ Arithmetic and logic
-
-CODE ARSHIFT
-R0 SP POP,
-TOP R0 TOP ASR MOV,
 END-SUB

@@ -171,6 +171,9 @@ ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
 >COMPILERS<
 'FORTH <'FORTH   \ 'FORTH of new system
 INCLUDE" primitives.fs"
+[UNDEFINED] MINIMAL-PRIMITIVES [IF]
+   INCLUDE" extra-primitives.fs"
+[THEN]
 
 INCLUDE" highlevel.fs"
 INCLUDE" initialize.fs"

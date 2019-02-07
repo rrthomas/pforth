@@ -21,9 +21,6 @@ VALUE TARGET-'FORTH
 
 \ Arithmetic #1
 
-PROVIDE: CELL   4 ; [THEN]
-PROVIDE: -CELL   -4 ; [THEN]
-
 PROVIDE: TRUE   -1 ; [THEN]
 PROVIDE: FALSE   0 ; [THEN]
 
