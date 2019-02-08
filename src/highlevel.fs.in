@@ -1086,9 +1086,8 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 : WRAP?   ( -- f )   CURSORX @ + WIDTH < INVERT ;
 : NEWLINE   0 CURSORX !  CR ;
 3 CONSTANT GAP
-: WORDS
+: WORDLIST-WORDS   ( wid -- )
    NEWLINE                           \ start listing on a new line
-   CONTEXT @                         \ get start of chain
    BEGIN  @ ?DUP WHILE               \ for each word in the chain
       DUP >NAME COUNT                \ get the name
       DUP WRAP? IF  NEWLINE  THEN    \ new line if necessary
@@ -1102,7 +1101,8 @@ VARIABLE CURSORX   \ cursor x position during WORDS
       >LINK                          \ get link to next word
    REPEAT
    CURSORX @ IF  NEWLINE  THEN ;     \ ensure we're on a new line
-
+: WORDS   CONTEXT @  WORDLIST-WORDS ;
+: ALL-WORDS   GET-ORDER 0 ?DO  WORDLIST-WORDS  LOOP ;
 
 \ Environmental queries
 
