@@ -258,6 +258,8 @@ INCLUDE" branch-cells.fs" CONSTANT #BRANCH-CELLS
 INCLUDE" compiler1.fs"
 INCLUDE" compiler-postpone.fs"
 INCLUDE" defer-fetch-store.fs"
+\ FIXME: HACK
+INCLUDE" skip-does-link.fs"
 
 
 \ Strings #2
@@ -733,8 +735,7 @@ IMMEDIATE COMPILING
                                      bit 30 is COMPILING flag,
                                      bit 29 is SMUDGE flag,
                                      rest of MS byte is length of name field,
-                                     byte 2 is number of bytes of code
-                                     for an inline word
+                                     byte 2 is reserved for the back-end
                                      bytes 0 & 1 are offset to DOES> code for a
                                      defining word
 )
