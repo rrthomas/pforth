@@ -257,9 +257,9 @@ PREVIOUS  DEFINITIONS  ALSO ASSEMBLER
 \ ( arg2 arg1 -> TOP=arg1, R0=arg2 )
 \ ( assembly code )
 \ ( TOP=result1, R0=result2 -> result2 result1 )
-\ END-SUB
+\ END-PRIMITIVE \ or END-PRIMITIVE-CODE, if explicit flow control is needed
 
-: PRIMITIVE   ( args results -- args results )
+: PRIMITIVE   ( args results -- results args )
    CODE                       \ make a code word
    SWAP                       \ ( results args )
    DUP 3 < INVERT ABORT" PRIMITIVE needs < 3 arguments"
@@ -271,7 +271,7 @@ PREVIOUS  DEFINITIONS  ALSO ASSEMBLER
       R0 SP POP,
    THEN ;
 
-: END-PRIMITIVE-CODE   ( args results -- )
+: END-PRIMITIVE-CODE   ( results args -- )
    OVER  2 = IF               \ push R0 if results=2
       R0 SP PUSH,
    THEN
