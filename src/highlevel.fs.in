@@ -1220,6 +1220,8 @@ FALSE VALUE INTERACT?
                ERROR-PREFIX ." unknown option " TYPE CR
             "ENDCASE
          ELSE                        \ or interpret file
+            \ FIXME: install CATCH handler, and if INTERACT? is true, even
+            \ if case of error, respect it
             INCLUDED
          THEN
       REPEAT
