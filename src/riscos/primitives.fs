@@ -79,32 +79,32 @@ END-PRIMITIVE
 
 \ Control primitives
 
-CODE (CREATE)
-TOP SP PUSH,
+0 1 PRIMITIVE (CREATE)
 TOP LR 252 24 LSHIFT # BIC,
+END-PRIMITIVE-CODE
 UNLINK,
 END-CODE
 COMPILING
 
 INCLUDE" bracket-does.fs"
 
-CODE (LITERAL)
-TOP SP PUSH,
+0 1 PRIMITIVE (LITERAL)
 TOP LR 252 24 LSHIFT # BIC,
 TOP TOP 0@ LDR,
+END-PRIMITIVE-CODE
 PC LR 4 # ADD,
 END-CODE
 COMPILING
 
-CODE EXECUTE
+1 0 PRIMITIVE EXECUTE
 R0 TOP MOV,
-TOP SP POP,
+END-PRIMITIVE-CODE
 PC R0 MOV,
 END-CODE
 
-CODE @EXECUTE
+1 0 PRIMITIVE @EXECUTE
 R0 TOP MOV,
-TOP SP POP,
+END-PRIMITIVE-CODE
 PC R0 0@ LDR,
 END-CODE
 
@@ -133,18 +133,16 @@ BEGIN,
 LO UNTIL,                        \ divisor<original
 END-SUB
 
-CODE (U/MOD)
+2 2 PRIMITIVE (U/MOD)
 R3 LR MOV,                       \ save link
-R0 SP 0@ LDR,                    \ get dividend
 ' ((U/MOD)) COMPILE,
-R0 SP 0@ STR,                    \ push remainder
 TOP R2 MOV,                      \ get quotient
+END-PRIMITIVE-CODE
 PC R3 MOV,
 END-CODE
 
-CODE (/MOD)
+2 2 PRIMITIVE (/MOD)
 R5 LR MOV,                       \ save link
-R0 SP 0@ LDR,                    \ get dividend
 R3 R0 TOP EOR,                   \ get signs of quotient
 R3 R3 1 31 LSHIFT # AND,
 R3 R3 TOP 1 #LSR ADD,            \ and remainder (=divisor's)
@@ -160,14 +158,13 @@ R2 R2 1 # NE SUB,                \ remainder non-zero, floor
 R0 TOP R0 NE SUB,                \ quotient & correct remainder
 R3 1 30 LSHIFT # TST,            \ replace sign on remainder
 R0 R0 0 # NE RSB,
-R0 SP 0@ STR,                    \ push remainder
 TOP R2 MOV,                      \ get quotient
+END-PRIMITIVE-CODE
 PC R5 MOV,
 END-CODE
 
-CODE (S/REM)
+2 2 PRIMITIVE (S/REM)
 R4 LR MOV,                       \ save link
-R0 SP 0@ LDR,                    \ get dividend
 R3 R0 TOP EOR,                   \ get signs of quotient
 R3 R3 1 31 LSHIFT # AND,
 R3 R3 R0 1 #LSR ADD,             \ and remainder (=dividend's)
@@ -180,8 +177,8 @@ R3 1 31 LSHIFT # TST,            \ replace sign on quotient
 R2 R2 0 # NE RSB,
 R3 1 30 LSHIFT # TST,            \ replace sign on remainder
 R0 R0 0 # NE RSB,
-R0 SP 0@ STR,                    \ push remainder
 TOP R2 MOV,                      \ get quotient
+END-PRIMITIVE-CODE
 PC R4 MOV,
 END-CODE
 
@@ -246,7 +243,7 @@ END-CODE
 
 \ Control primitives
 
-CODE (LOOP)
+1 1 PRIMITIVE (LOOP)
 RP { R0 R1 } FD LDM,             \ get the index and limit
 R0 R0 1 # ADD,                   \ increment the index
 TOP SP PUSH,                     \ save the top of stack
@@ -254,10 +251,10 @@ R0 R1 CMP,                       \ set a flag on top of stack
 TOP 0 # EQ MVN,                  \ to TRUE if index=limit
 TOP 0 # NE MOV,                  \ or FALSE otherwise
 R0 RP 0@ STR,                    \ save new index
-END-SUB
+END-PRIMITIVE
 COMPILING
 
-CODE (+LOOP)
+1 1 PRIMITIVE (+LOOP)
 RP { R0 R1 } FD LDM,             \ get the index and limit
 R2 R0 R1 SUB,                    \ index-limit
 R0 R0 TOP ADD,                   \ alter the index
@@ -265,7 +262,7 @@ R0 RP 0@ STR,                    \ save new index
 R1 R0 R1 SUB,                    \ new index-limit
 R1 R1 R2 EOR,                    \ find whether signs the same
 TOP R1 31 #ASR MOV,              \ set flag TRUE if signs
-END-SUB                          \ different or FALSE if not
+END-PRIMITIVE                    \ different or FALSE if not
 COMPILING
 
 
@@ -280,9 +277,13 @@ COMPILING
 TOP SP 4 # ADD,
 END-PRIMITIVE
 
-1 0 PRIMITIVE SP!
+\ FIXME: We don't load TOP at the end, because we treat the stack as full
+\ (with POP, etc.) when in fact it should be empty (so that SP is the
+\ "correct" address, but points to the slot occupied by TOP). This works for
+\ now because of the limited ways we use SP!.
+CODE SP!
 SP TOP MOV,
-END-PRIMITIVE
+END-SUB
 
 0 1 PRIMITIVE RP@
 TOP RP MOV,
