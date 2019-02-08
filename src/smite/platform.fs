@@ -1,1 +1,1 @@
-: "PLATFORM   S" SMite" ;
+: "PLATFORM   S" SMite (frame-stack)" ;

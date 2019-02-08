@@ -64,22 +64,23 @@ $40 CONSTANT LITERAL-CONTINUATION
 \ FIXME: When we have assembler, "6" below becomes: CELL BITS/ *  LITERAL-CHUNK-BIT /  1+
 : ADDRESS-SPACE   6 0 DO  $80 C,  LOOP ;
 
-: AHEAD   HERE  ADDRESS-SPACE  $99 C, ; IMMEDIATE COMPILING
-: IF   HERE  ADDRESS-SPACE  $9A C, ; IMMEDIATE COMPILING
+: AHEAD   HERE  ADDRESS-SPACE  $96 C, ; IMMEDIATE COMPILING
+: IF   HERE  ADDRESS-SPACE  $97 C, ; IMMEDIATE COMPILING
 
 : @BRANCH   ( from -- to )   @LITERAL >'FORTH ;
 : !BRANCH   ( at from to opcode -- )   HERE >R  >R  ROT DP !
    <'FORTH LITERAL,  DROP  R> C,  R> DP ! ;
 
-: BRANCH   ( at from to -- )   $99 !BRANCH ;
-: CALL   ( at from to -- )   $9B !BRANCH ;
+: BRANCH   ( at from to -- )   $96 !BRANCH ;
+\ FIXME: Fix, or remove if not needed
+\ : CALL   ( at from to -- )   $AA !BRANCH ;
 
 : JOIN   ( from to -- )   <'FORTH  SWAP !LITERAL ;
 
-: CALL,   ( to -- )   <'FORTH LITERAL,  $9B C, ;
+: CALL,   ( to -- )   $9D C,  <'FORTH LITERAL,  $AA C, ;
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP C@ C,  1+  LOOP  DROP
    ELSE CALL,  THEN ;
 
 : LINK, ;
-: UNLINK,   $9C C, ;
+: UNLINK,   $A4 C,  $96 C, ;
 : LEAVE, ;

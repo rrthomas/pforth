@@ -3,9 +3,10 @@
 : R>ADDRESS ; IMMEDIATE COMPILING
 : (POSTPONE)   R> R>ADDRESS ALIGNED  DUP CELL+ >R  @ CURRENT-COMPILE, ;
 
-: EXECUTE   STATE @ IF  $9B C,  ELSE [ $9B C, ]  THEN ; IMMEDIATE
-: @EXECUTE   STATE @ IF  $95 C,  $9B C,  ELSE [ $95 C,  $9B C, ]
-   THEN ; IMMEDIATE
+: EXECUTE   STATE @ IF  $9D C,  -1 LITERAL, $87 C,  1 LITERAL,  $83 C,  $AA C,  ELSE
+   [ $9D C,  -1 C, $87 C,  1 C, ( FIXME: HACK! )  $83 C,  $AA C, ]  THEN ; IMMEDIATE
+: @EXECUTE   STATE @ IF  $92 C,  $9D C,  -1 LITERAL, $87 C,  1 LITERAL,  $83 C,  $AA C,
+   ELSE  [ $92 C,  $9D C,  -1 C, $87 C,  1 C, ( FIXME: HACK! )  $83 C,  $AA C, ]  THEN ; IMMEDIATE
 
 
 \ Data structures
