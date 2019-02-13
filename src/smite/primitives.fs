@@ -20,6 +20,7 @@ END-PRIMITIVE
 ] 1 [ BSWAP
 END-PRIMITIVE
 
+\ FIXME: Only works when inlined!
 1 0 PRIMITIVE >R
 BPUSH_FRAME_DEPTH
 ] -1 [
@@ -28,10 +29,13 @@ BADD
 BPUSH_FRAME
 END-PRIMITIVE
 
+\ FIXME: Only works when inlined!
 0 1 PRIMITIVE R>
+BPUSH_F0
 BPOP_FRAME
 END-PRIMITIVE
 
+\ FIXME: Only works when inlined!
 0 1 PRIMITIVE R@
 BPUSH_F0
 BLOAD_FRAME_VALUE
@@ -79,7 +83,7 @@ END-PRIMITIVE
 CELL LITERAL,
 BUDIVMOD
 ] 1 [ BPOP
-BSTORE_F0
+BPOP_FRAME
 END-PRIMITIVE
 
 \ FIXME: Make these optional in pForth (highlevel.fs does not need them)
