@@ -2,6 +2,7 @@ CR .( Required primitives )
 
 ALSO ASSEMBLER \ For INLINE
 
+\ FIXME: PRIMITIVEs cannot be called: ROLL the return address down first, outside the INLINE count
 
 \ Stack primitives
 
@@ -10,30 +11,16 @@ ALSO ASSEMBLER \ For INLINE
 END-PRIMITIVE
 
 1 1 PRIMITIVE PICK
-BPUSH
+BDUP
 END-PRIMITIVE
 
-\ FIXME: Implement ROLL
-\ 1 1 PRIMITIVE ROLL
+1 1 PRIMITIVE ROLL
+BROTATE
+END-PRIMITIVE
 
 2 2 PRIMITIVE SWAP
 ] 1 [ BSWAP
 END-PRIMITIVE
-
-1 0 PRIMITIVE >R
-BPOP2R
-END-PRIMITIVE
-
-0 1 PRIMITIVE R>
-BRPOP
-END-PRIMITIVE
-
-\ Don't use END-PRIMITIVE as R@ can't be INLINE
-0 1 PRIMITIVE R@
-] 1 [ BRPUSH
-END-PRIMITIVE-CODE
-BRET
-END-CODE
 
 0 1 PRIMITIVE CELL
 ] 4 [
@@ -41,58 +28,6 @@ END-PRIMITIVE
 
 0 1 PRIMITIVE -CELL
 ] -4 [
-END-PRIMITIVE
-
-0 1 PRIMITIVE NATIVE-POINTER-CELLS
-BPUSH_NATIVE_POINTER_SIZE
-CELL LITERAL,
-BUDIVMOD
-] 1 [ BPOP
-END-PRIMITIVE
-
-
-\ Stack management primitives
-
-0 1 PRIMITIVE SP@
-BPUSH_SDEPTH
-CELL LITERAL,
-BMUL
-END-PRIMITIVE
-
-1 0 PRIMITIVE SP!
-CELL LITERAL,
-BUDIVMOD
-] 1 [ BPOP
-BSTORE_SDEPTH
-END-PRIMITIVE
-
-0 1 PRIMITIVE RP@
-BPUSH_RDEPTH
-CELL LITERAL,
-BMUL
-END-PRIMITIVE
-
-\ FIXME: only works when inlined
-1 0 PRIMITIVE RP!
-CELL LITERAL,
-BUDIVMOD
-] 1 [ BPOP
-BSTORE_RDEPTH
-END-PRIMITIVE
-
-0 CONSTANT S0
-0 CONSTANT R0
-
-0 1 PRIMITIVE STACK-CELLS
-BPUSH_SSIZE
-END-PRIMITIVE
-
-0 1 PRIMITIVE RETURN-STACK-CELLS
-BPUSH_RSIZE
-END-PRIMITIVE
-
-0 1 PRIMITIVE MEMORY@
-BPUSH_MEMORY
 END-PRIMITIVE
 
 
@@ -171,7 +106,7 @@ BXOR
 END-PRIMITIVE
 
 1 1 PRIMITIVE INVERT
-BINVERT
+BNOT
 END-PRIMITIVE
 
 2 1 PRIMITIVE LSHIFT
@@ -183,17 +118,99 @@ BRSHIFT
 END-PRIMITIVE
 
 
-\ Control primitives
-
-INCLUDE" bracket-create.fs"
-INCLUDE" bracket-does.fs"
-
-
 \ System primitives
 
 1 0 PRIMITIVE HALT
 BHALT
 END-PRIMITIVE
+
+
+\ Control primitives
+
+\ Must NOT be inline, as it needs caller's PC!
+CODE (CREATE)
+4 LITERAL, BADD \ FIXME: skip extra CELL (see CREATE,)
+1 LITERAL, BSWAP
+BBRANCH
+END-CODE
+
+INCLUDE" bracket-does.fs"
+
+
+\ Stack management
+
+VARIABLE RP \ FIXME: Make this a small constant!
+\ FIXME: >R and R> must be defined as CODE words, because they are needed by
+\ LINK, and UNLINK,
+1 0 PRIMITIVE >R
+' RP >BODY <'FORTH LITERAL,
+0 LITERAL, BDUP
+BLOAD
+-4 LITERAL, BADD \ FIXME: target -CELL, not -4
+0 LITERAL, BDUP
+2 LITERAL, BSWAP
+BSTORE
+BSTORE
+END-PRIMITIVE
+0 INLINE \ Prevent inlining: it's too long to go at the start of each word!
+
+0 1 PRIMITIVE R>
+' RP >BODY <'FORTH LITERAL,
+0 LITERAL, BDUP
+BLOAD
+0 LITERAL, BDUP
+4 LITERAL, BADD \ FIXME: target CELL, not 4
+2 LITERAL, BROTATE
+BSTORE
+BLOAD
+END-PRIMITIVE
+0 INLINE \ Prevent inlining: it's too long to go at the start of each word!
+
+0 1 PRIMITIVE R@
+' RP >BODY <'FORTH LITERAL,
+BLOAD
+BLOAD
+END-PRIMITIVE
+
+0 1 PRIMITIVE RP@
+' RP >BODY <'FORTH LITERAL,
+BLOAD
+END-PRIMITIVE
+
+\ FIXME: -9 THROW if RP is out of range
+\ Must be a primitive as it would mess up its own return
+1 0 PRIMITIVE RP!
+' RP >BODY <'FORTH LITERAL,
+BSTORE
+END-PRIMITIVE
+
+
+\ Stack management primitives
+
+0 1 PRIMITIVE SP@
+BGET_STACK_DEPTH
+CELL LITERAL,
+BMUL
+END-PRIMITIVE
+
+\ FIXME: Must be inlined!
+0 0 PRIMITIVE SP! \ Lie about arguments and results!
+CELL LITERAL,
+BUDIVMOD
+] 1 [ BPOP
+BSET_STACK_DEPTH
+END-PRIMITIVE
+
+
+\ FIXME: Put in better order; must be defined after bracket-create is included because of use of VALUE
+1024 1024 * VALUE MEMORY-SIZE \ FIXME: command-line parameter
+
+\ FIXME: Make these optional in pForth (highlevel.fs does not need them)
+4096 CONSTANT STACK-CELLS
+4096 CONSTANT RETURN-STACK-CELLS
+
+0 CONSTANT S0
+0 VALUE R0
 
 
 PREVIOUS
