@@ -11,7 +11,7 @@ CR .( pForth high level words )
 
 \ System variables
 
-DUP VALUE 'FORTH   \ value is put on stack by make.fs
+DUP VALUE 'FORTH   \ value is put on stack by make-base.fs
 VALUE TARGET-'FORTH
 : <'FORTH   'FORTH -  TARGET-'FORTH + ;
 : >'FORTH   'FORTH +  TARGET-'FORTH - ;
