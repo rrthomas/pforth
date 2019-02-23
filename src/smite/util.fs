@@ -19,5 +19,5 @@
 : EXTRA-PRIMITIVE   ( args results u -- )
    >R  PRIMITIVE              \ make a primitive
    R> LITERAL,                \ compile the extra instruction code
-   0 LITERAL,  BEXTRA         \ u 0 EXTRA
+   BLIB_C                     \ u LIB_C
    END-PRIMITIVE ;            \ finish the definition

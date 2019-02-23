@@ -8,7 +8,7 @@
 \ FIXME: Distinguish the case where we must align to a cell boundary for
 \ code-fiddling reasons (e.g. REDEFINER) from that where we need to align to
 \ a branch target (AHEAD); the latter is a null operation on SMite
-: NOPALIGN   $1F CALIGN ; \ FIXME: NOP
+: NOPALIGN   $1E CALIGN ; \ FIXME: NOP
 
 \ Find most-significant bit set in a CELL
 \ After https://stackoverflow.com/questions/2589096/find-most-significant-bit-left-most-that-is-set-in-a-bit-array
@@ -64,7 +64,7 @@ $80 CONSTANT LITERAL-FINAL
 
 \ FIXME: When we have assembler, "6" below becomes: CELL BITS/ *  LITERAL-CHUNK-BIT /  1+
 \ FIXME: Rather than compiling NOPs, compile a 6-byte (possibly non-normal) number
-: ADDRESS-SPACE   6 0 DO  $1F C,  LOOP ;
+: ADDRESS-SPACE   6 0 DO  $1E C,  LOOP ;
 
 : AHEAD   HERE  ADDRESS-SPACE  $18 C, ; IMMEDIATE COMPILING
 : IF   HERE  ADDRESS-SPACE  $19 C, ; IMMEDIATE COMPILING
