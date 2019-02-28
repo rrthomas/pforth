@@ -2,14 +2,8 @@
 HERE <'FORTH  1 C, 10 C,
 : CR"   LITERAL COUNT ;
 
-: WRITE-LITERAL   ( n fid -- ior )
-   HERE >R                       \ save DP
-   >R                            \ save fid
-   SCRATCH  TUCK DP !            \ compile number to SCRATCH
-   LITERAL,
-   HERE OVER -                   \ calculate length of literal
-   R> WRITE-FILE
-   R> DP ! ;                     \ restore DP
+: WRITE-BYTE   ( char fid -- ior )   SWAP  SCRATCH TUCK C!  1  ROT WRITE-FILE ;
+: WRITE-WORD   ( x fid -- ior )   SWAP  SCRATCH TUCK !  CELL  ROT WRITE-FILE ;
 
 \ FIXME: Check I/O return codes
 : SAVE-OBJECT   ( a-addr u1 c-addr u2 -- )
@@ -19,10 +13,9 @@ HERE <'FORTH  1 C, 10 C,
    R@ WRITE-FILE DROP
    CR" R@ WRITE-FILE DROP
    S" SMITE" R@ WRITE-FILE DROP  \ write header
-   0 SCRATCH TUCK C!  1  2DUP  R@ WRITE-FILE DROP
-   2DUP  R@ WRITE-FILE DROP  R@ WRITE-FILE DROP
-   0 R@ WRITE-LITERAL DROP       \ FIXME: write correct ENDISM
-   CELL R@ WRITE-LITERAL DROP    \ write WORD_SIZE
-   DUP R@ WRITE-LITERAL DROP     \ write length
+   0 R@ WRITE-BYTE DROP
+   0 R@ WRITE-BYTE DROP          \ FIXME: write correct ENDISM
+   CELL R@ WRITE-BYTE DROP       \ write WORD_SIZE
+   DUP R@ WRITE-WORD DROP        \ write length
    R@ WRITE-FILE DROP            \ write data
    R> CLOSE-FILE DROP ;          \ close file
