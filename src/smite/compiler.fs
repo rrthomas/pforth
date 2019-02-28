@@ -8,7 +8,7 @@
 \ FIXME: Distinguish the case where we must align to a cell boundary for
 \ code-fiddling reasons (e.g. REDEFINER) from that where we need to align to
 \ a branch target (AHEAD); the latter is a null operation on SMite
-: NOPALIGN   $1E CALIGN ; \ FIXME: NOP
+: NOPALIGN   $1F CALIGN ; \ FIXME: NOP
 
 \ Find most-significant bit set in a CELL
 \ After https://stackoverflow.com/questions/2589096/find-most-significant-bit-left-most-that-is-set-in-a-bit-array
@@ -64,21 +64,21 @@ $80 CONSTANT LITERAL-FINAL
 
 \ FIXME: When we have assembler, "6" below becomes: CELL BITS/ *  LITERAL-CHUNK-BIT /  1+
 \ FIXME: Rather than compiling NOPs, compile a 6-byte (possibly non-normal) number
-: ADDRESS-SPACE   6 0 DO  $1E C,  LOOP ;
+: ADDRESS-SPACE   6 0 DO  $1F C,  LOOP ;
 
-: AHEAD   HERE  ADDRESS-SPACE  $18 C, ; IMMEDIATE COMPILING
-: IF   HERE  ADDRESS-SPACE  $19 C, ; IMMEDIATE COMPILING
+: AHEAD   HERE  ADDRESS-SPACE  $19 C, ; IMMEDIATE COMPILING
+: IF   HERE  ADDRESS-SPACE  $1A C, ; IMMEDIATE COMPILING
 
 : @BRANCH   ( from -- to )   @LITERAL >'FORTH ;
 : !BRANCH   ( at from to opcode -- )   HERE >R  >R  ROT DP !
    <'FORTH LITERAL,  DROP  R> C,  R> DP ! ;
 
-: BRANCH   ( at from to -- )   $18 !BRANCH ;
-: CALL   ( at from to -- )   $1A !BRANCH ;
+: BRANCH   ( at from to -- )   $19 !BRANCH ;
+: CALL   ( at from to -- )   $1B !BRANCH ;
 
 : JOIN   ( from to -- )   <'FORTH  SWAP !LITERAL ;
 
-: CALL,   ( to -- )   <'FORTH LITERAL,  $1A C, ;
+: CALL,   ( to -- )   <'FORTH LITERAL,  $1B C, ;
 \ FIXME: 2 + below is a hack to skip over the primitive's prologue
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP 2 + C@ C,  1+  LOOP  DROP
    ELSE CALL,  THEN ;
