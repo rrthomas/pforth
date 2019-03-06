@@ -20,7 +20,8 @@ AS_CASE([$build],
   [beetle*], [PFORTH_BUILD_EXECUTOR([beetle])],
   [smite*], [PFORTH_BUILD_EXECUTOR([smite])
   BUILD_EXECUTOR="$BUILD_EXECUTOR --core-dump"],
-  [AC_PATH_PROGS(BUILD_EXECUTOR, [beetle smite])
+  [AS_IF([test "$build" != ""], AC_MSG_ERROR([pForth does not support building with $build]))
+   AC_PATH_PROGS(BUILD_EXECUTOR, [beetle smite])
    AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
      AC_MSG_ERROR([No build executor found for pForth]))
    build=`basename $BUILD_EXECUTOR`])
