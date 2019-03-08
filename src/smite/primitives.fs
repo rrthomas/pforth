@@ -68,6 +68,7 @@ END-PRIMITIVE
 BMUL
 END-PRIMITIVE
 
+\ FIXME: check for division by zero
 2 2 PRIMITIVE U/MOD
 BUDIVMOD
 ] 1 [ BSWAP
