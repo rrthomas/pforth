@@ -140,7 +140,11 @@ INCLUDE" bracket-does.fs"
 
 \ Stack management
 
-VARIABLE RP \ FIXME: Make this a small constant!
+\ FIXME: Make this a small constant!
+VARIABLE PRIMITIVE-RP
+
+\ FIXME: Make this a small constant!
+VARIABLE RP
 \ FIXME: >R and R> must be defined as CODE words, because they are needed by
 \ LINK, and UNLINK,
 1 0 PRIMITIVE >R

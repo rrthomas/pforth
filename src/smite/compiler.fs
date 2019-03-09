@@ -79,7 +79,7 @@ $80 CONSTANT LITERAL-FINAL
 : JOIN   ( from to -- )   <'FORTH  SWAP !LITERAL ;
 
 : CALL,   ( to -- )   <'FORTH LITERAL,  $1B C, ;
-\ FIXME: 2 + below is a hack to skip over the primitive's prologue
+\ FIXME: Second 2 + below is a hack to skip over the primitive's prologue
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP 2 + C@ C,  1+  LOOP  DROP
    ELSE CALL,  THEN ;
 

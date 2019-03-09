@@ -1,23 +1,33 @@
 \ FIXME: presumably move this into util-postpone.fs
 
+INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
+: PRIMITIVE-LINK,
+   PRIMITIVE-RP LITERAL,
+   BSTORE ;
+
+: PRIMITIVE-UNLINK,
+   PRIMITIVE-RP LITERAL,
+   BLOAD
+   BBRANCH ;
+
 \ Create SMite assembler primitives
-\ FIXME: optimise out 0 ROTATE
-: PRIMITIVE   ( args results -- results args )
-   SWAP                       \ ( results args )
-   CODE                       \ make a code word
-   DUP LITERAL,               \ save return address under arguments
-   BROTATE_DOWN
-   HERE -ROT ;                \ ( here results args )
+: PRIMITIVE   ( args results -- code-start )
+   2DROP
+   CODE  PRIMITIVE-LINK,                \ make a word
+   HERE ;
 
-: END-PRIMITIVE-CODE   ( here results args -- )
-   2DROP DROP ;
-
-: END-PRIMITIVE   ( here results args -- )
-   DROP  HERE SWAP  LITERAL, BROTATE_UP BBRANCH  END-CODE  >-< INLINE ;
+: END-PRIMITIVE   ( code-start -- )
+   HERE  PRIMITIVE-UNLINK, END-CODE  >-< INLINE ;
 
 \ Create SMite EXTRA calls
-: EXTRA-PRIMITIVE   ( args results u -- )
-   >R  PRIMITIVE              \ make a primitive
+: EXTRA-PRIMITIVE   ( args results u xt -- )
+   >R >R  PRIMITIVE           \ make a primitive
    R> LITERAL,                \ compile the extra instruction code
-   BLIB_C                     \ u LIB_C
+   R> EXECUTE                 \ compile the library extra instruction
    END-PRIMITIVE ;            \ finish the definition
+
+: LIBC-PRIMITIVE   ( args results u -- )
+   ['] BLIB_C EXTRA-PRIMITIVE ;
+
+: SMITE-PRIMITIVE   ( args results u -- )
+   ['] BLIB_SMITE EXTRA-PRIMITIVE ;
