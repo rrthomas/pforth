@@ -1226,6 +1226,7 @@ FALSE VALUE INTERACT?
             INCLUDED
          THEN
       REPEAT
+      2DROP                          \ drop 0 0 from NEXT-ARG
       INTERACT? INVERT IF  BYE  THEN
    ELSE
       BANNER
