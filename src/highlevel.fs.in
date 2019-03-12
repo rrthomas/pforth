@@ -663,6 +663,7 @@ VARIABLE HELD
 : WORDLIST#   ( a-addr -- +n )   2 CELLS +  @ ;
 : THREADS   ( a-addr1 -- a-addr2 )   3 CELLS +  @ ;
 BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
+\ FIXME: don't abuse SCRATCH
 : THREAD   ( a-addr u wid -- 'thread )   -ROT  SCRATCH  BLS OVER !  2DUP C!
    DUP 1+  2SWAP 3 MIN  ROT SWAP CMOVE  @  DUP 7 RSHIFT  DUP 7 RSHIFT
    XOR XOR  OVER WORDLIST# +  #THREADS 1- AND  CELLS  SWAP THREADS + ;
