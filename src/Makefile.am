@@ -25,9 +25,9 @@ all-local: !pForth/!TestBuild,feb
 	echo "Dir riscos" >> $@; \
 	echo "Copy pforth-new pforth-new-0 ~C F" >> $@; \
 	echo "Run pforth-new-0 make-base.fs" >> $@; \
-	echo "If <Sys$ReturnCode> <> 0 Then Set TestBuild$ExitCode <Sys$ReturnCode>" >> $@; \
+	echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
 	echo "diff pforth-new pforth-base" >> $@; \
-	echo "If <Sys$ReturnCode> <> 0 Then Set TestBuild$ExitCode <Sys$ReturnCode>" >> $@; \
+	echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
 	echo "Dir ^" >> $@; \
 	echo "" >> $@; \
 	echo "Dir ^" >> $@
