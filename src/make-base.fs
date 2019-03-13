@@ -162,7 +162,7 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 ' LITERAL TO CURRENT-LITERAL   \ use target compiler
 TARGET-'FORTH   \ save value of TARGET-'FORTH
 'FORTH   \ save value of 'FORTH
-' CROSS >BODY @  #THREADS #TARGET-BRANCH-CELLS + CELLS -  TO 'FORTH
+' CROSS >BODY @  #THREADS INCLUDE" init-space.fs" + CELLS -  TO 'FORTH
    \ make 'FORTH point to the start of it minus the threads table and
    \ initial branch
 INCLUDE" target-forth.fs" TO TARGET-'FORTH
@@ -182,7 +182,7 @@ HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
 ' NEW-FORTH >BODY @ @ <'FORTH  ' FORTH >BODY @ >'FORTH  !
    \ patch root wordlist
 ' FORTH >BODY @ CELL+  ' CHAIN >BODY  !   \ patch CHAIN
-' FORTH >NAME 8 -  'FORTH <'FORTH #TARGET-BRANCH-CELLS CELLS + OVER !  4 -  0 OVER !  4 -  0 SWAP !
+' FORTH >NAME 8 -  'FORTH <'FORTH INCLUDE" init-space.fs" CELLS + OVER !  4 -  0 OVER !  4 -  0 SWAP !
    \ patch FORTH wordlist
 1  ' KERNEL >NAME 8 -  !   \ patch #WORDLISTS
 ' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
@@ -197,10 +197,10 @@ HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
 ALIGN HERE 'FORTH -   \ ( length ) of binary image
 ROOT HERE OVER ALLOT   \ make space for binary image ( length start )
 TUCK   \ ( start length start )
-'FORTH  #THREADS #TARGET-BRANCH-CELLS + CELLS   \ ( s l s 'FORTH (#THREADS+n)CELLS )
+'FORTH  #THREADS INCLUDE" init-space.fs" + CELLS   \ ( s l s 'FORTH (#THREADS+n)CELLS )
 TUCK + -ROT +   \ ( s l 'FORTH+(#T+n)CELLS H+(#T+n)CELLS )
 2 PICK MOVE   \ copy dictionary ( s l )
-OVER #TARGET-BRANCH-CELLS CELLS + CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+(n CELLS) )
+OVER INCLUDE" init-space.fs" CELLS + CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+(n CELLS) )
 #THREADS CELLS MOVE   \ copy threads ( s l )
 
 OVER SWAP 2SWAP 'FORTH ROT  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
