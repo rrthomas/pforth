@@ -14,5 +14,4 @@
 
 \ Data structures
 
-\ FIXME: HACK: reserve extra cell
-: CREATE,   POSTPONE (CREATE) 0 , ;
+: CREATE,   POSTPONE (CREATE) ;

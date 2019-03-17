@@ -127,8 +127,9 @@ END-PRIMITIVE
 \ Control primitives
 
 \ Must NOT be inline, as it needs caller's PC!
+\ FIXME: use LIT_PC_REL
 CODE (CREATE)
-4 LITERAL, BADD \ FIXME: skip extra CELL (see CREATE,)
+2 LITERAL, BADD \ FIXME: skip extra CELL (see CREATE,)
 1 LITERAL, BSWAP
 BBRANCH
 END-CODE

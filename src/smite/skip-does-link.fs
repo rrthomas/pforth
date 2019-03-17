@@ -1,1 +1,1 @@
-: SKIP-DOES-LINK   CELL+ ;
+: SKIP-DOES-LINK   6 + ;
