@@ -2,8 +2,6 @@ CR .( Required primitives )
 
 ALSO ASSEMBLER \ For INLINE
 
-\ FIXME: PRIMITIVEs cannot be called: ROLL the return address down first, outside the INLINE count
-
 \ Stack primitives
 
 1 0 PRIMITIVE DROP
@@ -12,10 +10,6 @@ END-PRIMITIVE
 
 1 1 PRIMITIVE PICK
 BDUP
-END-PRIMITIVE
-
-1 1 PRIMITIVE ROLL
-BROTATE_UP
 END-PRIMITIVE
 
 2 2 PRIMITIVE SWAP
@@ -127,8 +121,9 @@ END-PRIMITIVE
 \ Control primitives
 
 \ Must NOT be inline, as it needs caller's PC!
+\ FIXME: use LIT_PC_REL
 CODE (CREATE)
-4 LITERAL, BADD \ FIXME: skip extra CELL (see CREATE,)
+2 LITERAL, BADD \ FIXME: skip extra CELL (see CREATE,)
 1 LITERAL, BSWAP
 BBRANCH
 END-CODE
@@ -163,7 +158,8 @@ END-PRIMITIVE
 BLOAD
 0 LITERAL, BDUP
 4 LITERAL, BADD \ FIXME: target CELL, not 4
-2 LITERAL, BROTATE_UP
+1 LITERAL, BSWAP
+2 LITERAL, BSWAP
 BSTORE
 BLOAD
 END-PRIMITIVE
