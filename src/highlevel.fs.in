@@ -1203,7 +1203,7 @@ INCLUDE" platform.fs"
 
 : BANNER
    ." pForth v" VERSION TYPE ."  (platform: " "PLATFORM TYPE ." )"
-   CR ." (c) Reuben Thomas 1991-2018" CR ;
+   CR ." (c) Reuben Thomas 1991-2019" CR ;
 
 FALSE VALUE INTERACT?
 : DO-START-OPTIONS
