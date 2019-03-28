@@ -7,8 +7,8 @@ host_SRCS = accept.fs branch-cells.fs compiler2.fs compiler4.fs			\
 	assembler.fs bracket-create.fs bracket-does.fs compiler1.fs		\
 	compiler.fs compiler-postpone.fs fileio.fs initialize.fs		\
 	os-compiler.fs os.fs parse-command-line.fs platform.fs			\
-	primitives.fs resolver-branch.fs save.fs target-forth.fs		\
-	target-util.fs terminal.fs util.fs util-postpone.fs
+	primitives.fs resolver-branch.fs save.fs skip-does-link.fs		\
+	target-forth.fs target-util.fs terminal.fs util.fs util-postpone.fs
 
 do_build_prep = \
 	if test $(srcdir) != $(builddir); then \
