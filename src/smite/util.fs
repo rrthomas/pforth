@@ -14,10 +14,11 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 : PRIMITIVE   ( args results -- code-start )
    2DROP
    CODE  PRIMITIVE-LINK,                \ make a word
-   HERE ;
+   _FETCH HERE ; \ FIXME: _FETCH is a hack to enable inlining
 
 : END-PRIMITIVE   ( code-start -- )
-   HERE  PRIMITIVE-UNLINK, END-CODE  >-< DROP ; \ FIXME: INLINE, not DROP!
+   _FETCH HERE \ FIXME: _FETCH is a hack to enable inlining
+   PRIMITIVE-UNLINK, END-CODE  >-< CELL/ INLINE ;
 
 \ Create SMite EXTRA calls
 : EXTRA-PRIMITIVE   ( args results u xt -- )
