@@ -17,7 +17,7 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
    HERE ;
 
 : END-PRIMITIVE   ( code-start -- )
-   HERE  PRIMITIVE-UNLINK, END-CODE  >-< INLINE ;
+   HERE  PRIMITIVE-UNLINK, END-CODE  >-< DROP ; \ FIXME: INLINE, not DROP!
 
 \ Create SMite EXTRA calls
 : EXTRA-PRIMITIVE   ( args results u xt -- )

@@ -123,7 +123,6 @@ END-PRIMITIVE
 \ Must NOT be inline, as it needs caller's PC!
 \ FIXME: use LIT_PC_REL
 CODE (CREATE)
-2 LITERAL, BADD \ FIXME: skip extra CELL (see CREATE,)
 1 LITERAL, BSWAP
 BBRANCH
 END-CODE
@@ -192,7 +191,6 @@ CELL LITERAL,
 BMUL
 END-PRIMITIVE
 
-\ FIXME: Must be inlined!
 0 0 PRIMITIVE SP! \ Lie about arguments and results!
 CELL LITERAL,
 BUDIVMOD
