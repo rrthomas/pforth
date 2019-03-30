@@ -12,21 +12,21 @@
 
 : @LITERAL   ALIGNED @ ;
 : !LITERAL   ALIGNED ! ;
-: LITERAL,   ( n -- )   $04 C,  ALIGN , ;
+: LITERAL,   ( n -- )   $07 C,  ALIGN , ;
 
-: AHEAD   HERE  $644 ,  0 , ; IMMEDIATE COMPILING
-: IF   HERE  $684 ,  0 , ; IMMEDIATE COMPILING
+: AHEAD   HERE  $47 ,  0 , ; IMMEDIATE COMPILING
+: IF   HERE  $87 ,  0 , ; IMMEDIATE COMPILING
 
 : @BRANCH   ( from -- to )   1+ @LITERAL >'FORTH ;
 : !BRANCH   ( at from to opcode -- )   HERE >R  >R  ROT DP !
-   R> 6 ( FIXME: INSTRUCTION-BIT ) LSHIFT $04 OR ,  <'FORTH ,  DROP  R> DP ! ;
+   R> 6 ( FIXME: INSTRUCTION-BIT ) LSHIFT $07 OR ,  <'FORTH ,  DROP  R> DP ! ;
 
-: BRANCH   ( at from to -- )   $19 !BRANCH ;
-: CALL   ( at from to -- )   $1B !BRANCH ;
+: BRANCH   ( at from to -- )   $01 !BRANCH ;
+: CALL   ( at from to -- )   $03 !BRANCH ;
 
 : JOIN   ( from to -- )   <'FORTH  SWAP 1+ !LITERAL ;
 
-: CALL,   ( to -- )   ALIGN  $6C4 ,  <'FORTH , ;
+: CALL,   ( to -- )   ALIGN  $C7 ,  <'FORTH , ;
 \ FIXME: name the phrase ">INFO 2 + C@" INLINE-SIZE
 \ FIXME: 12 + below is a hack to skip over the primitive's prologue
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP 12 + @ ,  CELL+  LOOP  DROP
