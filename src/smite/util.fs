@@ -20,15 +20,13 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
    _FETCH HERE \ FIXME: _FETCH is a hack to enable inlining
    PRIMITIVE-UNLINK, END-CODE  >-< CELL/ INLINE ;
 
-\ Create SMite EXTRA calls
-: EXTRA-PRIMITIVE   ( args results u xt -- )
+\ Create SMite EXT calls
+: EXT-PRIMITIVE   ( args results func lib -- )
    >R >R  PRIMITIVE           \ make a primitive
-   R> LITERAL,                \ compile the extra instruction code
-   R> EXECUTE                 \ compile the library extra instruction
+   R> LITERAL,                \ compile the function code
+   R> LITERAL,                \ compile the library code
+   BEXT
    END-PRIMITIVE ;            \ finish the definition
 
-: LIBC-PRIMITIVE   ( args results u -- )
-   ['] BLIB_C EXTRA-PRIMITIVE ;
-
-: SMITE-PRIMITIVE   ( args results u -- )
-   ['] BLIB_SMITE EXTRA-PRIMITIVE ;
+: SMITE-PRIMITIVE   ( args results func -- )   LIB_SMITE EXT-PRIMITIVE ;
+: LIBC-PRIMITIVE   ( args results func -- )   LIB_C EXT-PRIMITIVE ;
