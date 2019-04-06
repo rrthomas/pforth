@@ -28,8 +28,8 @@
 
 : CALL,   ( to -- )   ALIGN  $0307 ,  <'FORTH , ;
 \ FIXME: name the phrase ">INFO 2 + C@" INLINE-SIZE
-\ FIXME: 12 + below is a hack to skip over the primitive's prologue
-: COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP 12 + @ ,  CELL+  LOOP  DROP
+\ FIXME: 20 + below is a hack to skip over the primitive's prologue
+: COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP 20 + @ ,  CELL+  LOOP  DROP
    ELSE CALL,  THEN ;
 
 : LEAVE, ;

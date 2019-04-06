@@ -7,6 +7,6 @@ CODE PRE-INITIALIZE
 ' MEMORY-SIZE >BODY @ LITERAL,       \ FIXME: do this portably
 0 LITERAL, BDUP                      \ memory-limit RP !
 ' RP >BODY <'FORTH LITERAL,
-BSTORE
+2 LITERAL, BSTORE                    \ FIXME: constant!
 ' INITIALIZE COMPILE,                \ ( memory-limit )
 END-CODE

@@ -3,11 +3,11 @@
 INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 : PRIMITIVE-LINK,
    PRIMITIVE-RP LITERAL,
-   BSTORE ;
+   2 LITERAL, BSTORE ; \ FIXME: constant!
 
 : PRIMITIVE-UNLINK,
    PRIMITIVE-RP LITERAL,
-   BLOAD
+   2 LITERAL, BLOAD \ FIXME: constant!
    BBRANCH ;
 
 \ Create SMite assembler primitives

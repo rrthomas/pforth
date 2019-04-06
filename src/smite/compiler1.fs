@@ -4,7 +4,8 @@
 : (POSTPONE)   R> R>ADDRESS ALIGNED  DUP CELL+ >R  @ CURRENT-COMPILE, ;
 
 : EXECUTE   STATE @ IF  $03 ,  ELSE  [ $03 , ]  THEN ; IMMEDIATE
-: @EXECUTE   STATE @ IF  $0318 ,  ELSE  [ $0318 , ]  THEN ; IMMEDIATE
+\ FIXME: 2 constant!
+: @EXECUTE   STATE @ IF  $031807 , 2 ,  ELSE  [ $031807 , 2 , ]  THEN ; IMMEDIATE
 
 
 \ Data structures
