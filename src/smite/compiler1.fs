@@ -5,7 +5,7 @@
 
 : EXECUTE   STATE @ IF  $03 ,  ELSE  [ $03 , ]  THEN ; IMMEDIATE
 \ FIXME: 2 constant!
-: @EXECUTE   STATE @ IF  $031807 , 2 ,  ELSE  [ $031807 , 2 , ]  THEN ; IMMEDIATE
+: @EXECUTE   STATE @ IF  $03181A , 2 ,  ELSE  [ $03181A , 2 , ]  THEN ; IMMEDIATE
 
 
 \ Data structures
