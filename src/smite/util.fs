@@ -28,5 +28,5 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
    BEXT
    END-PRIMITIVE ;            \ finish the definition
 
-: SMITE-PRIMITIVE   ( args results func -- )   LIB_SMITE EXT-PRIMITIVE ;
+: LIBSMITE-PRIMITIVE   ( args results func -- )   LIB_SMITE EXT-PRIMITIVE ;
 : LIBC-PRIMITIVE   ( args results func -- )   LIB_C EXT-PRIMITIVE ;
