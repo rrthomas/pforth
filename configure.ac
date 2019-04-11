@@ -11,9 +11,10 @@ AM_CONDITIONAL([HAVE_LATEXMK], [test "$ac_cv_path_LATEXMK" != "true"])
 
 dnl Check build and host types (native or VM)
 AC_DEFUN([PFORTH_BUILD_EXECUTOR],
-  [AC_PATH_PROG(BUILD_EXECUTOR, [$1])
-   AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
-     AC_MSG_ERROR([Could not find executor $1 on PATH]))])
+  [AS_IF([test "$BUILD_EXECUTOR" = ""],
+   [AC_PATH_PROG(BUILD_EXECUTOR, [$1])
+    AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
+      AC_MSG_ERROR([Could not find executor $1 on PATH]))])])
 
 AS_CASE([$build],
   [arm*-riscos], [BUILD_EXECUTOR=""],
@@ -26,7 +27,6 @@ AS_CASE([$build],
      AC_MSG_ERROR([No build executor found for pForth]))
    build=`basename $BUILD_EXECUTOR`])
 AC_SUBST([build])
-AC_SUBST([BUILD_EXECUTOR])
 
 AS_IF([test "$HOST_EXECUTOR" = ""],
   AS_CASE([$host],
