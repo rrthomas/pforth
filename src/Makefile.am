@@ -2,7 +2,7 @@
 
 SUBDIRS = beetle riscos smite
 
-bin_SCRIPTS = $(host)/pforth
+bin_SCRIPTS = pforth
 BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/$(build)/pforth-base
 
 include $(srcdir)/host_src.am
@@ -33,6 +33,9 @@ all-local: !pForth/!TestBuild,feb
 	echo "Dir ^" >> $@
 
 # Extended Forth image (if building on host)
+pforth: $(host)/pforth
+	echo "#!$(HOST_EXECUTOR)" | cat - $(host)/pforth >> $@
+
 $(host)/pforth: $(host)/pforth-base $(host)/make.fs
 	if test "$(host)" = "$(build)"; then \
 		cd $(host); \
