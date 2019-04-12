@@ -871,6 +871,7 @@ VARIABLE 'FRAME  0 ' 'FRAME >BODY !
       -20 OF  ." write to a read-only location"  ENDOF
       -23 OF  -23 HALT  ENDOF
       -56 OF  ( QUIT )  ENDOF
+      -512 OF  ." unknown option " 'THROWN @ COUNT TYPE  CR  1 HALT  ENDOF
       ." exception " DUP . ." raised"
    ENDCASE ;
 : (QUIT)
@@ -1219,7 +1220,7 @@ FALSE VALUE INTERACT?
                S" --version"  "OF  BANNER BYE         "ENDOF
                S" --evaluate" "OF  NEXT-ARG EVALUATE  "ENDOF
                S" --interact" "OF  TRUE TO INTERACT?  "ENDOF
-               ERROR-PREFIX ." unknown option " TYPE CR
+               HERE 'THROWN !  ",  -512 THROW
             "ENDCASE
          ELSE                        \ or interpret file
             \ FIXME: install CATCH handler, and if INTERACT? is true, even

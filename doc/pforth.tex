@@ -120,7 +120,7 @@ pForth is an ANS Forth System
 \subsubsection{Exception word set}
 
 \begin{itemize}
-\item[--]Exceptions $-1$, $-2$, $-10$, $-11$, $-14$ and $-56$ may be raised by the system. Exception values $-256$ to $-511$ are reserved for the environment executing pForth to raise exceptions. Value $-512$ is used by the word {\tt (ERROR")}. Other exceptions in the range \{$-255\dots -1$\} may be raised by the host environment.
+\item[--]Exceptions $-1$, $-2$, $-10$, $-11$, $-14$ and $-56$ may be raised by the system. Exception values $-256$ to $-511$ are reserved for the environment executing pForth to raise exceptions. Value $-512$ is used to indicate an unknown command-line option. Other exceptions in the range \{$-255\dots -1$\} may be raised by the host environment.
 \end{itemize}
 
 \subsubsection{File word set}
