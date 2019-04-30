@@ -9,32 +9,42 @@ AC_PROG_LN_S
 AC_PATH_PROG(LATEXMK, latexmk, true)
 AM_CONDITIONAL([HAVE_LATEXMK], [test "$ac_cv_path_LATEXMK" != "true"])
 
-dnl Check build and host types (native or VM)
-AC_DEFUN([PFORTH_BUILD_EXECUTOR],
-  [AC_PATH_PROG(BUILD_EXECUTOR, [$1])
-   AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
-     AC_MSG_ERROR([Could not find executor $1 on PATH]))])
+dnl Check build and host architectures (native or VM)
+AC_DEFUN([PFORTH_CHECK_EXECUTOR],
+ [AC_PATH_PROG([$1], [$2])
+  AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
+    AC_MSG_ERROR([Could not find executor $2]))])
 
-AS_CASE([$build],
-  [arm*-riscos], [BUILD_EXECUTOR=""],
-  [beetle*], [PFORTH_BUILD_EXECUTOR([beetle])],
-  [smite*], [PFORTH_BUILD_EXECUTOR([smite])
-  BUILD_EXECUTOR="$BUILD_EXECUTOR --core-dump"],
-  [AS_IF([test "$build" != ""], AC_MSG_ERROR([pForth does not support building with $build]))
-   AC_PATH_PROGS(BUILD_EXECUTOR, [beetle smite])
-   AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
-     AC_MSG_ERROR([No build executor found for pForth]))
-   build=`basename $BUILD_EXECUTOR`])
+AS_IF([test "$BUILD_EXECUTOR" = ""],
+  [AS_CASE([$build],
+    [arm*-riscos], [BUILD_EXECUTOR=""],
+    [beetle*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [beetle])],
+    [smite*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [smite])
+    BUILD_EXECUTOR="$BUILD_EXECUTOR --core-dump"],
+    [AS_IF([test "$build" != ""],
+       AC_MSG_ERROR([pForth does not support building with $build]))
+     AC_PATH_PROGS(BUILD_EXECUTOR, [beetle smite])
+     AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
+       AC_MSG_ERROR([No build executor found for pForth]))
+     build=`basename $BUILD_EXECUTOR`])],
+  [AS_IF([test "$build" = ""],
+    [AC_MSG_ERROR([BUILD_EXECUTOR is set, but --build is not!])])
+   PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [$BUILD_EXECUTOR])])
+AS_IF([! $BUILD_EXECUTOR src/$build/pforth-base --evaluate BYE],
+  [AC_MSG_ERROR([$BUILD_EXECUTOR does not work!])])
 AC_SUBST([build])
-AC_SUBST([BUILD_EXECUTOR])
 
 AS_IF([test "$HOST_EXECUTOR" = ""],
-  AS_CASE([$host],
+  [AS_CASE([$host],
     [""], [HOST_EXECUTOR=$BUILD_EXECUTOR; host=$build],
     [arm*-riscos], [HOST_EXECUTOR=""],
-    [beetle*], [HOST_EXECUTOR="beetle"],
-    [smite*], [HOST_EXECUTOR="smite"],
-    [AC_MSG_ERROR([pForth does not support host $host])]))
+    [beetle*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [beetle])],
+    [smite*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [smite])],
+    [AC_MSG_ERROR([pForth does not support host $host])])],
+  [AS_IF([test "$host" = ""],
+   [AC_MSG_ERROR([HOST_EXECUTOR is set, but --host is not!])],
+   [AS_IF([test ! -x "$HOST_EXECUTOR"],
+     [AC_MSG_WARN([Cannot find HOST_EXECUTOR on this system])])])])
 AC_SUBST([host])
 AC_SUBST([HOST_EXECUTOR])
 
