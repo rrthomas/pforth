@@ -30,7 +30,7 @@ AS_IF([test "$BUILD_EXECUTOR" = ""],
   [AS_IF([test "$build" = ""],
     [AC_MSG_ERROR([BUILD_EXECUTOR is set, but --build is not!])])
    PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [$BUILD_EXECUTOR])])
-AS_IF([! $BUILD_EXECUTOR src/$build/pforth-base --evaluate BYE],
+AS_IF([! $BUILD_EXECUTOR $srcdir/src/$build/pforth-base --evaluate BYE],
   [AC_MSG_ERROR([$BUILD_EXECUTOR does not work!])])
 AC_SUBST([build])
 
