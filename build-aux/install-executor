@@ -41,6 +41,6 @@ case $BUILD in
         git clone https://github.com/rrthomas/mit.git
         cd mit
         # Make install before make check so Python ctypes's find_library can find libmit
-        ./bootstrap && ./configure --enable-silent-rules WORD_SIZE=4 && sudo make install && make check
+        ./bootstrap && ./configure --enable-silent-rules WORD_BYTES=4 && sudo make install && make check
         ;;
 esac
