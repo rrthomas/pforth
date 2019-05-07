@@ -1,4 +1,4 @@
-\ Machine-dependent words (SMite)
+\ Machine-dependent words (Mit)
 \ FIXME: Use assembler
 \ Reuben Thomas
 
@@ -7,7 +7,7 @@
 
 \ FIXME: Distinguish the case where we must align to a cell boundary for
 \ code-fiddling reasons (e.g. REDEFINER) from that where we need to align to
-\ a branch target (AHEAD); the latter is a null operation on SMite
+\ a branch target (AHEAD); the latter is a null operation on Mit
 : NOPALIGN   ALIGN ;
 
 : @LITERAL   ALIGNED @ ;

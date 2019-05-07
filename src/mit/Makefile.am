@@ -1,5 +1,5 @@
 # Source Makefile.am
 
-target = smite
+target = mit
 
 include $(srcdir)/../host.am

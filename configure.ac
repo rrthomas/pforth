@@ -19,11 +19,11 @@ AS_IF([test "$BUILD_EXECUTOR" = ""],
   [AS_CASE([$build],
     [arm*-riscos], [BUILD_EXECUTOR=""],
     [beetle*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [beetle])],
-    [smite*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [smite])
+    [mit*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [mit])
     BUILD_EXECUTOR="$BUILD_EXECUTOR --core-dump"],
     [AS_IF([test "$build" != ""],
        AC_MSG_ERROR([pForth does not support building with $build]))
-     AC_PATH_PROGS(BUILD_EXECUTOR, [beetle smite])
+     AC_PATH_PROGS(BUILD_EXECUTOR, [beetle mit])
      AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
        AC_MSG_ERROR([No build executor found for pForth]))
      build=`basename $BUILD_EXECUTOR`])],
@@ -39,7 +39,7 @@ AS_IF([test "$HOST_EXECUTOR" = ""],
     [""], [HOST_EXECUTOR=$BUILD_EXECUTOR; host=$build],
     [arm*-riscos], [HOST_EXECUTOR=""],
     [beetle*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [beetle])],
-    [smite*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [smite])],
+    [mit*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [mit])],
     [AC_MSG_ERROR([pForth does not support host $host])])],
   [AS_IF([test "$host" = ""],
    [AC_MSG_ERROR([HOST_EXECUTOR is set, but --host is not!])],
@@ -72,7 +72,7 @@ AC_CONFIG_FILES([
   src/pforthi
   src/beetle/Makefile
   src/riscos/Makefile
-  src/smite/Makefile
+  src/mit/Makefile
   src/highlevel.fs
   doc/Makefile
   extras/Makefile

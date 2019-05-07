@@ -10,7 +10,7 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
    2 LITERAL, BLOAD \ FIXME: constant!
    BBRANCH ;
 
-\ Create SMite assembler primitives
+\ Create Mit assembler primitives
 : PRIMITIVE   ( args results -- code-start )
    2DROP
    CODE  PRIMITIVE-LINK,                \ make a word
@@ -20,7 +20,7 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
    _FETCH HERE \ FIXME: _FETCH is a hack to enable inlining
    PRIMITIVE-UNLINK, END-CODE  >-< CELL/ INLINE ;
 
-\ Create SMite EXT calls
+\ Create Mit EXT calls
 : EXT-PRIMITIVE   ( args results func lib -- )
    >R >R  PRIMITIVE           \ make a primitive
    R> LITERAL,                \ compile the function code
@@ -28,5 +28,5 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
    BEXT
    END-PRIMITIVE ;            \ finish the definition
 
-: LIBSMITE-PRIMITIVE   ( args results func -- )   LIB_SMITE EXT-PRIMITIVE ;
+: LIBMIT-PRIMITIVE   ( args results func -- )   LIB_MIT EXT-PRIMITIVE ;
 : LIBC-PRIMITIVE   ( args results func -- )   LIB_C EXT-PRIMITIVE ;

@@ -73,7 +73,7 @@ especially those whose semantics are extended more than once. pForth's own
 words such as the forward refs compiler tools ought to have their own
 wordsets.
 
-3. Separate OS from processor, so that e.g. sMite and ARM versions of RISC OS
+3. Separate OS from processor, so that e.g. mit and ARM versions of RISC OS
 pForth can use the same OS interface and code.
 
 4. Add memory allocation and use for transient buffers. Using for

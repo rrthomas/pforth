@@ -7,7 +7,9 @@
 : SAVE-OBJECT   ( a-addr u1 c-addr u2 -- )
    W/O CREATE-FILE DROP          \ open file
    >R                            \ save file-id
-   S" SMITE" R@ WRITE-FILE DROP  \ write header
+   S" MIT" R@ WRITE-FILE DROP  \ write header
+   0 R@ WRITE-BYTE DROP
+   0 R@ WRITE-BYTE DROP
    0 R@ WRITE-BYTE DROP
    0 R@ WRITE-BYTE DROP          \ FIXME: write correct ENDISM
    CELL R@ WRITE-BYTE DROP       \ write WORD_SIZE

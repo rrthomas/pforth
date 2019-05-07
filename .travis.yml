@@ -22,7 +22,7 @@ matrix:
             - rlwrap
     - os: linux
       env:
-        - BUILD=smite
+        - BUILD=mit
       addons:
         apt:
           packages:
@@ -37,7 +37,7 @@ matrix:
             - *default_deps
     - os: linux
       env:
-        - BUILD=smite
+        - BUILD=mit
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
       addons:
         apt:
@@ -65,7 +65,7 @@ matrix:
         - BUILD=beetle
     - os: osx
       env:
-        - BUILD=smite
+        - BUILD=mit
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install help2man; fi

@@ -1,6 +1,6 @@
 # Source Makefile.am
 
-SUBDIRS = beetle riscos smite
+SUBDIRS = beetle riscos mit
 
 bin_SCRIPTS = pforth
 BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/$(build)/pforth-base
