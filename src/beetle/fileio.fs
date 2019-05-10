@@ -11,3 +11,17 @@
 : BIN  BIN-MODE OR ;
 
 : CREATE-FILE   ( adr u fam -- fid ior )   CREATE-FAM OR  OPEN-FILE ;
+
+CREATE ARG-BUFFER  256 ALLOT \ FIXME: this is ugly
+: ABSOLUTE-ARG   ( u1 -- c-addr u2 )
+   TOTAL-ARGS OVER > IF \ u1
+      DUP ARGLEN  DUP 256 < IF \ FIXME: cope with longer arguments
+         SWAP  ARG-BUFFER TUCK
+         ARGCOPY
+         SWAP
+      ELSE
+         DROP DROP  0 0
+      THEN
+   ELSE
+      DROP  0 0
+   THEN ;
