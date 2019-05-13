@@ -24,8 +24,8 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 : EXT-PRIMITIVE   ( args results func lib -- )
    >R >R  PRIMITIVE           \ make a primitive
    R> LITERAL,                \ compile the function code
-   R> LITERAL,                \ compile the library code
-   BEXT
+   NOPALIGN
+   R> 8 LSHIFT $01 OR ,       \ compile the library call (FIXME: HACK!)
    END-PRIMITIVE ;            \ finish the definition
 
 : LIBMIT-PRIMITIVE   ( args results func -- )   LIB_MIT EXT-PRIMITIVE ;
