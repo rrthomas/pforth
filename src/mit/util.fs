@@ -3,11 +3,11 @@
 INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 : PRIMITIVE-LINK,
    PRIMITIVE-RP LITERAL,
-   2 LITERAL, BSTORE ; \ FIXME: constant!
+   BLIT_2 BSTORE ; \ FIXME: constant!
 
 : PRIMITIVE-UNLINK,
    PRIMITIVE-RP LITERAL,
-   2 LITERAL, BLOAD \ FIXME: constant!
+   BLIT_2 BLOAD \ FIXME: constant!
    BBRANCH ;
 
 \ Create Mit assembler primitives
@@ -18,7 +18,7 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 
 : END-PRIMITIVE   ( code-start -- )
    _FETCH HERE \ FIXME: _FETCH is a hack to enable inlining
-   PRIMITIVE-UNLINK, END-CODE  >-< CELL/ INLINE ;
+   PRIMITIVE-UNLINK, END-CODE  >-< INLINE ;
 
 \ Create Mit EXT calls
 : EXT-PRIMITIVE   ( args results func lib -- )
