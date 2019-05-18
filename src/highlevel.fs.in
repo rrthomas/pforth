@@ -1107,6 +1107,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 : WORDS   CONTEXT @  WORDLIST-WORDS ;
 : ALL-WORDS   GET-ORDER 0 ?DO  WORDLIST-WORDS  LOOP ;
 
+
 \ Environmental queries
 
 : ENVIRONMENT?
