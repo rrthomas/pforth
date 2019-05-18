@@ -17,7 +17,7 @@ AC_DEFUN([PFORTH_CHECK_EXECUTOR],
 
 AS_IF([test "$BUILD_EXECUTOR" = ""],
   [AS_CASE([$build],
-    [arm*-riscos], [BUILD_EXECUTOR=""],
+    [arm*-riscos], [BUILD_EXECUTOR=""; build=riscos],
     [beetle*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [beetle])],
     [mit*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [mit])
     BUILD_EXECUTOR="$BUILD_EXECUTOR --core-dump"],
