@@ -203,6 +203,7 @@ TUCK + -ROT +   \ ( s l 'FORTH+(#T+n)CELLS H+(#T+n)CELLS )
 OVER INCLUDE" init-space.fs" CELLS + CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+(n CELLS) )
 #THREADS CELLS MOVE   \ copy threads ( s l )
 
+OVER INCLUDE" init-space.fs" CELLS ERASE   \ zero initial branch space
 OVER SWAP 2SWAP 'FORTH ROT  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
 
 S" pforth-new" SAVE-OBJECT   \ write system image
