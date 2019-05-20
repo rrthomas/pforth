@@ -764,18 +764,18 @@ IMMEDIATE COMPILING
 
 \ Exceptions #2
 
-VARIABLE 'FRAME  0 ' 'FRAME >BODY !
+VARIABLE HANDLER  0 ' HANDLER >BODY !
 : CATCH
-   'FRAME @ >R                       \ push pointer to last frame
-   SAVE-INPUT>R                      \ push current input source
    SP@ >R                            \ push data stack pointer
-   RP@ 'FRAME !                      \ set pointer to current frame
+   HANDLER @ >R                      \ push pointer to last frame
+   SAVE-INPUT>R                      \ push current input source
+   RP@ HANDLER !                     \ set pointer to current frame
    EXECUTE                           \ execute guarded word
-   R> DROP                           \ pop exception frame
-   R> BEGIN  ?DUP WHILE              \ can't use a DO loop as that would
-     R> DROP  1-                     \ interfere with the return stack
-   REPEAT
-   R> 'FRAME !                       \ reset pointer to previous frame
+   R> BEGIN  ?DUP WHILE              \ pop input source;
+     R> DROP  1-                     \ can't use a DO loop as that would
+   REPEAT                            \ interfere with the return stack
+   R> HANDLER !                      \ reset pointer to previous frame
+   R> DROP                           \ discard saved stack pointer
    0 ;                               \ leave OK flag
 
 
@@ -1152,11 +1152,13 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 
 : (THROW)
    ?DUP IF                           \ if flag is true
-      'FRAME @ ?DUP IF               \ and there's a frame to pop
+      HANDLER @ ?DUP IF              \ and there's a frame to pop
          RP!                         \ set return stack to frame
-         R>  SWAP >R  SP!  R>        \ reset data stack, keep exception no.
-         R>RESTORE-INPUT             \ reset input source
-         R> 'FRAME !                 \ set pointer to next frame
+         R>RESTORE-INPUT             \ restore input source
+         R> HANDLER !                \ set pointer to next frame
+         R> SWAP >R                  \ keep exception number
+         SP! DROP                    \ restore data stack
+         R>                          \ restore exception number
       ELSE                           \ if no frame,
          ERROR-PREFIX                \ print any message
          DUP HANDLE-ERROR CR
@@ -1242,7 +1244,7 @@ INCLUDE" parse-command-line.fs"
    DUP TO LIMIT                      \ set LIMIT
    [ ' (THROW) <'FORTH ] LITERAL 'THROW!
                                      \ set 'THROW
-   0 'FRAME !                        \ reset 'FRAME
+   0 HANDLER !                       \ reset HANDLER
    0 FILE-BUFFER# !                  \ reset FILE-BUFFER#
    DUP /BLOCK-BUFFER -               \ reserve block buffer,
    #FILE-BUFFERS /FILE-BUFFER * -    \ file buffers,
