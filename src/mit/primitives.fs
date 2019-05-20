@@ -190,15 +190,15 @@ NATIVE-POINTER-CELLS 1 $13 LIBMIT-PRIMITIVE GET_STACK_DEPTH
 
 \ Stack management primitives
 
-: SP@
-   MIT_CURRENT_STATE
-   GET_STACK_DEPTH
-   CELL * ;
-: SP!
-   CELL U/MOD SWAP DROP
-   MIT_CURRENT_STATE
-   SET_STACK_DEPTH ;
+0 0 PRIMITIVE SP@
+BPUSH_STACK_DEPTH
+BLIT_2 BLSHIFT \ FIXME constant!
+END-PRIMITIVE
 
+1 0 PRIMITIVE SP!
+BLIT_2 BRSHIFT BNOT \ FIXME constant!
+BPUSH_STACK_DEPTH BADD BPOP
+END-PRIMITIVE
 
 \ FIXME: Put in better order; must be defined after bracket-create is included because of use of VALUE
 1024 1024 * VALUE MEMORY-SIZE \ FIXME: command-line parameter
