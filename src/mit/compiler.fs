@@ -12,7 +12,12 @@
 
 : @LITERAL   ALIGNED @ ;
 : !LITERAL   ALIGNED ! ;
-: LITERAL,   ( n -- )   $0A C,  ALIGN , ;
+: LITERAL,   ( n -- )
+   DUP 4 U< IF \ Use a LIT_n instruction if possible
+      $0C + C,  ALIGN \ FIXME: ALIGN shouldn't be needed
+   ELSE
+      $0A C,  ALIGN ,
+   THEN ;
 
 : AHEAD   HERE  $010A ,  0 , ; IMMEDIATE COMPILING
 : IF   HERE  $020A ,  0 , ; IMMEDIATE COMPILING
