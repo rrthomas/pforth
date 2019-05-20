@@ -8,7 +8,7 @@ matrix:
   include:
     - os: linux
       env:
-        - BUILD=beetle
+        - HOST=beetle
       addons:
         apt:
           packages: &default_deps
@@ -22,39 +22,42 @@ matrix:
             - rlwrap
     - os: linux
       env:
-        - BUILD=mit
+        - HOST=mit
       addons:
         apt:
           packages:
             - *default_deps
     - os: linux
       env:
+        - HOST=beetle
+        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
+      addons:
+        apt:
+          packages:
+            - *default_deps
+    - os: linux
+      env:
+        - HOST=mit
+        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
+      addons:
+        apt:
+          packages:
+            - *default_deps
+    - os: linux
+      env:
+        - HOST=arm-riscos
         - BUILD=beetle
-        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
-      addons:
-        apt:
-          packages:
-            - *default_deps
-    - os: linux
-      env:
-        - BUILD=mit
-        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
-      addons:
-        apt:
-          packages:
-            - *default_deps
-    - os: linux
-      env:
-        - BUILD=arm-riscos
       addons:
         apt:
           packages: &riscos_deps
             - qtbase5-dev
             - qtmultimedia5-dev
             - libqt5multimedia5-plugins
+            - *default_deps
     - os: linux
       env:
-        - BUILD=arm-riscos
+        - HOST=arm-riscos
+        - BUILD=beetle
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
       addons:
         apt:
@@ -62,17 +65,19 @@ matrix:
             - *riscos_deps
     - os: osx
       env:
-        - BUILD=beetle
+        - HOST=beetle
     - os: osx
       env:
-        - BUILD=mit
+        - HOST=mit
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install help2man; fi
+  - if [[ "$HOST" == "" ]]; then export HOST=$BUILD; fi
   - ./build-aux/install-executor $BUILD
+  - if [[ "$BUILD" != "$HOST" ]]; then ./build-aux/install-executor $HOST; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ldconfig; fi
 
 script:
-  - autoreconf -i && ./configure --enable-silent-rules --build=$BUILD
+  - autoreconf -i && ./configure --enable-silent-rules --build=$BUILD --host=$HOST
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make check; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if [[ "$BUILD" == "arm-riscos" ]]; then cd src; make \!pForth/\!TestBuild,feb; cd \!pForth; ./run-rpcemu; else make distcheck; fi; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if [[ "$HOST" == "arm-riscos" ]]; then cd src; make \!pForth/\!TestBuild,feb; cd \!pForth; ./run-rpcemu; else make distcheck; fi; fi
