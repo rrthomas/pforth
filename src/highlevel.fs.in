@@ -1,7 +1,7 @@
 \ pForth high level words
 \ Reuben Thomas   started 1/91
 
-CR .( pForth high level words )
+CR .( @PACKAGE_NAME@ high level words )
 
 
 \ Placeholder
@@ -1204,7 +1204,7 @@ INCLUDE" platform.fs"
    ." Report bugs to @PACKAGE_BUGREPORT@." CR ;
 
 : BANNER
-   ." pForth v" VERSION TYPE ."  (platform: " "PLATFORM TYPE ." )"
+   ." @PACKAGE_NAME@ v" VERSION TYPE ."  (platform: " "PLATFORM TYPE ." )"
    CR ." (c) Reuben Thomas 1991-2019" CR ;
 
 FALSE VALUE INTERACT?
