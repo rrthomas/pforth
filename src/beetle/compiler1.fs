@@ -6,7 +6,7 @@
 : DO,   $55 C, ;
 : LOOP,   $56 ADR, ;
 : +LOOP,   $58 ADR, ;
-: UNLOOP, ;
+: END-LOOP, ;
 
 ALSO ASSEMBLER
 : EXECUTE   STATE @ IF  $50 C,  NOPALIGN  ELSE [ $50 C,  NOPALIGN ]
