@@ -5,8 +5,8 @@
 
 CODE PRE-INITIALIZE
 ' MEMORY-SIZE >BODY @ LITERAL,       \ FIXME: do this portably
-BLIT_0 BDUP                          \ memory-limit RP !
+MLIT_0 MDUP                          \ memory-limit RP !
 ' RP >BODY <'FORTH LITERAL,
-BLIT_2 BSTORE                        \ FIXME: constant!
+MLIT_2 MSTORE                        \ FIXME: constant!
 ' INITIALIZE COMPILE,                \ ( memory-limit )
 END-CODE

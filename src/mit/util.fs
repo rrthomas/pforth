@@ -3,12 +3,12 @@
 INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 : PRIMITIVE-LINK,
    PRIMITIVE-RP LITERAL,
-   BLIT_2 BSTORE ; \ FIXME: constant!
+   MLIT_2 MSTORE ; \ FIXME: constant!
 
 : PRIMITIVE-UNLINK,
    PRIMITIVE-RP LITERAL,
-   BLIT_2 BLOAD \ FIXME: constant!
-   BBRANCH ;
+   MLIT_2 MLOAD \ FIXME: constant!
+   MBRANCH ;
 
 \ Create Mit assembler primitives
 : PRIMITIVE   ( args results -- code-start )
