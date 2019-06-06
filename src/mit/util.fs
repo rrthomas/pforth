@@ -8,7 +8,7 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 : PRIMITIVE-UNLINK,
    PRIMITIVE-RP LITERAL,
    MLIT_2 MLOAD \ FIXME: constant!
-   MBRANCH ;
+   MJUMP ;
 
 \ Create Mit assembler primitives
 : PRIMITIVE   ( args results -- code-start )
