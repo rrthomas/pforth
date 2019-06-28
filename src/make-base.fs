@@ -24,7 +24,11 @@ INCLUDE" util.fs"
 : STUB   BL WORD  HEADER ;
 
 \ Create stubs for words that may not exist on host
+STUB IP
+STUB DOCOL
 STUB (LITERAL)
+STUB (BRANCH)
+STUB (?BRANCH)
 STUB (LOOP)
 STUB (+LOOP)
 STUB UNLOOP
@@ -76,6 +80,7 @@ DECIMAL
 
 
 INCLUDE" compiler.fs"
+INCLUDE" native-branch.fs"
 INCLUDE" compiler1.fs"
 INCLUDE" save.fs"
 
@@ -150,6 +155,8 @@ INCLUDE" target-forth.fs" TO TARGET-'FORTH
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
 'FORTH <'FORTH   \ 'FORTH of new system
 INCLUDE" primitives.fs"
+INCLUDE" inner-interpreter.fs"
+INCLUDE" system-params.fs"
 [UNDEFINED] MINIMAL-PRIMITIVES [IF]
    INCLUDE" extra-primitives.fs"
 [THEN]
@@ -182,7 +189,7 @@ OVER INCLUDE" init-space.fs" CELLS + CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS
 #THREADS CELLS MOVE   \ copy threads ( s l )
 
 OVER INCLUDE" init-space.fs" CELLS ERASE   \ zero initial branch space
-OVER SWAP 2SWAP 'FORTH ROT  BRANCH   \ patch in initial branch
+OVER SWAP 2SWAP 'FORTH ROT  NATIVE-BRANCH \ patch in initial branch
 
 S" pforth-new" SAVE-OBJECT   \ write system image
 

@@ -73,6 +73,7 @@ AC_CONFIG_FILES([
   src/beetle/Makefile
   src/riscos/Makefile
   src/mit/Makefile
+  src/mit-threaded/Makefile
   src/highlevel.fs
   doc/Makefile
   extras/Makefile
