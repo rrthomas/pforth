@@ -17,11 +17,11 @@ MLIT_0 MSWAP
 END-PRIMITIVE
 
 0 1 PRIMITIVE CELL
-] 4 [
+MLIT NOPALIGN 4 ,
 END-PRIMITIVE
 
 0 1 PRIMITIVE -CELL
-] -4 [
+MLIT NOPALIGN -4 ,
 END-PRIMITIVE
 
 
@@ -140,46 +140,42 @@ VARIABLE RP
 \ FIXME: >R and R> must be defined as CODE words, because they are needed by
 \ LINK, and UNLINK,
 1 0 PRIMITIVE >R
-' RP >BODY <'FORTH LITERAL,
-MLIT_0 MDUP
-MLIT_2 MLOAD \ FIXME: constant!
--4 LITERAL, MADD \ FIXME: target -CELL, not -4
-MLIT_0 MDUP
-MLIT_1 MSWAP
-MLIT_2 MSTORE \ FIXME: constant!
-MLIT_2 MSTORE \ FIXME: constant!
+MLIT MLIT_0 MDUP MLIT_2 \ FIXME: constant!
+' RP >BODY <'FORTH ,
+MLOAD MLIT MADD MLIT_0
+-4 , \ FIXME: target -CELL, not -4
+MDUP MLIT_1 MSWAP MLIT_2 \ FIXME: constant!
+MSTORE MLIT_2 MSTORE \ FIXME: constant!
 END-PRIMITIVE
 0 INLINE \ Prevent inlining: it's too long to go at the start of each word!
 
 0 1 PRIMITIVE R>
-' RP >BODY <'FORTH LITERAL,
-MLIT_0 MDUP
-MLIT_2 MLOAD \ FIXME: constant!
-MLIT_0 MDUP
-4 LITERAL, MADD \ FIXME: target CELL, not 4
-MLIT_0 MSWAP
-MLIT_1 MSWAP
-MLIT_2 MSTORE \ FIXME: constant!
-MLIT_2 MLOAD \ FIXME: constant!
+MLIT MLIT_0 MDUP MLIT_2 \ FIXME: constant!
+' RP >BODY <'FORTH ,
+MLOAD MLIT_0 MDUP MLIT
+4 , \ FIXME: target CELL, not 4
+MADD MLIT_0 MSWAP MLIT_1
+MSWAP MLIT_2 MSTORE MLIT_2 \ FIXME: constant! x 2
+MLOAD
 END-PRIMITIVE
 0 INLINE \ Prevent inlining: it's too long to go at the start of each word!
 
 0 1 PRIMITIVE R@
-' RP >BODY <'FORTH LITERAL,
-MLIT_2 MLOAD \ FIXME: constant!
-MLIT_2 MLOAD \ FIXME: constant!
+MLIT MLIT_2 MLOAD MLIT_2 \ FIXME: constant! × 2
+' RP >BODY <'FORTH ,
+MLOAD
 END-PRIMITIVE
 
 0 1 PRIMITIVE RP@
-' RP >BODY <'FORTH LITERAL,
-MLIT_2 MLOAD \ FIXME: constant!
+MLIT MLIT_2 MLOAD NOPALIGN \ FIXME: constant!
+' RP >BODY <'FORTH ,
 END-PRIMITIVE
 
 \ FIXME: -9 THROW if RP is out of range
 \ Must be a primitive as it would mess up its own return
 1 0 PRIMITIVE RP!
-' RP >BODY <'FORTH LITERAL,
-MLIT_2 MSTORE \ FIXME: constant!
+MLIT MLIT_2 MSTORE NOPALIGN \ FIXME: constant!
+' RP >BODY <'FORTH ,
 END-PRIMITIVE
 
 

@@ -2,13 +2,12 @@
 
 INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 : PRIMITIVE-LINK,
-   PRIMITIVE-RP LITERAL,
-   MLIT_2 MSTORE ; \ FIXME: constant!
+   MLIT MLIT_2 MSTORE NOPALIGN \ FIXME: constant!
+   PRIMITIVE-RP , ;
 
 : PRIMITIVE-UNLINK,
-   PRIMITIVE-RP LITERAL,
-   MLIT_2 MLOAD \ FIXME: constant!
-   MJUMP ;
+   MLIT MLIT_2 MLOAD MJUMP \ FIXME: constant!
+   PRIMITIVE-RP , ;
 
 \ Create Mit assembler primitives
 : PRIMITIVE   ( args results -- code-start )
@@ -23,8 +22,7 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 \ Create Mit EXT calls
 : EXT-PRIMITIVE   ( args results func lib -- )
    >R >R  PRIMITIVE           \ make a primitive
-   R> LITERAL,                \ compile the function code
-   NOPALIGN
+   R> MLIT NOPALIGN ,         \ compile the function code
    R> 8 LSHIFT $01 OR ,       \ compile the library call (FIXME: HACK!)
    END-PRIMITIVE ;            \ finish the definition
 
