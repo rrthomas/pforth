@@ -4,9 +4,9 @@
    START ;
 
 CODE PRE-INITIALIZE
-' MEMORY-SIZE >BODY @ LITERAL,       \ FIXME: do this portably
-MLIT_0 MDUP                          \ memory-limit RP !
-' RP >BODY <'FORTH LITERAL,
-MLIT_2 MSTORE                        \ FIXME: constant!
-' INITIALIZE COMPILE,                \ ( memory-limit )
+MLIT MLIT_0 MDUP MLIT                \ memory-limit RP !
+' MEMORY-SIZE >BODY @ ,
+' RP >BODY <'FORTH ,
+MLIT_2 MSTORE MLIT MCALL             \ FIXME: constant!
+' INITIALIZE <'FORTH ,               \ ( memory-limit )
 END-CODE
