@@ -1,1 +1,1 @@
-: RESOLVER-BRANCH   ( at from to -- )   CALL ;
+: RESOLVER-BRANCH   ( at from to -- )   <'FORTH -ROT DROP ! ;

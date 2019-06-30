@@ -51,10 +51,6 @@ EXTRA_DIST = $(portable_SRCS)							\
 CLEANFILES = pforth
 DISTCLEANFILES = $(host)/pforth
 
-portable_SRCS = compiler2.fs compiler4.fs compiler5.fs control1.fs		\
-	control2.fs control3.fs defer-fetch-store.fs defining.fs does.fs	\
-	highlevel.fs interpreter3.fs make-base.fs resolver.fs vocabulary.fs
-
 if HAVE_RLWRAP
 install-exec-hook:
 	export pforth_name=`echo pforth | sed '$(transform)'`; \

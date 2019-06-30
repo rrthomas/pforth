@@ -1,5 +1,3 @@
-\ FIXME: presumably move this into util-postpone.fs
-
 INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
 : PRIMITIVE-LINK,
    MLIT MLIT_2 MSTORE NOPALIGN \ FIXME: constant!

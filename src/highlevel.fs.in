@@ -258,8 +258,6 @@ INCLUDE" branch-cells.fs" CONSTANT #BRANCH-CELLS
 INCLUDE" compiler1.fs"
 INCLUDE" compiler-postpone.fs"
 INCLUDE" defer-fetch-store.fs"
-\ FIXME: HACK
-INCLUDE" skip-does-link.fs"
 
 
 \ Strings #2

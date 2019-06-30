@@ -15,7 +15,7 @@ Support objects.
 
 Support locals.
 
-Add TIMES combinator and use in assembler and for REDEFINER.
+Add TIMES combinator and use in assembler.
 
 Make pForth case-insensitive for word lookup, or downcase it all.
 

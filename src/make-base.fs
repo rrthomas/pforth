@@ -9,46 +9,15 @@ INCLUDE" platform.fs"
 CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
 
 
-INCLUDE" resolver.fs"
-
-\ Redefinition
-
-\ >DOES>, given the xt of a defining word, returns the address of the DOES>
-\ code.
-: >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
-
-INCLUDE" will-do.fs"
-
-\ REDEFINERs swap the execution semantics of WILL-DOs between the old and
-\ new semantics. u is the number of words to swap.
-VARIABLE REDEFINER-BUFFER  #BRANCH-CELLS CELLS ALLOT
-: REDEFINER   ( name )   ( old1 new1...oldu newu u -- )
-   CREATE  DUP ,                     \ write the no. of words to redefine
-   0 ?DO                             \ for each word
-      OVER ,                         \ record the old xt
-      HERE                           \ address of branch we're about to compile
-      #BRANCH-CELLS CELLS ALLOT      \ allow space for branch
-      -ROT BRANCH                    \ compile branch from old word to the new
-   LOOP
-   DOES>
-      DUP @                          \ no. of words to redefine
-      CELLS #BRANCH-CELLS 1+ *       \ size of patch data
-      SWAP CELL+                     \ start address of patch data
-      TUCK + SWAP ?DO
-         I CELL+  DUP                \ address of code to patch word with
-         I @  DUP                    \ get address to patch
-         #BRANCH-CELLS CELLS >R      \ number of bytes to patch
-         REDEFINER-BUFFER R@ CMOVE   \ save old code temporarily
-         #BRANCH-CELLS CODE-MOVE     \ patch code
-         REDEFINER-BUFFER SWAP R> CMOVE
-                                     \ save old code
-      #BRANCH-CELLS 1+ CELLS  +LOOP ;
-
 INCLUDE" target-util.fs"
 INCLUDE" assembler.fs"
 
 
 \ Meta-compiler utilities
+
+ALSO ASSEMBLER
+INCLUDE" util.fs"
+
 
 \ STUB FOO creates an empty word.
 \ This is used to POSTPONE target words that may not exist on the host.
@@ -61,8 +30,22 @@ STUB (+LOOP)
 STUB UNLOOP
 STUB (CREATE)
 
+
 \ RISC OS-specific meta-compiler utilities (FIXME)
 : '?   BL WORD FIND  0= IF  DROP 0  ELSE <'FORTH  THEN ;
+
+
+\ Machinery for compiling forward references to defining words' DOES> code
+
+\ >DOES>, given the xt of a defining word, returns the address of the DOES>
+\ code.
+: >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
+
+: ADD-RESOLVE   DUP @  LAST CELL+  TUCK  !  SWAP ! ;
+: (DOES>)   R> R>ADDRESS CELL+  ADD-RESOLVE ;
+: DOES-LINK,   0 , ;
+INCLUDE" does.fs"
+
 
 VOCABULARY META  ALSO META DEFINITIONS
 FOREIGN  ' NON-META? TO 'SELECTOR \ build meta-compiler using native compiler
@@ -92,11 +75,8 @@ DECIMAL
    THEN ;
 
 
-ALSO ASSEMBLER
-
 INCLUDE" compiler.fs"
 INCLUDE" compiler1.fs"
-INCLUDE" util.fs"
 INCLUDE" save.fs"
 
 
@@ -108,19 +88,16 @@ INCLUDE" save.fs"
 
 \ POSTPONE itself must be defined in FORTH, so that it can be run during the
 \ compilation of the rest of META, which is FOREIGN while it is being built.
-NATIVE ALSO FORTH DEFINITIONS
+ALSO FORTH DEFINITIONS
 : POSTPONE   BL WORD FIND ?DUP 0= IF UNDEFINED THEN 0> IF >COMPILE @
    CURRENT-COMPILE, ELSE C" (POSTPONE)" FIND-AND-COMPILE, ALIGN <'FORTH , THEN ;
 IMMEDIATE COMPILING
 
-PREVIOUS   \ use META POSTPONE and LINK,
-INCLUDE" util-postpone.fs"   \ like util.fs but requires POSTPONE
+META DEFINITIONS  PREVIOUS  \ use META POSTPONE and LINK,
 INCLUDE" bracket-create.fs"
 INCLUDE" bracket-does.fs"
 INCLUDE" compiler-postpone.fs"
-\ FIXME: INCLUDE" does.fs"
-INCLUDE" will-do.fs"
-ALSO FORTH  META DEFINITIONS FOREIGN  PREVIOUS
+ALSO META  FOREIGN  PREVIOUS
 
 
 INCLUDE" control2.fs"
@@ -132,14 +109,17 @@ INCLUDE" compiler5.fs"
 INCLUDE" defer-fetch-store.fs"
 INCLUDE" defining.fs"
 INCLUDE" vocabulary.fs"
-INCLUDE" resolver.fs"
+INCLUDE" resolver-branch.fs"
 
-RESOLVER (VALUE) WILL-DO VALUE
-RESOLVER (DEFER) WILL-DO DEFER
-RESOLVER (VOCABULARY) WILL-DO VOCABULARY
-3 REDEFINER >COMPILERS<
-
-PREVIOUS
+: RESOLVES   ( name )   ( a-addr -- )
+   '
+   >DOES> @                          \ get first address in branch list
+   BEGIN  ?DUP WHILE                 \ chain down list until null marker
+      DUP  @                         \ get next address in list
+      -ROT 2DUP SWAP RESOLVER-BRANCH \ compile the call or branch
+      SWAP
+   REPEAT
+   DROP ;                            \ drop a-addr
 
 
 \ Constants
@@ -168,7 +148,6 @@ TARGET-'FORTH   \ save value of TARGET-'FORTH
 INCLUDE" target-forth.fs" TO TARGET-'FORTH
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
->COMPILERS<
 'FORTH <'FORTH   \ 'FORTH of new system
 INCLUDE" primitives.fs"
 [UNDEFINED] MINIMAL-PRIMITIVES [IF]
@@ -185,14 +164,13 @@ HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
 ' FORTH >NAME 8 -  'FORTH <'FORTH INCLUDE" init-space.fs" CELLS + OVER !  4 -  0 OVER !  4 -  0 SWAP !
    \ patch FORTH wordlist
 1  ' KERNEL >NAME 8 -  !   \ patch #WORDLISTS
-' VALUE >DOES> RESOLVES (VALUE)   \ resolve run-times
-' DEFER >DOES> RESOLVES (DEFER)
-' VOCABULARY >DOES> RESOLVES (VOCABULARY)
+' VALUE >DOES>  ALSO META  RESOLVES VALUE  PREVIOUS \ resolve run-times
+' DEFER >DOES>  ALSO META  RESOLVES DEFER  PREVIOUS
+' VOCABULARY >DOES>  ALSO META  RESOLVES VOCABULARY  PREVIOUS
 ' ABORT <'FORTH TO SCAN-TEST
 ' ABORT <'FORTH TO VISIBLE?
 ' NEW-FORTH >BODY @ @  PREVIOUS  DUP RELOCATE   \ relocate the new dictionary
    \ leave initial branch target on the stack
->COMPILERS<
 
 ALIGN HERE 'FORTH -   \ ( length ) of binary image
 ROOT HERE OVER ALLOT   \ make space for binary image ( length start )
@@ -204,11 +182,11 @@ OVER INCLUDE" init-space.fs" CELLS + CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS
 #THREADS CELLS MOVE   \ copy threads ( s l )
 
 OVER INCLUDE" init-space.fs" CELLS ERASE   \ zero initial branch space
-OVER SWAP 2SWAP 'FORTH ROT  >COMPILERS< BRANCH >COMPILERS<   \ patch in initial branch
+OVER SWAP 2SWAP 'FORTH ROT  BRANCH   \ patch in initial branch
 
 S" pforth-new" SAVE-OBJECT   \ write system image
 
-KERNEL PREVIOUS DEFINITIONS   \ restore original order
+KERNEL PREVIOUS PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
 TO TARGET-'FORTH   \ restore TARGET-'FORTH
 TO CURRENT-LITERAL   \ restore original compiler
