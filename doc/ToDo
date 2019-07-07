@@ -97,6 +97,9 @@ current system or not.
 replace bits all the way from a simple VM implementation (Tau?) down to a
 highly OS-integrated one which replaces ACCEPT &c. Again, use objects.
 
-8. Don't interpret, always compile (incrementally compile a line, then
-execute). This gets rid of STATE and dual-action (compile/interpret) words.
-Hopefully (there may be some traps in ANS).
+8. Don't interpret, always compile, by default as a :NONAME. Use separate
+control stack: if when the input source becomes empty the control stack is
+empty, execute. (Defining words put a placeholder on the control stack; [
+and ] must temporarily stash the top value.) This gets rid of STATE and
+dual-action (compile/interpret) words. Hopefully (there may be some traps in
+ANS).
