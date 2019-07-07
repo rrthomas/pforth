@@ -1,6 +1,7 @@
 \ Compiler #4
 
-: :   BL WORD HEADER  TRUE SMUDGE  LINK,  ] ;
+: COLON   HEADER  TRUE SMUDGE  LINK,  ] ;
+: :   BL WORD  COLON ;
 : CURRENT?   ( wid xt n -- f )   2DROP  GET-CURRENT = ;
 : PROVIDED?  ['] CURRENT? SELECT NIP ;
 : [PROVIDED]   BL WORD PROVIDED? ; IMMEDIATE
@@ -8,10 +9,8 @@
    BL WORD  DUP PROVIDED? IF
       DROP
       POSTPONE [ELSE]
-   ELSE \ FIXME: factor this out here and in :
-      HEADER
-      TRUE SMUDGE
-      LINK, ]
+   ELSE
+      COLON
    THEN ;
 : ;   UNLINK,  POSTPONE [  FALSE SMUDGE ; IMMEDIATE COMPILING
 : :NONAME   ALIGN  0 ,  HERE LINK,  ] ;
