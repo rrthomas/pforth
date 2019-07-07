@@ -8,7 +8,7 @@
    BL WORD  DUP PROVIDED? IF
       DROP
       POSTPONE [ELSE]
-   ELSE
+   ELSE \ FIXME: factor this out here and in :
       HEADER
       TRUE SMUDGE
       LINK, ]
