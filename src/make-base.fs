@@ -35,10 +35,6 @@ STUB UNLOOP
 STUB (CREATE)
 
 
-\ RISC OS-specific meta-compiler utilities (FIXME)
-: '?   BL WORD FIND  0= IF  DROP 0  ELSE <'FORTH  THEN ;
-
-
 \ Machinery for compiling forward references to defining words' DOES> code
 
 \ >DOES>, given the xt of a defining word, returns the address of the DOES>
