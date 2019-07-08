@@ -40,10 +40,12 @@ architecture is not supported, Beetle and Mit are automatically searched
 for, in that order.
 
 To choose the host and/or build system manually, pass the `--host=ARCH` or
-`--build=ARCH` arguments to `configure`.
+`--build=ARCH` arguments to `configure`; to choose the flavour (e.g. `mit-threaded`), pass the `HOST_FLAVOUR` or `BUILD_FLAVOUR` variable.
 
-To give the path to a VM executor, set the `ac_cv_path_HOST_EXECUTOR` or
-`ac_cv_path_BUILD_EXECUTOR` environment variables.
+To give the path to a VM executor, set the `HOST_EXECUTOR` or
+`BUILD_EXECUTOR` variables.
+
+See `./configure --help` for more information.
 
 To build the documentation, a comprehensive TeX system such as TeXLive is
 required.

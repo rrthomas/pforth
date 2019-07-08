@@ -3,7 +3,6 @@
 noinst_DATA = pforth-base
 EXTRA_DIST = $(host_SRCS) pforth-base make.fs
 DISTCLEANFILES = pforth-base
-BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/../$(build)/pforth-base
 
 highlevel.fs: $(srcdir)/../highlevel.fs.in
 	cd $(top_builddir); ./config.status --file=src/highlevel.fs

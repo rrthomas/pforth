@@ -3,7 +3,6 @@
 SUBDIRS = beetle riscos mit mit-threaded
 
 bin_SCRIPTS = pforth
-BUILD_PFORTH = $(BUILD_EXECUTOR) $(abs_srcdir)/$(build)/pforth-base
 
 include $(srcdir)/host_src.am
 
