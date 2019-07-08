@@ -34,7 +34,7 @@ all-local: !pForth/!TestBuild,feb
 
 # Extended Forth image (if building on host)
 pforth: $(host)/pforth
-	echo "#!$(HOST_EXECUTOR)" | cat - $(host)/pforth >> $@
+	echo "#!$(HOST_EXECUTOR)" | cat - $(host)/pforth > $@
 
 $(host)/pforth: $(host)/pforth-base $(host)/make.fs
 	if test "$(host)" = "$(build)"; then \
