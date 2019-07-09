@@ -23,7 +23,9 @@ AS_IF([test "$BUILD_EXECUTOR" = ""],
     [arm*-riscos], [BUILD_EXECUTOR=""; build=riscos],
     [beetle*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [beetle])],
     [mit*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [mit])
-    BUILD_EXECUTOR="$BUILD_EXECUTOR --core-dump"],
+            AS_IF([test "$BUILD_EXECUTOR_FLAGS" = ""],
+              [BUILD_EXECUTOR_FLAGS=-O])
+            BUILD_EXECUTOR_FLAGS="$BUILD_EXECUTOR_FLAGS --core-dump"],
     [AS_IF([test "$build" != ""],
        AC_MSG_ERROR([pForth does not support building with $build]))
      AC_PATH_PROGS(BUILD_EXECUTOR, [beetle mit])
@@ -51,7 +53,9 @@ AS_IF([test "$HOST_EXECUTOR" = ""],
     [""], [HOST_EXECUTOR=$BUILD_EXECUTOR; host=$build],
     [arm*-riscos], [HOST_EXECUTOR=""],
     [beetle*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [beetle])],
-    [mit*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [mit])],
+    [mit*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [mit])
+            AS_IF([test "$HOST_EXECUTOR_FLAGS" = ""],
+              [HOST_EXECUTOR_FLAGS=-O])],
     [AC_MSG_ERROR([pForth does not support host $host])])],
   [AS_IF([test "$host" = ""],
    [AC_MSG_ERROR([HOST_EXECUTOR is set, but --host is not!])],
