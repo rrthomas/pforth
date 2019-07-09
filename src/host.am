@@ -14,7 +14,7 @@ do_build = \
 	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make-base.fs && \
 	if test "$(host)" = "$(build)" -a "$(target)" = "$(host)"; then \
 		mv pforth-new pforth-new-0 && \
-		$(BUILD_EXECUTOR) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make-base.fs && \
+		$(BUILD_EXECUTOR) $(BUILD_EXECUTOR_FLAGS) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make-base.fs && \
 		cmp pforth-new pforth-new-0 && \
 		rm pforth-new-0; \
 	fi && \

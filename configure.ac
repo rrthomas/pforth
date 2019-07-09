@@ -16,6 +16,7 @@ AC_DEFUN([PFORTH_CHECK_EXECUTOR],
     AC_MSG_ERROR([Could not find executor $2]))])
 
 AC_ARG_VAR([BUILD_EXECUTOR], [path to build executor])
+AC_ARG_VAR([BUILD_EXECUTOR_FLAGS], [flags to pass to build executor])
 AC_ARG_VAR([BUILD_FLAVOUR], [build flavour])
 AS_IF([test "$BUILD_EXECUTOR" = ""],
   [AS_CASE([$build],
@@ -37,12 +38,13 @@ AS_IF([test "$BUILD_FLAVOUR" != ""],
   [build_flavour=$BUILD_FLAVOUR
   AS_IF([! test -d "src/$build_flavour"],
     AC_MSG_ERROR([pForth does not come in flavour '$build_flavour']))])
-AS_IF([! $BUILD_EXECUTOR $srcdir/src/$build_flavour/pforth-base --evaluate BYE],
+AS_IF([! $BUILD_EXECUTOR $BUILD_EXECUTOR_FLAGS $srcdir/src/$build_flavour/pforth-base --evaluate BYE],
   [AC_MSG_ERROR([$BUILD_EXECUTOR does not work!])])
 AC_SUBST([build])
 AC_SUBST([build_flavour])
 
 AC_ARG_VAR([HOST_EXECUTOR], [path to host executor])
+AC_ARG_VAR([HOST_EXECUTOR_FLAGS], [flags to pass to host executor])
 AC_ARG_VAR([HOST_FLAVOUR], [host flavour])
 AS_IF([test "$HOST_EXECUTOR" = ""],
   [AS_CASE([$host],
@@ -62,7 +64,6 @@ AS_IF([test "$HOST_FLAVOUR" != ""],
     AC_MSG_ERROR([pForth does not come in flavour '$host_flavour']))])
 AC_SUBST([host])
 AC_SUBST([host_flavour])
-AC_SUBST([HOST_EXECUTOR])
 
 AC_MSG_NOTICE([Build executor: $build])
 AS_IF([test "$BUILD_EXECUTOR" != ""],

@@ -33,7 +33,7 @@ all-local: !pForth/!TestBuild,feb
 
 # Extended Forth image (if building on host)
 pforth: $(host)/pforth
-	echo "#!$(HOST_EXECUTOR)" | cat - $(host)/pforth > $@
+	echo "#!$(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS)" | cat - $(host)/pforth > $@
 
 $(host)/pforth: $(host)/pforth-base $(host)/make.fs
 	if test "$(host)" = "$(build)"; then \
@@ -67,4 +67,4 @@ loc-local:
 
 check-local: $(host)/pforth
 	cd $(top_srcdir)/extras && \
-	echo foobar | $(HOST_EXECUTOR) $(abs_builddir)/$(host)/pforth tests.fs
+	echo foobar | $(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS) $(abs_builddir)/$(host)/pforth tests.fs
