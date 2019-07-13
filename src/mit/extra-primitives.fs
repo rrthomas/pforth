@@ -26,6 +26,10 @@ END-PRIMITIVE
 
 \ Arithmetic and logical primitives
 
+2 1 PRIMITIVE -
+MNEGATE MADD
+END-PRIMITIVE
+
 1 1 PRIMITIVE 1+
 MNOT
 MNEGATE
