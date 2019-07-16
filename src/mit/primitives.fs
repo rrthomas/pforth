@@ -114,13 +114,6 @@ END-PRIMITIVE
 
 \ Control primitives
 
-\ Must NOT be inline, as it needs caller's PC!
-\ FIXME: use LIT_PC_REL
-CODE (CREATE)
-MLIT_0 MSWAP
-MJUMP
-END-CODE
-
 INCLUDE" bracket-does.fs"
 
 
