@@ -1,4 +1,4 @@
 ALSO ASSEMBLER
-: NATIVE-BRANCH   ( at from to -- )   $01 HERE >R  >R  ROT DP !
-   R> INSTRUCTION-BIT LSHIFT $0A OR ,  <'FORTH ,  DROP  R> DP ! ;
+: NATIVE-BRANCH   ( at from to -- )   $01 HERE >R  >R  >-< CELL-  SWAP DP !
+   R> INSTRUCTION-BIT LSHIFT $0B OR ,  ,  R> DP ! ;
 PREVIOUS
