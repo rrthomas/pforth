@@ -657,6 +657,8 @@ VARIABLE HELD
 
 : DEFINITIONS   CONTEXT @  SET-CURRENT ;
 
+\ FIXME: Build hash table at load time. Remove thread field from header;
+\ instead implement a self-contained open hash table.
 1024 CONSTANT #THREADS
 : WORDLIST#   ( a-addr -- +n )   2 CELLS +  @ ;
 : THREADS   ( a-addr1 -- a-addr2 )   3 CELLS +  @ ;
@@ -672,7 +674,7 @@ BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
 DEFER VISIBLE?   \ word visibility test
 : ALL-VISIBLE   ( wid xt n -- true )   2DROP DROP  TRUE ;
 \ VISIBLE? must be set before VET-WORDLIST is called, with a word whose
-\ stack effect is [ wid xt n -- f ], where wid is the word list and xt the
+\ stack effect is ( wid xt n -- f ), where wid is the word list and xt the
 \ execution token of the found word and n its immediacy flag, and f is true
 \ if the word is deemed visible by the test.
 : VET-WORDLIST   ( c-addr u wid -- 0 | xt 1 | xt -1 )
@@ -729,7 +731,7 @@ IMMEDIATE COMPILING
   Compilation method                 1 cell
   Name field                         counted string, up to 8 cells
   Link field                         1 cell, link to LAST
-  Thread field                       1 cell, link to previous word in CURRENT
+  Thread field                       1 cell, link to previous word in thread
   Info field                         1 cell: bit 31 is IMMEDIATE flag,
                                      bit 30 is COMPILING flag,
                                      bit 29 is SMUDGE flag,
