@@ -14,5 +14,4 @@
    THEN ;
 : ;   UNLINK,  POSTPONE [  FALSE SMUDGE ; IMMEDIATE COMPILING
 : :NONAME   ALIGN  0 ,  HERE LINK,  ] ;
-\ FIXME: This is the only use for a separate compilation method
 : ;IMMEDIATE   POSTPONE ;  IMMEDIATE  LAST >COMPILE ! ; IMMEDIATE COMPILING
