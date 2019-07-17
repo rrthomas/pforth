@@ -54,15 +54,10 @@ DECIMAL
 \ Relocate new dictionary
 : >ADDRESS<   DUP @  ?DUP IF  <'FORTH SWAP !  ELSE DROP  THEN ;
 : RELOCATE   ( a-addr -- )
-   CURRENT-VOLUME @ @  #THREADS CELLS  OVER + SWAP DO
-      I @  ?DUP IF  <'FORTH I !  THEN
-   CELL +LOOP
    BEGIN
       >LINK
       DUP @ ?DUP WHILE
-      OVER 3 CELLS +   \ hack to go from link field to code field
-      >COMPILE >ADDRESS<
-      OVER CELL+   \ hack to go from link field to thread field
+      OVER CELL+   \ hack to go from link field to compilation method
       >ADDRESS<
       DUP <'FORTH ROT !
    REPEAT
@@ -133,8 +128,6 @@ INCLUDE" branch-cells.fs" CONSTANT #TARGET-BRANCH-CELLS
 
 NATIVE  ' LOCAL? TO 'SELECTOR \ now meta-compiler is built, allow it to run
 
-VOLUME NEW   \ define a new hash table
-NEW   \ make the new dictionary the current volume
 ALSO FORTH   \ use FORTH's VOCABULARY
 VOCABULARY NEW-FORTH   \ define the new root vocabulary
 PREVIOUS
@@ -146,9 +139,8 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 ' LITERAL TO CURRENT-LITERAL   \ use target compiler
 TARGET-'FORTH   \ save value of TARGET-'FORTH
 'FORTH   \ save value of 'FORTH
-' CROSS >BODY @  #THREADS INCLUDE" init-space.fs" + CELLS -  TO 'FORTH
-   \ make 'FORTH point to the start of it minus the threads table and
-   \ initial branch
+' CROSS >BODY @  INCLUDE" init-space.fs" CELLS -  TO 'FORTH
+   \ make 'FORTH point to the start of it minus the initial branch
 INCLUDE" target-forth.fs" TO TARGET-'FORTH
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
@@ -167,9 +159,8 @@ HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
 ' NEW-FORTH >BODY @ @ <'FORTH  ' FORTH >BODY @ >'FORTH  !
    \ patch root wordlist
 ' FORTH >BODY @ CELL+  ' CHAIN >BODY  !   \ patch CHAIN
-' FORTH >NAME 8 -  'FORTH <'FORTH INCLUDE" init-space.fs" CELLS + OVER !  4 -  0 OVER !  4 -  0 SWAP !
+' FORTH >NAME 4 -  0 OVER !  4 -  0 SWAP !
    \ patch FORTH wordlist
-1  ' KERNEL >NAME 8 -  !   \ patch #WORDLISTS
 ' VALUE >DOES>  ALSO META  RESOLVES VALUE  PREVIOUS \ resolve run-times
 ' DEFER >DOES>  ALSO META  RESOLVES DEFER  PREVIOUS
 ' VOCABULARY >DOES>  ALSO META  RESOLVES VOCABULARY  PREVIOUS
@@ -181,18 +172,16 @@ HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
 ALIGN HERE 'FORTH -   \ ( length ) of binary image
 ROOT HERE OVER ALLOT   \ make space for binary image ( length start )
 TUCK   \ ( start length start )
-'FORTH  #THREADS INCLUDE" init-space.fs" + CELLS   \ ( s l s 'FORTH (#THREADS+n)CELLS )
-TUCK + -ROT +   \ ( s l 'FORTH+(#T+n)CELLS H+(#T+n)CELLS )
+'FORTH  INCLUDE" init-space.fs" CELLS   \ ( s l s 'FORTH nCELLS )
+TUCK + -ROT +   \ ( s l 'FORTH+nCELLS H+nCELLS )
 2 PICK MOVE   \ copy dictionary ( s l )
-OVER INCLUDE" init-space.fs" CELLS + CURRENT-VOLUME @ @  SWAP   \ ( s l 'THREADS s+(n CELLS) )
-#THREADS CELLS MOVE   \ copy threads ( s l )
 
 OVER INCLUDE" init-space.fs" CELLS ERASE   \ zero initial branch space
 OVER SWAP 2SWAP 'FORTH ROT  NATIVE-BRANCH   \ patch in initial branch
 
 S" pforth-new" SAVE-OBJECT   \ write system image
 
-KERNEL PREVIOUS PREVIOUS DEFINITIONS   \ restore original order
+PREVIOUS PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
 TO TARGET-'FORTH   \ restore TARGET-'FORTH
 TO CURRENT-LITERAL   \ restore original compiler

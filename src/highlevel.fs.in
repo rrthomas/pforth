@@ -220,7 +220,7 @@ VARIABLE STATE
 : ]   1 STATE ! ;
 
 VARIABLE #ORDER
-CREATE CONTEXT  8 CELLS ALLOT
+CREATE CONTEXT  8 CELLS ALLOT \ FIXME: constant
 
 VARIABLE CURRENT
 : GET-CURRENT   CURRENT @ ;
@@ -228,10 +228,9 @@ VARIABLE CURRENT
 : LAST   GET-CURRENT  @ ;
 
 : >LINK   3 CELLS - ;
-: >THREAD   2 CELLS - ;
+: >COMPILE   2 CELLS - ;
 : >INFO   CELL- ;
 : >NAME   DUP >INFO 3 + C@  31 AND 1+ CHARS ALIGNED  SWAP >LINK  >-< ;
-: >COMPILE   >NAME CELL- ;
 
 : IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP !  LAST DUP >COMPILE ! ;
 : COMPILING   LAST >INFO  DUP @  $40000000 OR  SWAP ! ;
@@ -657,17 +656,6 @@ VARIABLE HELD
 
 : DEFINITIONS   CONTEXT @  SET-CURRENT ;
 
-\ FIXME: Build hash table at load time. Remove thread field from header;
-\ instead implement a self-contained open hash table.
-1024 CONSTANT #THREADS
-: WORDLIST#   ( a-addr -- +n )   2 CELLS +  @ ;
-: THREADS   ( a-addr1 -- a-addr2 )   3 CELLS +  @ ;
-BL  DUP 8 LSHIFT OR  DUP 16 LSHIFT OR  CONSTANT BLS
-\ FIXME: don't abuse SCRATCH
-: THREAD   ( a-addr u wid -- 'thread )   -ROT  SCRATCH  BLS OVER !  2DUP C!
-   DUP 1+  2SWAP 3 MIN  ROT SWAP CMOVE  @  DUP 7 RSHIFT  DUP 7 RSHIFT
-   XOR XOR  OVER WORDLIST# +  #THREADS 1- AND  CELLS  SWAP THREADS + ;
-
 : GET-ORDER   #ORDER @  DUP IF  DUP >R  CELLS  CONTEXT TUCK + CELL-  DO
    I @  -CELL +LOOP  R>  THEN ;
 
@@ -678,9 +666,8 @@ DEFER VISIBLE?   \ word visibility test
 \ execution token of the found word and n its immediacy flag, and f is true
 \ if the word is deemed visible by the test.
 : VET-WORDLIST   ( c-addr u wid -- 0 | xt 1 | xt -1 )
-   >R                                \ save wid
-   2DUP R@ THREAD                    \ get address of thread
-   BEGIN  @  ?DUP WHILE              \ for all words in thread
+   DUP >R                            \ save wid
+   BEGIN  @  ?DUP WHILE              \ for all words in list
       DUP >NAME                      \ get name field address
       2OVER ROT COUNT                \ COUNT the strings
       COMPARE 0= IF                  \ if the name matches
@@ -697,7 +684,7 @@ DEFER VISIBLE?   \ word visibility test
             THEN
          THEN
       THEN
-      >THREAD                        \ leave next thread field
+      >LINK                          \ leave next link field
    REPEAT
    2DROP  R> DROP                    \ get rid of c-addr, u and wid,
    0 ;                               \ and set flag to 0
@@ -728,10 +715,9 @@ IMMEDIATE COMPILING
 
 ( A header has the following structure:
 
-  Compilation method                 1 cell
   Name field                         counted string, up to 8 cells
   Link field                         1 cell, link to LAST
-  Thread field                       1 cell, link to previous word in thread
+  Compilation method                 1 cell
   Info field                         1 cell: bit 31 is IMMEDIATE flag,
                                      bit 30 is COMPILING flag,
                                      bit 29 is SMUDGE flag,
@@ -742,7 +728,6 @@ IMMEDIATE COMPILING
 )
 : HEADER   ( c-addr -- )
    ALIGN                             \ align DP for new definition
-   0 ,                               \ store null compilation method
    DUP C@ 31 MIN                     \ get name (max. 31 chars)
    2DUP SWAP C!
    OVER COUNT
@@ -751,15 +736,14 @@ IMMEDIATE COMPILING
    THEN
    DUP >R                            \ save length
    CHAR+                             \ length of name field
-   HERE TUCK >R                      \ beginning of name field
+   HERE SWAP                         \ beginning of name field
    DUP ALLOT                         \ reserve space for name field
    CMOVE                             \ write name in name field
    BL CALIGN                         \ pad with spaces to next cell boundary
    LAST ,                            \ store link to last word
-   GET-CURRENT DUP                   \ get CURRENT word list chain
-   R> COUNT ROT THREAD  DUP @ ,      \ store link to last word
+   0 ,                               \ store null compilation method
    R> 24 LSHIFT  ,                   \ save length of name field
-   HERE TUCK  SWAP !  SWAP ! ;       \ update CURRENT word list and thread
+   HERE GET-CURRENT ! ;              \ update CURRENT word list
 
 
 \ Exceptions #2
@@ -1009,32 +993,14 @@ INCLUDE" defining.fs"
    DOES>  TO DP ;
 : ROOT   ROOTDP TO DP ;
 
-VARIABLE CODEX  0 ' CODEX >BODY !
-VARIABLE CURRENT-VOLUME
-( A volume has the following structure:
-
-  'THREADS                          address of dictionary's THREADS
-  Link field                        link to next volume in CODEX
-  #WORDLISTS                        number of wordlists in volume
-)
-: VOLUME   CREATE  HERE 3 CELLS + ,  HERE CODEX  DUP @ ,  !  0 ,
-   #THREADS 0 DO  0 ,  LOOP  DOES>  CURRENT-VOLUME ! ;
-: #WORDLISTS   ( volume -- '#wordlists )   2 CELLS + ;
-ALIGN HERE <'FORTH   \ leave address of data structure
-'FORTH  INCLUDE" init-space.fs" CELLS +  <'FORTH  ,   \ address of start of threads hash table
-HERE <'FORTH  ' CODEX >BODY  DUP @ ,  !  0 ,
-: KERNEL   LITERAL ( address is HERE left earlier ) CURRENT-VOLUME ! ;
-
 VARIABLE CHAIN  0 ' CHAIN >BODY !
 ( A wordlist has the following structure:
 
   Head of list         most recently defined word
   Link field           next wordlist in CHAIN
-  Wordlist number      number of wordlist in VOLUME; bit 10 is FOREIGN flag
-  'THREADS             address of dictionary's THREADS
+  Info field           bit 10 is FOREIGN flag
 )
-: WORDLIST   ALIGN HERE  0 ,  HERE <'FORTH  CHAIN  DUP @ ,  !  CURRENT-VOLUME @
-   TUCK #WORDLISTS  DUP @  DUP ,  1+ SWAP !  SWAP @ <'FORTH , ;
+: WORDLIST   ALIGN HERE  0 ,  HERE <'FORTH  CHAIN  DUP @ ,  !  0 , ;
 INCLUDE" vocabulary.fs"
 VOCABULARY FORTH
 ' FORTH >BODY @ CONSTANT FORTH-WORDLIST
@@ -1055,14 +1021,6 @@ VOCABULARY FORTH
       DUP CELL-  DUP
       BEGIN  @  DUP HERE < INVERT WHILE  >LINK  REPEAT
       SWAP !
-   REPEAT
-   CODEX DUP  BEGIN  @  DUP HERE < UNTIL  OVER !
-   BEGIN  @ ?DUP WHILE
-      DUP CELL- @  DUP  #THREADS CELLS +  SWAP DO
-         I DUP
-         BEGIN  @ DUP  HERE < INVERT WHILE  >THREAD  REPEAT
-         SWAP !
-      CELL +LOOP
    REPEAT ;
 : FORGET   ( name )   ' (FORGET) ;
 : MARKER   ( name )
@@ -1252,7 +1210,7 @@ INCLUDE" parse-command-line.fs"
    256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
    'BUFFERS !                        \ set 'BUFFERS
    'BUFFERS @  TUCK -  ERASE         \ erase buffers
-   ROOT KERNEL                       \ use ROOT dictionary and KERNEL volume
+   ROOT                              \ use ROOT dictionary
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
    PARSE-COMMAND-LINE
