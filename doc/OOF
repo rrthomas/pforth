@@ -1,14 +1,15 @@
 Object-oriented Forth syntax
 
-CREATE[ ... ] for per instance declarations. Compile immediate words and save
-others as literal strings. At run-time, run the NEW" method of each class
-compiled, supplying the literal string on the stack.
+CREATE[ ... ] for per-instance declarations. Need non-parsing versions of
+VARIABLE, VALUE etc. Then can say e.g.
+
+    CREATE[ S" FOO" VARIABLE 42 S" BAR" VALUE ]
 
 DOES[ ... ] for methods. Go into interpretation mode after DOES[ and compile
-into a private dictionary.
+into a (per-class) private dictionary.
 
 DOES> and CREATE work as normal: CREATE is effectively CREATE[ ] and DOES> is
-DOES[ :NONAME ... ].
+DOES[ : DOES-METHOD ... ; DEFAULT ].
 
 DEFAULT after a declaration in CREATE[ ... ] or DOES[ ... ] makes that method
 the default.
