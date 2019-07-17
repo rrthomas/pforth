@@ -26,7 +26,6 @@
 \ FIXME: allow arbitrary branches; at the moment we're effectively
 \ restricted to 64Mb.
 : BRANCH   ( at from to -- )   $4D !BRANCH ;
-: CALL   ( at from to -- )   $53 !BRANCH ;
 
 : JOIN   ( from to -- )   <'FORTH  SWAP  1+ ALIGNED  ! ;
 
