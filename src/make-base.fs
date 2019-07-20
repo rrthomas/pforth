@@ -52,14 +52,17 @@ FOREIGN  ' NON-META? TO 'SELECTOR \ build meta-compiler using native compiler
 DECIMAL
 
 \ Relocate new dictionary
-: >ADDRESS<   DUP @  ?DUP IF  <'FORTH SWAP !  ELSE DROP  THEN ;
 : RELOCATE   ( a-addr -- )
    BEGIN
       >LINK
       DUP @ ?DUP WHILE
       OVER CELL+   \ hack to go from link field to compilation method
-      >ADDRESS<
-      DUP <'FORTH ROT !
+      DUP @  ?DUP IF   \ relocate compilation method if any
+         <'FORTH SWAP !
+      ELSE
+         DROP
+      THEN
+      DUP <'FORTH ROT !   \ relocate link field
    REPEAT
    DROP ;
 
