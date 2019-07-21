@@ -4,9 +4,9 @@
    START ;
 
 CODE PRE-INITIALIZE
-MLIT MLIT_0 MDUP MLIT                \ memory-limit RP !
+MLIT MLIT_0 MDUP MLIT_PC_REL         \ memory-limit RP !
 ' MEMORY-SIZE >BODY @ ,
-' RP >BODY <'FORTH ,
-MLIT_2 MSTORE MLIT MCALL             \ FIXME: constant!
-' INITIALIZE <'FORTH ,               \ ( memory-limit )
+ ' RP >BODY OFFSET,
+MLIT_2 MSTORE MLIT_PC_REL MCALL      \ FIXME: constant!
+' INITIALIZE OFFSET,                 \ ( memory-limit )
 END-CODE

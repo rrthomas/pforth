@@ -16,17 +16,19 @@
       $0A C,  ALIGN ,
    THEN ;
 
+: OFFSET   ( from to -- offset )   >-< CELL- ;
+: OFFSET,   ( to -- )   HERE CELL- SWAP OFFSET , ;
+: JOIN   ( from to -- )   OVER CELL- SWAP OFFSET SWAP ! ;
+
 : AHEAD   $010B ,  HERE  0 , ; IMMEDIATE COMPILING
 : IF   $020B ,  HERE  0 , ; IMMEDIATE COMPILING
 
 : @BRANCH   ( from -- to )   DUP @ + ;
-: !BRANCH   ( at from to opcode -- )   HERE >R  >R  >-< CELL-  SWAP DP !
+: !BRANCH   ( at from to opcode -- )   HERE >R  >R  OFFSET  SWAP DP !
    R> 8 ( FIXME: INSTRUCTION-BIT ) LSHIFT $0B OR ,  ,  R> DP ! ;
 
 : BRANCH   ( at from to -- )   $01 !BRANCH ;
 : CALL   ( at from to -- )   $03 !BRANCH ;
-
-: JOIN   ( from to -- )   OVER -  SWAP ! ;
 
 : CALL,   ( to -- )   ALIGN  $030B ,  HERE - , ;
 \ FIXME: name the phrase ">INFO 2 + C@" INLINE-SIZE
