@@ -128,8 +128,8 @@ VARIABLE RP
 \ FIXME: >R and R> must be defined as CODE words, because they are needed by
 \ LINK, and UNLINK,
 1 0 PRIMITIVE >R
-MLIT MLIT_0 MDUP MLIT_2 \ FIXME: constant!
-' RP >BODY <'FORTH ,
+MLIT_PC_REL MLIT_0 MDUP MLIT_2 \ FIXME: constant!
+' RP >BODY OFFSET,
 MLOAD MLIT MADD MLIT_0
 -4 , \ FIXME: target -CELL, not -4
 MDUP MLIT_1 MSWAP MLIT_2 \ FIXME: constant!
@@ -138,8 +138,8 @@ END-PRIMITIVE
 0 INLINE \ Prevent inlining: it's too long to go at the start of each word!
 
 0 1 PRIMITIVE R>
-MLIT MLIT_0 MDUP MLIT_2 \ FIXME: constant!
-' RP >BODY <'FORTH ,
+MLIT_PC_REL MLIT_0 MDUP MLIT_2 \ FIXME: constant!
+' RP >BODY OFFSET,
 MLOAD MLIT_0 MDUP MLIT
 4 , \ FIXME: target CELL, not 4
 MADD MLIT_0 MSWAP MLIT_1
