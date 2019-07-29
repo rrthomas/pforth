@@ -1,0 +1,1 @@
+: RELOCATE-HELPER   TRUE ABORT" Invalid relocation type!" ;

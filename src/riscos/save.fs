@@ -8,12 +8,10 @@
    R@ WRITE-FILE DROP            \ write data
    R> CLOSE-FILE DROP ;          \ close file
 
+0 VALUE 'TYPE-FILE
 [PROVIDED] TYPE-FILE  [IF]
-   ' TYPE-FILE <'FORTH
-[ELSE]
-   0
+   ' TYPE-FILE ADDRESS-TO 'TYPE-FILE
 [THEN]
-VALUE 'TYPE-FILE
 
 : SAVE-OBJECT   ( a-addr u1 c-addr u2 -- )
    2SWAP 2OVER                   \ save filename

@@ -10,14 +10,28 @@ CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
 
 
 INCLUDE" target-util.fs"
+INCLUDE" relocate.fs"   \ Need target's version of RELOCATE for call below
 INCLUDE" assembler.fs"
 
 
 \ Meta-compiler utilities
 
 ALSO ASSEMBLER
-INCLUDE" util.fs"
 'FORTH VALUE TARGET-'FORTH   \ While building meta-compiler, don't relocate
+64 1024 * CONSTANT DICTIONARY-SIZE
+CREATE RELOCATION-TABLE  HERE 0 ,  HERE 0 ,  HERE DICTIONARY-SIZE CELL/ ALLOT
+VALUE RELOCATIONS  VALUE #RELOCATIONS
+: (ADD-RELOCATION)   ( a-addr type -- )
+   OVER CELL 1- AND ABORT" Relocation address must be aligned!"
+   OVER RELOCATION-TABLE < ABORT" Invalid relocation!"
+   DUP CELL < INVERT ABORT" Relocation type must be < CELL!"
+   OR  #RELOCATIONS @ CELLS RELOCATIONS + !
+   1 #RELOCATIONS +! ;
+: ADD-RELOCATION   ( a-addr -- )
+   0 (ADD-RELOCATION) ;
+: ADDRESS!   DUP ADD-RELOCATION  ! ;
+: ADDRESS,   HERE ADD-RELOCATION  , ;
+
 : <'FORTH   'FORTH -  TARGET-'FORTH + ;
 : >'FORTH   'FORTH +  TARGET-'FORTH - ;
 
@@ -49,27 +63,12 @@ STUB (CREATE)
 : DOES-LINK,   0 , ;
 \ FIXME: Why is this needed here as well as below (under INCLUDE" defining.fs")?
 : DOES>   NOPALIGN  POSTPONE (DOES>)  NOPALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
-   DUP @ ROT OR  SWAP !  <'FORTH ,  DOES-LINK, ; IMMEDIATE COMPILING
+   DUP @ ROT OR  SWAP !  ADDRESS,  DOES-LINK, ; IMMEDIATE COMPILING
 
 
 VOCABULARY META  ALSO META DEFINITIONS
 FOREIGN  ' NON-META? TO 'SELECTOR \ build meta-compiler using native compiler
 DECIMAL
-
-\ Relocate new dictionary
-: RELOCATE   ( a-addr -- )
-   BEGIN
-      >LINK
-      DUP @ ?DUP WHILE
-      OVER CELL+   \ hack to go from link field to compilation method
-      DUP @  ?DUP IF   \ relocate compilation method if any
-         <'FORTH SWAP !
-      ELSE
-         DROP
-      THEN
-      DUP <'FORTH ROT !   \ relocate link field
-   REPEAT
-   DROP ;
 
 \ Check stack is balanced
 : ??STACK
@@ -94,11 +93,11 @@ INCLUDE" save.fs"
 \ compilation of the rest of META, which is FOREIGN while it is being built.
 ALSO FORTH DEFINITIONS
 : POSTPONE   BL WORD FIND ?DUP 0= IF UNDEFINED THEN 0> IF >COMPILE @
-   CURRENT-COMPILE, ELSE C" (POSTPONE)" ?FIND CURRENT-COMPILE, ALIGN <'FORTH , THEN ;
+   CURRENT-COMPILE, ELSE C" (POSTPONE)" ?FIND CURRENT-COMPILE, ALIGN ADDRESS, THEN ;
 IMMEDIATE COMPILING
 \ FIXME: RELATIVE-POSTPONE exists only for mit-threaded, and only in make-base.fs
 : RELATIVE-POSTPONE   BL WORD FIND ?DUP 0= IF UNDEFINED THEN 0> IF >COMPILE @
-   CURRENT-COMPILE, ELSE C" (RELATIVE-POSTPONE)" ?FIND CURRENT-COMPILE, ALIGN <'FORTH , THEN ;
+   CURRENT-COMPILE, ELSE C" (RELATIVE-POSTPONE)" ?FIND CURRENT-COMPILE, ALIGN ADDRESS, THEN ;
 IMMEDIATE COMPILING
 
 META DEFINITIONS  PREVIOUS  \ use META POSTPONE and LINK,
@@ -107,23 +106,35 @@ INCLUDE" compiler-postpone.fs"
 ALSO META  FOREIGN  PREVIOUS
 
 
+\ ADDRESS- variants are not to be compiled, so no compilation method needed
+: ADDRESS-TO   ' >BODY  DUP ADD-RELOCATION  ! ;
+: HEADER   ( c-addr -- )
+   HEADER
+   LAST >LINK  DUP @ IF  ADD-RELOCATION  ELSE DROP  THEN ;
+INCLUDE" code.fs"
+INCLUDE" util.fs"
+INCLUDE" add-relocate-helpers.fs"
 INCLUDE" control2.fs"
 INCLUDE" control3.fs"
 INCLUDE" compiler2.fs"
 INCLUDE" interpreter3.fs"
 INCLUDE" compiler4.fs"
+: ;IMMEDIATE   POSTPONE ;  IMMEDIATE  LAST >COMPILE ADDRESS! ; IMMEDIATE COMPILING
 INCLUDE" compiler5.fs"
 \ FIXME: wrap this definition rather than copy-and-modify
-: [']   ' <'FORTH  POSTPONE LITERAL ; IMMEDIATE COMPILING
+: [']   ALIGN '  POSTPONE ADDRESS-LITERAL ; IMMEDIATE COMPILING
 INCLUDE" defer-fetch-store.fs"
 INCLUDE" defining.fs"
 \ FIXME: wrap these definitions rather than copy-and-modify
+: IS   ' >BODY  DUP ADD-RELOCATION  !  ; \ FIXME: really DEFER!
+   :NONAME   ALIGN '  POSTPONE ADDRESS-LITERAL  POSTPONE DEFER! ;IMMEDIATE
 : TO   ' >BODY ! ;
-   :NONAME   ' >BODY  <'FORTH  POSTPONE LITERAL  POSTPONE ! ;IMMEDIATE
+   :NONAME   ' >BODY  ALIGN POSTPONE ADDRESS-LITERAL  POSTPONE ! ;IMMEDIATE
 : DOES>   NOPALIGN  POSTPONE (DOES>)  NOPALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
-   DUP @ ROT OR  SWAP !  <'FORTH ,  DOES-LINK, ; IMMEDIATE COMPILING
+   DUP @ ROT OR  SWAP !  ADDRESS,  DOES-LINK, ; IMMEDIATE COMPILING
 INCLUDE" vocabulary.fs"
 INCLUDE" resolver-branch.fs"
+: IMMEDIATE   IMMEDIATE  LAST >COMPILE ADD-RELOCATION ;
 
 : RESOLVES   ( name )   ( a-addr -- )
    '
@@ -138,7 +149,7 @@ INCLUDE" resolver-branch.fs"
 
 \ Constants
 
-64 1024 * CONSTANT SIZE
+DICTIONARY-SIZE CONSTANT SIZE
 INCLUDE" branch-cells.fs" CONSTANT #TARGET-BRANCH-CELLS
 
 NATIVE  ' LOCAL? TO 'SELECTOR \ now meta-compiler is built, allow it to run
@@ -155,10 +166,13 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 'FORTH   \ save value of 'FORTH
 ' CROSS >BODY @  INCLUDE" init-space.fs" CELLS -  TO 'FORTH
    \ make 'FORTH point to the start of it minus the initial branch
+'FORTH 4 ROLL !   \ store 'FORTH in RELOCATION-TABLE
+0 #RELOCATIONS !   \ FIXME: incorrect relocations will have been added by
+\ POSTPONE{,-RELATIVE} compiling the meta-compiler
 INCLUDE" target-forth.fs" TO TARGET-'FORTH \ Set value for relocation
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
-'FORTH <'FORTH   \ 'FORTH of new system
+TARGET-'FORTH   \ 'FORTH of new system
 INCLUDE" primitives.fs"
 INCLUDE" inner-interpreter.fs"
 INCLUDE" system-params.fs"
@@ -169,27 +183,31 @@ INCLUDE" system-params.fs"
 INCLUDE" highlevel.fs"
 INCLUDE" initialize.fs"
 
-HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
-' NEW-FORTH >BODY @ @ <'FORTH  ' FORTH >BODY @  !
-   \ patch root wordlist
-' FORTH >BODY @ <'FORTH CELL+  ' CHAIN >BODY  !   \ patch CHAIN
-' FORTH >BODY DUP @ <'FORTH SWAP !   \ relocate FORTH
-' FORTH >NAME 4 -  0 OVER !  4 -  0 SWAP !
-   \ patch FORTH wordlist
+HERE  ' ROOTDP >BODY ADDRESS!   \ patch ROOTDP
+' NEW-FORTH >BODY @ @  ' FORTH >BODY @  ADDRESS!   \ patch root wordlist
+' FORTH >BODY @ CELL+  ' CHAIN >BODY  ADDRESS!   \ patch CHAIN
+' FORTH >BODY DUP @  SWAP ADDRESS!   \ relocate FORTH
+' FORTH >NAME 4 -  0 OVER !  4 -  0 SWAP !   \ patch FORTH wordlist
 ' VALUE >DOES>  ALSO META  RESOLVES VALUE  PREVIOUS \ resolve run-times
 ' DEFER >DOES>  ALSO META  RESOLVES DEFER  PREVIOUS
 ' VOCABULARY >DOES>  ALSO META  RESOLVES VOCABULARY  PREVIOUS
-' ABORT <'FORTH TO SCAN-TEST
-' ABORT <'FORTH TO VISIBLE?
-' NEW-FORTH >BODY @ @  PREVIOUS  DUP RELOCATE   \ relocate the new dictionary
-   \ leave initial branch target on the stack
+' ABORT ADDRESS-TO SCAN-TEST
+' ABORT ADDRESS-TO VISIBLE?
+' NEW-FORTH >BODY @ @  PREVIOUS   \ leave initial branch target on the stack
+
+\ Normalize relocations relative to TARGET-'FORTH, to make the built image
+\ reproducible.
+'FORTH TARGET-'FORTH RELOCATION-TABLE RELOCATE
 
 ALIGN HERE 'FORTH -   \ ( length ) of binary image
 ROOT HERE OVER ALLOT   \ make space for binary image ( length start )
 TUCK   \ ( start length start )
 'FORTH  INCLUDE" init-space.fs" CELLS   \ ( s l s 'FORTH nCELLS )
-TUCK + -ROT +   \ ( s l 'FORTH+nCELLS H+nCELLS )
+TUCK + -ROT +   \ ( s l 'FORTH+nCELLS s+nCELLS )
 2 PICK MOVE   \ copy dictionary ( s l )
+RELOCATION-TABLE #RELOCATIONS @ 2 + CELLS   \ ( s l 'relocation-table relocation-table-length )
+TUCK HERE  OVER ALLOT  SWAP MOVE   \ copy relocation table ( s l relocation-table-length )
++   \ ( s l' )
 
 OVER INCLUDE" init-space.fs" CELLS ERASE   \ zero initial branch space
 OVER SWAP 2SWAP 'FORTH ROT  NATIVE-BRANCH   \ patch in initial branch
