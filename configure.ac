@@ -95,8 +95,12 @@ AC_CONFIG_FILES([
   src/riscos/Makefile
   src/mit/Makefile
   src/mit-threaded/Makefile
-  src/highlevel.fs
   doc/Makefile
   extras/Makefile
 ])
+AC_CONFIG_FILES([src/highlevel.fs],
+  [ln -fs ../highlevel.fs src/beetle/highlevel.fs
+   ln -fs ../highlevel.fs src/riscos/highlevel.fs
+   ln -fs ../highlevel.fs src/mit/highlevel.fs
+   ln -fs ../highlevel.fs src/mit-threaded/highlevel.fs])
 AC_OUTPUT
