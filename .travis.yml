@@ -5,6 +5,12 @@ env:
   global:
     - VERBOSE=1
 
+addons:
+  homebrew:
+    packages:
+    - help2man
+    update: true
+
 matrix:
   include:
     - os: linux
@@ -81,7 +87,6 @@ matrix:
         - HOST=mit
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install help2man; fi
   - if [[ "$HOST" == "" ]]; then export HOST=$BUILD; fi
   - ./build-aux/install-executor $BUILD
   - if [[ "$BUILD" != "$HOST" ]]; then ./build-aux/install-executor $HOST; fi
