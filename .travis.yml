@@ -87,6 +87,7 @@ matrix:
         - HOST=mit
 
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then if [[ "$HOST" == "mit" ]]; then pip3 install pyyaml; fi; fi
   - if [[ "$HOST" == "" ]]; then export HOST=$BUILD; fi
   - ./build-aux/install-executor $BUILD
   - if [[ "$BUILD" != "$HOST" ]]; then ./build-aux/install-executor $HOST; fi
