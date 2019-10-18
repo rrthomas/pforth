@@ -18,11 +18,11 @@ INCLUDE" branch-cells.fs" CELLS CONSTANT PRIMITIVE-RP
    PRIMITIVE-UNLINK, END-CODE  >-< INLINE ;
 
 \ Create Mit EXT calls
-: EXT-PRIMITIVE   ( args results func lib -- )
-   >R >R  PRIMITIVE           \ make a primitive
+: EXT-PRIMITIVE   ( func lib -- )
+   >R >R  0 0 PRIMITIVE       \ make a primitive (FIXME: don't call PRIMITIVE)
    R> MLIT NOPALIGN ,         \ compile the function code
    R> 8 LSHIFT $01 OR ,       \ compile the library call (FIXME: HACK!)
    END-PRIMITIVE ;            \ finish the definition
 
-: LIBMIT-PRIMITIVE   ( args results func -- )   LIB_MIT EXT-PRIMITIVE ;
-: LIBC-PRIMITIVE   ( args results func -- )   LIB_C EXT-PRIMITIVE ;
+: LIBMIT-PRIMITIVE   ( func -- )   LIB_MIT EXT-PRIMITIVE ;
+: LIBC-PRIMITIVE   ( func -- )   LIB_C EXT-PRIMITIVE ;
