@@ -5,9 +5,9 @@
 
 \ FIXME: Check I/O return codes
 : SAVE-OBJECT   ( a-addr u1 c-addr u2 -- )
-   W/O CREATE-FILE DROP          \ open file
+   W/O BIN CREATE-FILE DROP      \ open file
    >R                            \ save file-id
-   S" MIT" R@ WRITE-FILE DROP  \ write header
+   S" MIT" R@ WRITE-FILE DROP    \ write header
    0 R@ WRITE-BYTE DROP
    0 R@ WRITE-BYTE DROP
    0 R@ WRITE-BYTE DROP

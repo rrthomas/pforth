@@ -2,7 +2,7 @@
 
 \ FIXME: Check I/O return codes
 : SAVE-OBJECT   ( a-addr u1 c-addr u2 -- )
-   W/O CREATE-FILE DROP          \ open file
+   W/O BIN CREATE-FILE DROP      \ open file
    >R                            \ save file-id
    S" BEETLE" R@ WRITE-FILE DROP \ write header
    0 SCRATCH TUCK C!  1  2DUP  R@ WRITE-FILE DROP

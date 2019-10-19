@@ -2,7 +2,7 @@
 \ Reuben Thomas   1/7/96-18/3/99
 
 
-: BIN ; IMMEDIATE
+: BIN ;
 : R/O   $40 ;
 : W/O   $C0 ;
 : R/W   $C0 ;
