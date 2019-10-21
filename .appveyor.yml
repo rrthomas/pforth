@@ -1,0 +1,27 @@
+version: "{build}"
+
+environment:
+  global:
+    VERBOSE: 1 # Get test logs in output
+    BUILD: beetle
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      MSYSTEM: MSYS
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      MSYSTEM: MINGW64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      MSYSTEM: MINGW32
+
+test: off
+
+init:
+  - cmd: git config --global core.autocrlf input
+
+install:
+  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/appveyor-install.sh"
+
+# `git rm-symlinks` in pforth (defined in build-aux/appveyor-install.sh) to
+# fix symlinks for Windows.
+build_script:
+  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/install-executor --no-sudo $BUILD"
+  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && git submodule update --init --recursive && autoreconf -fi && ./configure --enable-silent-rules && make check"

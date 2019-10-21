@@ -1,5 +1,11 @@
 #!/bin/sh
-# Install executor (used for Travis build)
+# Install executor (used for Travis & AppVeyor build)
+
+SUDO=sudo
+if test "$1" = "--no-sudo"; then
+    shift
+    SUDO=""
+fi
 
 BUILD=$1
 unset OAUTH_PARAMETER
@@ -17,7 +23,7 @@ case $BUILD in
         curl -L https://github.com/rrthomas/beetle/releases/download/$LATEST_RELEASE/$FILE -o $FILE
         tar zxf $FILE
         cd beetle-$LATEST_RELEASE_NUMBER
-        ./configure --enable-silent-rules && make check && sudo make install
+        ./configure --enable-silent-rules && make check && $SUDO make install
         ;;
     arm-riscos)
         cd src/\!pForth
@@ -41,6 +47,6 @@ case $BUILD in
         git clone https://github.com/rrthomas/mit.git
         cd mit
         # Make install before make check so Python ctypes's find_library can find libmit
-        ./bootstrap && ./configure --enable-silent-rules WORD_BYTES=4 && sudo make install && make check
+        ./bootstrap && ./configure --enable-silent-rules WORD_BYTES=4 && $SUDO make install && make check
         ;;
 esac
