@@ -750,7 +750,7 @@ IMMEDIATE COMPILING
 
 VARIABLE HANDLER  0 ' HANDLER >BODY !
 : CATCH
-   SP@ >R                            \ push data stack pointer
+   SP@ CELL- >R                      \ push data stack pointer
    HANDLER @ >R                      \ push pointer to last frame
    SAVE-INPUT>R                      \ push current input source
    RP@ HANDLER !                     \ set pointer to current frame
@@ -1115,7 +1115,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
          R>RESTORE-INPUT             \ restore input source
          R> HANDLER !                \ set pointer to next frame
          R> SWAP >R                  \ keep exception number
-         SP! DROP                    \ restore data stack
+         SP!                         \ restore data stack
          R>                          \ restore exception number
       ELSE                           \ if no frame,
          ERROR-PREFIX                \ print any message
