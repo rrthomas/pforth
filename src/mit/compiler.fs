@@ -5,15 +5,15 @@
 
 \ Core compiler
 
-: NOPALIGN   ALIGN ;
+: NOPALIGN   0 CALIGN ;
 
 : @LITERAL   ALIGNED @ ;
 : !LITERAL   ALIGNED ! ;
 : LITERAL,   ( n -- )
    DUP 4 U< IF \ Use a LIT_n instruction if possible
-      $0C + C,  ALIGN \ FIXME: ALIGN shouldn't be needed
+      $0C + C,  NOPALIGN \ FIXME: ALIGN shouldn't be needed
    ELSE
-      $0A C,  ALIGN ,
+      $0A C,  NOPALIGN ,
    THEN ;
 
 : OFFSET   ( from to -- offset )   >-< CELL- ;
@@ -30,7 +30,7 @@
 : BRANCH   ( at from to -- )   $01 !BRANCH ;
 : CALL   ( at from to -- )   $03 !BRANCH ;
 
-: CALL,   ( to -- )   ALIGN  $030B ,  HERE - , ;
+: CALL,   ( to -- )   NOPALIGN  $030B ,  HERE - , ;
 \ FIXME: name the phrase ">INFO 2 + C@" INLINE-SIZE
 \ FIXME: 8 + below is a hack to skip over the primitive's prologue
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP 8 + C@ C,  1+  LOOP  DROP
