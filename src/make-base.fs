@@ -17,6 +17,9 @@ INCLUDE" assembler.fs"
 
 ALSO ASSEMBLER
 INCLUDE" util.fs"
+'FORTH VALUE TARGET-'FORTH   \ While building meta-compiler, don't relocate
+: <'FORTH   'FORTH -  TARGET-'FORTH + ;
+: >'FORTH   'FORTH +  TARGET-'FORTH - ;
 
 
 \ STUB FOO creates an empty word.
@@ -44,7 +47,9 @@ STUB (CREATE)
 : ADD-RESOLVE   DUP @  LAST CELL+  TUCK  !  SWAP ! ;
 : (DOES>)   R> R>ADDRESS CELL+  ADD-RESOLVE ;
 : DOES-LINK,   0 , ;
-INCLUDE" does.fs"
+\ FIXME: Why is this needed here as well as below (under INCLUDE" defining.fs")?
+: DOES>   NOPALIGN  POSTPONE (DOES>)  NOPALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
+   DUP @ ROT OR  SWAP !  <'FORTH ,  DOES-LINK, ; IMMEDIATE COMPILING
 
 
 VOCABULARY META  ALSO META DEFINITIONS
@@ -73,7 +78,7 @@ DECIMAL
    THEN ;
 
 
-INCLUDE" compiler.fs"
+INCLUDE" relocate-compiler.fs"
 INCLUDE" native-branch.fs"
 INCLUDE" compiler1.fs"
 INCLUDE" save.fs"
@@ -108,8 +113,15 @@ INCLUDE" compiler2.fs"
 INCLUDE" interpreter3.fs"
 INCLUDE" compiler4.fs"
 INCLUDE" compiler5.fs"
+\ FIXME: wrap this definition rather than copy-and-modify
+: [']   ' <'FORTH  POSTPONE LITERAL ; IMMEDIATE COMPILING
 INCLUDE" defer-fetch-store.fs"
 INCLUDE" defining.fs"
+\ FIXME: wrap these definitions rather than copy-and-modify
+: TO   ' >BODY ! ;
+   :NONAME   ' >BODY  <'FORTH  POSTPONE LITERAL  POSTPONE ! ;IMMEDIATE
+: DOES>   NOPALIGN  POSTPONE (DOES>)  NOPALIGN  HERE CELL+  LAST  2DUP - CELL/  SWAP >INFO
+   DUP @ ROT OR  SWAP !  <'FORTH ,  DOES-LINK, ; IMMEDIATE COMPILING
 INCLUDE" vocabulary.fs"
 INCLUDE" resolver-branch.fs"
 
@@ -140,11 +152,10 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 ' CURRENT-LITERAL >BODY @
 ' COMPILE, TO CURRENT-COMPILE,   \ use target compiler
 ' LITERAL TO CURRENT-LITERAL   \ use target compiler
-TARGET-'FORTH   \ save value of TARGET-'FORTH
 'FORTH   \ save value of 'FORTH
 ' CROSS >BODY @  INCLUDE" init-space.fs" CELLS -  TO 'FORTH
    \ make 'FORTH point to the start of it minus the initial branch
-INCLUDE" target-forth.fs" TO TARGET-'FORTH
+INCLUDE" target-forth.fs" TO TARGET-'FORTH \ Set value for relocation
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
 'FORTH <'FORTH   \ 'FORTH of new system
@@ -159,9 +170,10 @@ INCLUDE" highlevel.fs"
 INCLUDE" initialize.fs"
 
 HERE <'FORTH  ' ROOTDP >BODY !   \ patch ROOTDP
-' NEW-FORTH >BODY @ @ <'FORTH  ' FORTH >BODY @ >'FORTH  !
+' NEW-FORTH >BODY @ @ <'FORTH  ' FORTH >BODY @  !
    \ patch root wordlist
-' FORTH >BODY @ CELL+  ' CHAIN >BODY  !   \ patch CHAIN
+' FORTH >BODY @ <'FORTH CELL+  ' CHAIN >BODY  !   \ patch CHAIN
+' FORTH >BODY DUP @ <'FORTH SWAP !   \ relocate FORTH
 ' FORTH >NAME 4 -  0 OVER !  4 -  0 SWAP !
    \ patch FORTH wordlist
 ' VALUE >DOES>  ALSO META  RESOLVES VALUE  PREVIOUS \ resolve run-times
@@ -186,7 +198,6 @@ S" pforth-new" SAVE-OBJECT   \ write system image
 
 PREVIOUS PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
-TO TARGET-'FORTH   \ restore TARGET-'FORTH
 TO CURRENT-LITERAL   \ restore original compiler
 TO CURRENT-COMPILE,
 

@@ -11,8 +11,8 @@ host_SRCS = $(portable_SRCS) \
 	compiler.fs compiler-postpone.fs extra-primitives.fs fileio.fs		\
 	init-space.fs initialize.fs inner-interpreter.fs native-branch.fs	\
 	os-compiler.fs os.fs parse-command-line.fs platform.fs primitives.fs	\
-	resolver-branch.fs save.fs system-params.fs target-forth.fs		\
-	target-util.fs terminal.fs util.fs
+	relocate-compiler.fs resolver-branch.fs save.fs system-params.fs	\
+	target-forth.fs	target-util.fs terminal.fs util.fs
 
 do_build_prep = \
 	if test $(srcdir) != $(builddir); then \

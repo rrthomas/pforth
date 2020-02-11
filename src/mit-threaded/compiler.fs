@@ -6,7 +6,7 @@
 
 : NOPALIGN   ALIGN ;
 
-: @BRANCH   ( from -- to )   @ >'FORTH ;
-: JOIN   ( from to -- )   <'FORTH  SWAP ! ;
-: COMPILE,   ( to -- )   <'FORTH , ;
+: @BRANCH   ( from -- to )   @ ;
+: JOIN   ( from to -- )   SWAP ! ;
+: COMPILE,   ( to -- )   , ;
 : LEAVE, ;

@@ -11,10 +11,7 @@ CR .( @PACKAGE_NAME@ high level words )
 
 \ System variables
 
-DUP VALUE 'FORTH   \ value is put on stack by make-base.fs
-VALUE TARGET-'FORTH
-: <'FORTH   'FORTH -  TARGET-'FORTH + ;
-: >'FORTH   'FORTH +  TARGET-'FORTH - ;
+VALUE 'FORTH   \ value is put on stack by make-base.fs
 
 0 VALUE LIMIT
 
@@ -710,7 +707,7 @@ DEFER VISIBLE?   \ word visibility test
 DEFER CURRENT-LITERAL  ' LITERAL <'FORTH IS CURRENT-LITERAL
 \ FIXME: The definition of POSTPONE should not call the metacompiler's POSTPONE
 : POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
-   CURRENT-COMPILE,  ELSE  POSTPONE (POSTPONE) ALIGN  <'FORTH ,  THEN ;
+   CURRENT-COMPILE,  ELSE  POSTPONE (POSTPONE)  ALIGN ,  THEN ;
 IMMEDIATE COMPILING
 
 ( A header has the following structure:
@@ -1000,10 +997,10 @@ VARIABLE CHAIN  0 ' CHAIN >BODY !
   Link field           next wordlist in CHAIN
   Info field           bit 10 is FOREIGN flag
 )
-: WORDLIST   ALIGN HERE  0 ,  HERE <'FORTH  CHAIN  DUP @ ,  !  0 , ;
+: WORDLIST   ALIGN HERE  0 ,  HERE  CHAIN  DUP @ ,  !  0 , ;
 INCLUDE" vocabulary.fs"
 VOCABULARY FORTH
-' FORTH >BODY @ CONSTANT FORTH-WORDLIST
+' FORTH >BODY @ <'FORTH CONSTANT FORTH-WORDLIST
 : ALSO   CONTEXT  DUP CELL+  #ORDER @ CELLS  MOVE  1 #ORDER +! ;
 : ONLY   FORTH  1 #ORDER ! ;
 : FOREIGN   CONTEXT @  2 CELLS +  DUP @ 1024 OR  SWAP ! ;
