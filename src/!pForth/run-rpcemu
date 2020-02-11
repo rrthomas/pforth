@@ -1,11 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+set -e
+
 cp -a hostfs rpcemu/* rpcemu-*/
 cd rpcemu-*/
-# FIXME: -platform offscreen should work, but it crashes on Ubuntu 14.04's
-# Qt5; try again once Travis upgraded (works for me on 18.04).
-#./rpcemu-interpreter -platform offscreen
-Xvfb :1 &
-XVFB_PID=$!
-export DISPLAY=:1
-./rpcemu-interpreter
-kill $XVFB_PID
+./rpcemu-interpreter -platform offscreen
