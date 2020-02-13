@@ -1,7 +1,7 @@
 # Source Makefile.am
 
 noinst_DATA = pforth-base
-EXTRA_DIST = $(host_SRCS) pforth-base make.fs
+EXTRA_DIST = $(host_SRCS) pforth-base
 DISTCLEANFILES = pforth-base
 
 highlevel.fs: $(srcdir)/../highlevel.fs.in
@@ -10,7 +10,7 @@ highlevel.fs: $(srcdir)/../highlevel.fs.in
 include $(srcdir)/../host_src.am
 
 do_build = \
-	export srcs="$(host_SRCS) make.fs"; $(do_build_prep) && \
+	export srcs="$(host_SRCS)"; $(do_build_prep) && \
 	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make-base.fs && \
 	if test "$(host)" = "$(build)" -a "$(target)" = "$(host)"; then \
 		mv pforth-new pforth-new-0 && \

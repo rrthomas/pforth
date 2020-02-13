@@ -31,21 +31,11 @@ all-local: !pForth/!TestBuild,feb
 	echo "" >> $@; \
 	echo "Dir ^" >> $@
 
-# Extended Forth image (if building on host)
-pforth: $(host)/pforth
-	echo "#!$(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS)" | cat - $(host)/pforth > $@
-
-$(host)/pforth: $(host)/pforth-base $(host)/make.fs
-	if test "$(host)" = "$(build)"; then \
-		cd $(host); \
-		export srcs="$(host_SRCS) make.fs"; $(do_build_prep) && \
-		$(BUILD_PFORTH) make.fs; \
-	else \
-		cp $(host)/pforth-base $@; \
-	fi
+# Forth image
+pforth: $(host)/pforth-base
+	echo "#!$(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS)" | cat - $(host)/pforth-base > $@
 
 EXTRA_DIST = $(portable_SRCS)							\
-	make.fs									\
 	!pForth/!TestBuild,feb
 CLEANFILES = pforth
 DISTCLEANFILES = $(host)/pforth
@@ -65,6 +55,6 @@ endif
 loc-local:
 	$(CLOC) $(CLOC_OPTS) $(portable_SRCS)
 
-check-local: $(host)/pforth
+check-local: $(host)/pforth-base
 	cd $(top_srcdir)/extras && \
-	echo foobar | $(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS) $(abs_builddir)/$(host)/pforth tests.fs
+	echo foobar | $(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS) $(abs_builddir)/$(host)/pforth-base tests.fs
