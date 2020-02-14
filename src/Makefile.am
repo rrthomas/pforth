@@ -14,26 +14,26 @@ all-local: !pForth/!TestBuild,feb
 	echo "" >> $@; \
 	for i in $(SUBDIRS); do \
 		echo "Dir $$i" >> $@; \
-		echo "pforth make-base.fs" >> $@; \
+		echo "pforth make.fs" >> $@; \
 		echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
-		echo "diff pforth-new pforth-base" >> $@; \
+		echo "diff pforth-new pforth" >> $@; \
 		echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
 		echo "Dir ^" >> $@; \
 		echo "" >> $@; \
 	done; \
 	echo "Dir riscos" >> $@; \
 	echo "Copy pforth-new pforth-new-0 ~C F" >> $@; \
-	echo "Run pforth-new-0 make-base.fs" >> $@; \
+	echo "Run pforth-new-0 make.fs" >> $@; \
 	echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
-	echo "diff pforth-new pforth-base" >> $@; \
+	echo "diff pforth-new pforth" >> $@; \
 	echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
 	echo "Dir ^" >> $@; \
 	echo "" >> $@; \
 	echo "Dir ^" >> $@
 
 # Forth image
-pforth: $(host)/pforth-base
-	echo "#!$(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS)" | cat - $(host)/pforth-base > $@
+pforth: $(host)/pforth
+	echo "#!$(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS)" | cat - $(host)/pforth > $@
 
 EXTRA_DIST = $(portable_SRCS)							\
 	!pForth/!TestBuild,feb
@@ -55,6 +55,6 @@ endif
 loc-local:
 	$(CLOC) $(CLOC_OPTS) $(portable_SRCS)
 
-check-local: $(host)/pforth-base
+check-local: $(host)/pforth
 	cd $(top_srcdir)/extras && \
-	echo foobar | $(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS) $(abs_builddir)/$(host)/pforth-base tests.fs
+	echo foobar | $(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS) $(abs_builddir)/$(host)/pforth tests.fs

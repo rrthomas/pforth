@@ -1,8 +1,8 @@
 # Source Makefile.am
 
-noinst_DATA = pforth-base
-EXTRA_DIST = $(host_SRCS) pforth-base
-DISTCLEANFILES = pforth-base
+noinst_DATA = pforth
+EXTRA_DIST = $(host_SRCS) pforth
+DISTCLEANFILES = pforth
 
 highlevel.fs: $(srcdir)/../highlevel.fs.in
 	cd $(top_builddir); ./config.status --file=src/highlevel.fs
@@ -11,10 +11,10 @@ include $(srcdir)/../host_src.am
 
 do_build = \
 	export srcs="$(host_SRCS)"; $(do_build_prep) && \
-	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make-base.fs && \
+	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs && \
 	if test "$(host)" = "$(build)" -a "$(target)" = "$(host)"; then \
 		mv pforth-new pforth-new-0 && \
-		$(BUILD_EXECUTOR) $(BUILD_EXECUTOR_FLAGS) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make-base.fs && \
+		$(BUILD_EXECUTOR) $(BUILD_EXECUTOR_FLAGS) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make.fs && \
 		cmp pforth-new pforth-new-0 && \
 		rm pforth-new-0; \
 	fi && \
@@ -22,7 +22,7 @@ do_build = \
 
 
 # Triple test (if building on host)
-pforth-base: $(host_SRCS)
+pforth: $(host_SRCS)
 	$(do_build)
 
 # Build with minimal primitives

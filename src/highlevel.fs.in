@@ -11,7 +11,7 @@ CR .( @PACKAGE_NAME@ high level words )
 
 \ System variables
 
-VALUE 'FORTH   \ value is put on stack by make-base.fs
+VALUE 'FORTH   \ value is put on stack by make.fs
 0 VALUE LIMIT
 
 
