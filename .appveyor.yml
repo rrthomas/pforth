@@ -2,6 +2,8 @@ version: "{build}"
 
 environment:
   global:
+    GITHUB_TOKEN:
+      secure: 3J3HXNPKxCnwyaNtnJAH2xwHg9cG/SEB9YNrBGYoGRQSeNBO19+yVv48x6LfNiA9
     VERBOSE: 1 # Get test logs in output
     BUILD: beetle
   matrix:
@@ -17,11 +19,11 @@ test: off
 init:
   - cmd: git config --global core.autocrlf input
 
+# `git rm-symlinks` in pforth (defined in build-aux/appveyor-install.sh) to
+# fix symlinks for Windows.
 install:
   - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/appveyor-install.sh"
 
-# `git rm-symlinks` in pforth (defined in build-aux/appveyor-install.sh) to
-# fix symlinks for Windows.
 build_script:
   - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/install-executor --no-sudo $BUILD"
   - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && git submodule update --init --recursive && autoreconf -fi && ./configure --enable-silent-rules && make check"

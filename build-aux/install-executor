@@ -14,7 +14,11 @@ case $BUILD in
         cd $HOME
         # From https://gist.github.com/steinwaywhw/a4cd19cda655b8249d908261a62687f8
         # Authentication is needed to prevent exceeding API limits from Travis/AppVeyor
-        LATEST_RELEASE=`curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/rrthomas/beetle/releases/latest | grep tag_name | sed -e 's/.*tag_name": "\([^"]*\).*/\1/'`
+        if test "$GITHUB_TOKEN" != ""; then
+            LATEST_RELEASE=`curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/rrthomas/beetle/releases/latest | grep tag_name | sed -e 's/.*tag_name": "\([^"]*\).*/\1/'`
+        else
+            LATEST_RELEASE=`curl https://api.github.com/repos/rrthomas/beetle/releases/latest | grep tag_name | sed -e 's/.*tag_name": "\([^"]*\).*/\1/'`
+        fi
         LATEST_RELEASE_NUMBER=`echo $LATEST_RELEASE | sed -e s/^v//`
         FILE=beetle-$LATEST_RELEASE_NUMBER.tar.gz
         curl -L https://github.com/rrthomas/beetle/releases/download/$LATEST_RELEASE/$FILE -o $FILE
