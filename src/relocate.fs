@@ -1,3 +1,5 @@
+\ FIXME: Compile this with the mit back-end for mit-threaded so it can
+\ actually be used for mit-threaded!
 INCLUDE" relocate-helper.fs"
 
 \ Relocate literal addresses relative to 'FORTH using the given relocation
