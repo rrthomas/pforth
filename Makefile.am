@@ -13,3 +13,6 @@ release: distcheck
 		package=pforth \
 		version=$(VERSION) \
 		dist_type=tar.gz
+
+distcheck-hook:
+	touch src/highlevel.fs.in
