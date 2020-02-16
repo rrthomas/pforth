@@ -78,7 +78,7 @@ DECIMAL
 
 
 INCLUDE" relocate-compiler.fs"
-INCLUDE" native-branch.fs"
+INCLUDE" native-call.fs"
 INCLUDE" compiler1.fs"
 INCLUDE" save.fs"
 
@@ -150,7 +150,7 @@ INCLUDE" resolver-branch.fs"
 \ Constants
 
 DICTIONARY-SIZE CONSTANT SIZE
-INCLUDE" branch-cells.fs" CONSTANT #TARGET-BRANCH-CELLS
+INCLUDE" call-cells.fs" CONSTANT #TARGET-CALL-CELLS
 
 NATIVE  ' LOCAL? TO 'SELECTOR \ now meta-compiler is built, allow it to run
 
@@ -210,7 +210,7 @@ TUCK HERE  OVER ALLOT  SWAP MOVE   \ copy relocation table ( s l relocation-tabl
 +   \ ( s l' )
 
 OVER INCLUDE" init-space.fs" CELLS ERASE   \ zero initial branch space
-OVER SWAP 2SWAP 'FORTH ROT  NATIVE-BRANCH   \ patch in initial branch
+OVER SWAP 2SWAP 'FORTH ROT  NATIVE-CALL   \ patch in initial branch
 
 S" pforth-new" SAVE-OBJECT   \ write system image
 
