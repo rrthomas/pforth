@@ -14,38 +14,28 @@ all-local: !pForth/!TestBuild,feb
 	echo "" >> $@; \
 	for i in $(SUBDIRS); do \
 		echo "Dir $$i" >> $@; \
-		echo "pforth make-base.fs" >> $@; \
+		echo "pforth make.fs" >> $@; \
 		echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
-		echo "diff pforth-new pforth-base" >> $@; \
+		echo "diff pforth-new pforth" >> $@; \
 		echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
 		echo "Dir ^" >> $@; \
 		echo "" >> $@; \
 	done; \
 	echo "Dir riscos" >> $@; \
 	echo "Copy pforth-new pforth-new-0 ~C F" >> $@; \
-	echo "Run pforth-new-0 make-base.fs" >> $@; \
+	echo "Run pforth-new-0 make.fs" >> $@; \
 	echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
-	echo "diff pforth-new pforth-base" >> $@; \
+	echo "diff pforth-new pforth" >> $@; \
 	echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
 	echo "Dir ^" >> $@; \
 	echo "" >> $@; \
 	echo "Dir ^" >> $@
 
-# Extended Forth image (if building on host)
+# Forth image
 pforth: $(host)/pforth
 	echo "#!$(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS)" | cat - $(host)/pforth > $@
 
-$(host)/pforth: $(host)/pforth-base $(host)/make.fs
-	if test "$(host)" = "$(build)"; then \
-		cd $(host); \
-		export srcs="$(host_SRCS) make.fs"; $(do_build_prep) && \
-		$(BUILD_PFORTH) make.fs; \
-	else \
-		cp $(host)/pforth-base $@; \
-	fi
-
 EXTRA_DIST = $(portable_SRCS)							\
-	make.fs									\
 	!pForth/!TestBuild,feb
 CLEANFILES = pforth
 DISTCLEANFILES = $(host)/pforth

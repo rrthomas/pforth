@@ -115,15 +115,12 @@ $C LIBMIT-PRIMITIVE NATIVE-POINTER-CELLS
 
 \ Control primitives
 
-INCLUDE" bracket-does.fs"
-
+INCLUDE" primitive-bracket-does.fs"
 
 \ Stack management
 
-\ FIXME: Make this a small constant!
 VARIABLE PRIMITIVE-RP
 
-\ FIXME: Make this a small constant!
 VARIABLE RP
 \ FIXME: >R and R> must be defined as CODE words, because they are needed by
 \ LINK, and UNLINK,
@@ -149,23 +146,25 @@ END-PRIMITIVE
 0 INLINE \ Prevent inlining: it's too long to go at the start of each word!
 
 0 1 PRIMITIVE R@
-MLIT MLIT_2 MLOAD MLIT_2 \ FIXME: constant! × 2
-' RP >BODY <'FORTH ,
+MLIT_PC_REL MLIT_2 MLOAD MLIT_2 \ FIXME: constant! × 2
+' RP >BODY OFFSET,
 MLOAD
 END-PRIMITIVE
+0 INLINE \ Prevent inlining because of relative offset to RP
 
 0 1 PRIMITIVE RP@
-MLIT MLIT_2 MLOAD NOPALIGN \ FIXME: constant!
-' RP >BODY <'FORTH ,
+MLIT_PC_REL MLIT_2 MLOAD NOPALIGN \ FIXME: constant!
+' RP >BODY OFFSET,
 END-PRIMITIVE
+0 INLINE \ Prevent inlining because of relative offset to RP
 
 \ FIXME: -9 THROW if RP is out of range
 \ Must be a primitive as it would mess up its own return
 1 0 PRIMITIVE RP!
-MLIT MLIT_2 MSTORE NOPALIGN \ FIXME: constant!
-' RP >BODY <'FORTH ,
+MLIT_PC_REL MLIT_2 MSTORE NOPALIGN \ FIXME: constant!
+' RP >BODY OFFSET,
 END-PRIMITIVE
-
+0 INLINE \ Prevent inlining because of relative offset to RP
 
 $0 LIBMIT-PRIMITIVE MIT_CURRENT_STATE
 $1 LIBMIT-PRIMITIVE NATIVE_ADDRESS_OF_RANGE

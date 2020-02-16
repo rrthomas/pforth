@@ -7,6 +7,6 @@
 : NOPALIGN   ALIGN ;
 
 : @BRANCH   ( from -- to )   @ ;
-: JOIN   ( from to -- )   SWAP ! ;
-: COMPILE,   ( to -- )   , ;
+: JOIN   ( from to -- )   SWAP ADDRESS! ;
+: COMPILE,   ( to -- )   ADDRESS, ;
 : LEAVE, ;

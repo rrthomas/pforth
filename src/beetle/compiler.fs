@@ -11,6 +11,7 @@
 \ FIXME: FIT, should abort on failure
 : FIT,   ( x -- )   HERE DUP ALIGNED >-<  0 ?DO  DUP C,  8 RSHIFT  LOOP
    DROP ;
+: FIT!   ( x a-addr -- )   HERE  SWAP DP !  1 ALLOT  SWAP FIT,  DP ! ;
 : NOPALIGN   0 FIT, ;
 
 
@@ -18,8 +19,7 @@
 
 : OFFSET   ( from to -- offset )   >-<  CELL/ 1-  $00FFFFFF AND ;
 : @BRANCH   ( from -- to )   DUP 1+ CELL- ALIGNED @  8 ARSHIFT  1+ CELLS + ;
-: !BRANCH   ( at from to -- )   OFFSET  HERE  ROT DP !  1 ALLOT
-   SWAP FIT,  DP ! ;
+: !BRANCH   ( at from to -- )   OFFSET SWAP FIT! ;
 
 \ FIXME: allow arbitrary branches; at the moment we're effectively
 \ restricted to 64Mb.

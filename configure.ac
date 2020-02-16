@@ -40,7 +40,7 @@ AS_IF([test "$BUILD_FLAVOUR" != ""],
   [build_flavour=$BUILD_FLAVOUR
   AS_IF([! test -d "src/$build_flavour"],
     AC_MSG_ERROR([pForth does not come in flavour '$build_flavour']))])
-AS_IF([! $BUILD_EXECUTOR $BUILD_EXECUTOR_FLAGS $srcdir/src/$build_flavour/pforth-base --evaluate BYE],
+AS_IF([! $BUILD_EXECUTOR $BUILD_EXECUTOR_FLAGS $srcdir/src/$build_flavour/pforth --evaluate BYE],
   [AC_MSG_ERROR([$BUILD_EXECUTOR does not work!])])
 AC_SUBST([build])
 AC_SUBST([build_flavour])

@@ -11,8 +11,7 @@ CR .( @PACKAGE_NAME@ high level words )
 
 \ System variables
 
-VALUE 'FORTH   \ value is put on stack by make-base.fs
-
+VALUE 'FORTH   \ value is put on stack by make.fs
 0 VALUE LIMIT
 
 
@@ -212,6 +211,9 @@ VARIABLE ROOTDP
 : C,   HERE  +CHAR ALLOT  C! ;
 : CALIGN   HERE  DUP ALIGNED  >-< 0 ?DO  DUP C,  LOOP  DROP ;
 
+: ADDRESS!   ! ;
+: ADDRESS,   , ;
+
 VARIABLE STATE
 : [   0 STATE ! ; IMMEDIATE COMPILING
 : ]   1 STATE ! ;
@@ -249,7 +251,7 @@ INCLUDE" os-compiler.fs"   \ words necessary for the machine
 : CODE-MOVE   CELLS OVER + SWAP ?DO  DUP @  I CODE!  CELL+
    CELL +LOOP  DROP ;
 INCLUDE" compiler.fs"
-DEFER CURRENT-COMPILE,  ' COMPILE, <'FORTH IS CURRENT-COMPILE,
+DEFER CURRENT-COMPILE,  ' COMPILE, IS CURRENT-COMPILE,
 INCLUDE" branch-cells.fs" CONSTANT #BRANCH-CELLS
 INCLUDE" compiler1.fs"
 INCLUDE" compiler-postpone.fs"
@@ -544,7 +546,7 @@ DEFER SCAN-TEST
 : .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
 
 \ Set default PROGRAM-NAME in case for some reason there is no ARG 0
-HERE <'FORTH  S" @PACKAGE@" ",  VALUE "PROGRAM-NAME
+HERE  S" @PACKAGE@" ",  0 VALUE "PROGRAM-NAME  ADDRESS-TO "PROGRAM-NAME
 
 : ERROR-PREFIX   "PROGRAM-NAME COUNT TYPE  S" : " TYPE ;
 
@@ -704,7 +706,7 @@ DEFER VISIBLE?   \ word visibility test
    0 ;                               \ if not found leave string & 0 flag
 : FIND   ( c-addr -- a-addr n )   ['] ALL-VISIBLE SELECT ;
 
-DEFER CURRENT-LITERAL  ' LITERAL <'FORTH IS CURRENT-LITERAL
+DEFER CURRENT-LITERAL  ' LITERAL IS CURRENT-LITERAL
 \ FIXME: The definition of POSTPONE should not call the metacompiler's POSTPONE
 : POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
    CURRENT-COMPILE,  ELSE  POSTPONE (POSTPONE)  ALIGN ,  THEN ;
@@ -778,7 +780,7 @@ VARIABLE HANDLER  0 ' HANDLER >BODY !
    ELSE
       FOREIGN? INVERT                \ to execute, word must be native
    THEN ;
-' LOCAL? <'FORTH VALUE 'SELECTOR
+0 VALUE 'SELECTOR  ' LOCAL? ADDRESS-TO 'SELECTOR
 : INTERPRET
    BEGIN  BL WORD  DUP C@ WHILE      \ while text in input stream
       'SELECTOR SELECT               \ search for word
@@ -1000,7 +1002,7 @@ VARIABLE CHAIN  0 ' CHAIN >BODY !
 : WORDLIST   ALIGN HERE  0 ,  HERE  CHAIN  DUP @ ,  !  0 , ;
 INCLUDE" vocabulary.fs"
 VOCABULARY FORTH
-' FORTH >BODY @ <'FORTH CONSTANT FORTH-WORDLIST
+0 VALUE FORTH-WORDLIST  ' FORTH >BODY @ ADDRESS-TO FORTH-WORDLIST
 : ALSO   CONTEXT  DUP CELL+  #ORDER @ CELLS  MOVE  1 #ORDER +! ;
 : ONLY   FORTH  1 #ORDER ! ;
 : FOREIGN   CONTEXT @  2 CELLS +  DUP @ 1024 OR  SWAP ! ;
@@ -1125,9 +1127,6 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 INCLUDE" os.fs"   \ include OS access words
 INCLUDE" save.fs"
 
-: SAVE-IMAGE   ( c-addr u -- )
-   'FORTH -ROT  ALIGN HERE 'FORTH - -ROT  SAVE-OBJECT ;
-
 
 \ Command-line argument interface
 \ (Design copied from GForth)
@@ -1142,6 +1141,8 @@ VARIABLE ARGC
 
 
 \ Initialisation and version number
+
+INCLUDE" relocate.fs"
 
 : VERSION   S" @VERSION@" ;
 INCLUDE" platform.fs"
@@ -1197,7 +1198,7 @@ INCLUDE" parse-command-line.fs"
 
 : START
    DUP TO LIMIT                      \ set LIMIT
-   [ ' (THROW) <'FORTH ] LITERAL 'THROW!
+   [ ' (THROW) ] ADDRESS-LITERAL 'THROW!
                                      \ set 'THROW
    0 HANDLER !                       \ reset HANDLER
    0 FILE-BUFFER# !                  \ reset FILE-BUFFER#
