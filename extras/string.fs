@@ -1,3 +1,7 @@
+\ (c) Reuben Thomas 2018
+\
+\ This file is in the public domain.
+
 : CHOMP   ( c-addr u1 -- c-addr u2 )
    2DUP +                            \ end of string
    EOL TUCK  2SWAP - OVER            \ calculate where EOL would start

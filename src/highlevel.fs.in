@@ -1,5 +1,12 @@
 \ pForth high level words
-\ Reuben Thomas   started 1/91
+\
+\ (c) Reuben Thomas 1991-2020
+\
+\ The package is distributed under the GNU GPL version 3, or, at your
+\ option, any later version.
+\
+\ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
+\ RISK.
 
 CR .( @PACKAGE_NAME@ high level words )
 
@@ -252,7 +259,7 @@ INCLUDE" os-compiler.fs"   \ words necessary for the machine
    CELL +LOOP  DROP ;
 INCLUDE" compiler.fs"
 DEFER CURRENT-COMPILE,  ' COMPILE, IS CURRENT-COMPILE,
-INCLUDE" branch-cells.fs" CONSTANT #BRANCH-CELLS
+INCLUDE" call-cells.fs" CONSTANT #CALL-CELLS
 INCLUDE" compiler1.fs"
 INCLUDE" compiler-postpone.fs"
 INCLUDE" defer-fetch-store.fs"

@@ -1,3 +1,7 @@
+\ Ackermann function
+\ (c) Reuben Thomas 2020
+\ This file is in the public domain.
+
 : ACKERMANN-RECURSIVE   ( m n -- result )
    OVER 0= IF                           \ n + 1 if m = 0
       NIP 1+

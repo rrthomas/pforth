@@ -1,3 +1,11 @@
+\ (c) Reuben Thomas 1995-2018
+\
+\ The package is distributed under the GNU GPL version 3, or, at your
+\ option, any later version.
+\
+\ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
+\ RISK.
+
 \ Convert SWI names to numbers
 \ ad-hoc list for metacompiling
 : OS#   ( c-addr n -- u )

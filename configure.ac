@@ -1,4 +1,12 @@
-dnl Process this file with autoconf to produce a configure script
+# configure.ac
+#
+# (c) Reuben Thomas 2018-2020
+#
+# The package is distributed under the GNU GPL version 3, or, at your
+# option, any later version.
+#
+# THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
+# RISK.
 
 AC_INIT(pForth, 0.81, rrt@sc3d.org)
 AC_CONFIG_AUX_DIR([build-aux])

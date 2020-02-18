@@ -1,5 +1,12 @@
 \ Mass storage input/output words
-\ Reuben Thomas   started 2/7/96
+\
+\ (c) Reuben Thomas 1996-2019
+\
+\ The package is distributed under the GNU GPL version 3, or, at your
+\ option, any later version.
+\
+\ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
+\ RISK.
 
 0 CONSTANT R/O
 1 CONSTANT W/O

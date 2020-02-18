@@ -1,4 +1,0 @@
-ALSO ASSEMBLER
-: NATIVE-BRANCH   ( at from to -- )   $03 HERE >R  >R  >-< CELL-  SWAP DP !
-   R> INSTRUCTION-BIT LSHIFT $0B OR ,  ,  R> DP ! ;
-PREVIOUS

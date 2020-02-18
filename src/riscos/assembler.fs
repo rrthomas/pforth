@@ -1,6 +1,13 @@
 \ ARM assembler
 \ Based on Silicon Vision's RiscForth's assembler
-\ Reuben Thomas   started 15/4/96
+\
+\ (c) Reuben Thomas 1996-2019
+\
+\ The package is distributed under the GNU GPL version 3, or, at your
+\ option, any later version.
+\
+\ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
+\ RISK.
 
 CR .( ARM assembler )
 

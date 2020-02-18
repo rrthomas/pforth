@@ -7,10 +7,10 @@ portable_SRCS = compiler2.fs compiler4.fs compiler5.fs control1.fs		\
 	highlevel.fs interpreter3.fs make.fs relocate.fs vocabulary.fs
 
 host_SRCS = $(portable_SRCS) \
-	accept.fs add-relocate-helpers.fs assembler.fs branch-cells.fs		\
-	bracket-does.fs code.fs compiler1.fs compiler.fs compiler-postpone.fs	\
+	accept.fs add-relocate-helpers.fs assembler.fs bracket-does.fs		\
+	call-cells.fs code.fs compiler1.fs compiler.fs compiler-postpone.fs	\
 	extra-primitives.fs fileio.fs init-space.fs initialize.fs		\
-	inner-interpreter.fs native-branch.fs os-compiler.fs os.fs		\
+	inner-interpreter.fs native-call.fs os-compiler.fs os.fs		\
 	parse-command-line.fs platform.fs primitive-bracket-does.fs		\
 	primitives.fs relocate-compiler.fs relocate-helper.fs			\
 	resolver-branch.fs save.fs system-params.fs target-forth.fs		\
