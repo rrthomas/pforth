@@ -1,4 +1,13 @@
-\ Create bForth assembler primitives
+\ Create Beetle assembler primitives
+\
+\ (c) Reuben Thomas 1995-2016
+\
+\ The package is distributed under the GNU GPL version 3, or, at your
+\ option, any later version.
+\
+\ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
+\ RISK.
+
 : PRIMITIVES   ( +n -- )
    0 DO
       [CHAR] B PAD CHAR+ C!      \ store "B" at start of name

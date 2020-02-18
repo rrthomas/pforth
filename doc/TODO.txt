@@ -1,3 +1,5 @@
+This file is (c) Reuben Thomas 1995-2020, and is in the public domain.
+
 Support CELL = 8
 
 Have SIGINT handler in interpreter loop. Process Ctrl+D as normal.
@@ -19,8 +21,6 @@ Add TIMES combinator and use in assembler.
 Make pForth case-insensitive for word lookup, or downcase it all.
 
 Add assembler to base image.
-
-Have consistent source copyright notices.
 
 Obviate the need for the compilation method field (>COMPILE) by using
 cmForth-like compilation word list. But this does prevent it being possible

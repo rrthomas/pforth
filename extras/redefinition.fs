@@ -3,6 +3,14 @@
 \ must have been defined with R: name ... ; as R; consumes information that
 \ REDEFINER needs.
 
+\ (c) Reuben Thomas 1995-2018
+\
+\ The package is distributed under the GNU GPL version 3, or, at your
+\ option, any later version.
+\
+\ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
+\ RISK.
+
 \ R: redefines name. old is the old xt and new the new xt.
 \ To redefine a word immediately use R: name ... R;; to set up a redefinition
 \ for later use with a REDEFINER use R: name ... ;.

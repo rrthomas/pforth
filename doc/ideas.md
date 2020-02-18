@@ -1,11 +1,47 @@
-Newsgroups: comp.lang.forth
-Subject: Partial evaluation: a code generation mechanism (long)
-Summary: 
-Followup-To: 
-Distribution: 
-Organization: University of Cambridge, England
-Keywords: 
-Cc: 
+This file is (c) Reuben Thomas 1995-2020, and is in the public domain.
+
+# Input stack
+
+Could generalise the input stream to be a stack. Have a specification for
+each stream giving its handle (e.g. a filename, file handle+ptr+length,
+address+length &c.). Also have a flag specifying whether the end of the
+stream counts as EOL or not. Then can splice into the middle of a source by
+copying its specifiers and changing the length and starting address (to do
+this, need to have a known start address and length for the source that is to
+be split).
+
+# Object-oriented Forth syntax
+
+CREATE[ ... ] for per-instance declarations. Need non-parsing versions of
+VARIABLE, VALUE etc. Then can say e.g.
+
+    CREATE[ S" FOO" VARIABLE 42 S" BAR" VALUE ]
+
+DOES[ ... ] for methods. Go into interpretation mode after DOES[ and compile
+into a (per-class) private dictionary.
+
+DOES> and CREATE work as normal: CREATE is effectively CREATE[ ] and DOES> is
+DOES[ : DOES-METHOD ... ; DEFAULT ].
+
+DEFAULT after a declaration in CREATE[ ... ] or DOES[ ... ] makes that method
+the default.
+
+Modify the parser to allow the following syntax:
+
+object		executes default method of object
+object.method	executes method of object
+class_method	executes method of class on the object on the stack
+O' object	returns the object pointer of object.
+
+Can parse the top three after attempting to parse a token as a number (should
+be before for efficiency, but after for ANS compatibility; and yet not, as if
+no non-ANSI object words are created, this effect will not occur).
+
+# Partial evaluation
+
+Newsgroups: comp.lang.forth  
+Subject: Partial evaluation: a code generation mechanism (long)  
+Organization: University of Cambridge, England  
 
 Optimising compilers, particularly of functional languages, are often seen
 as partial evaluators, and it occurred to me a little while ago that this
@@ -141,3 +177,14 @@ structures to be used in interpretive mode, without breaching it.
 
 Heuristic for stopping unbounded code expansion: set some factor (e.g. 2)
 above which code will not be expanded over the unevaluated version.
+
+# Direct threading
+
+Use 4-byte addresses, with the bottom two bits as follows:
+
+00 - next word is code
+01 - next word is data
+10 - string follows (length in count byte)
+11 - end of code (EXIT) or native code/data follows
+
+Could use relative addressing.

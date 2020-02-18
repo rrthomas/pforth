@@ -1,5 +1,9 @@
 #!/bin/bash
 # Install executor (used for Travis & AppVeyor build)
+#
+# (c) Reuben Thomas 2018-2020
+#
+# This file is in the public domain.
 
 SUDO=sudo
 if test "$1" = "--no-sudo"; then

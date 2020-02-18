@@ -1,4 +1,12 @@
 # Docs Makefile.am
+#
+# (c) Reuben Thomas 2018-2020
+#
+# The package is distributed under the GNU GPL version 3, or, at your
+# option, any later version.
+#
+# THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
+# RISK.
 
 LATEX_SRCS = \
 	$(srcdir)/pforth.tex \
@@ -23,7 +31,7 @@ clean-local:
 	$(LATEXMK) $(LATEXMK_OPTS) -C $(LATEX_SRCS)
 
 EXTRA_DIST = $(LATEX_SRCS) $(LATEX_PDFS) \
-	InputStack OOF PartialEval Threading ToDo
+	ideas.md TODO.txt
 
 .tex.pdf:
 	env BIBINPUTS=$(abs_srcdir)/bibtex/bib $(LATEXMK) $(LATEXMK_OPTS) $<
