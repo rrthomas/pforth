@@ -21,6 +21,6 @@
    0 R@ WRITE-BYTE DROP
    0 R@ WRITE-BYTE DROP          \ FIXME: write correct ENDISM
    CELL R@ WRITE-BYTE DROP       \ write WORD_SIZE
-   DUP R@ WRITE-WORD DROP        \ write length
+   DUP CELL/ R@ WRITE-WORD DROP  \ write length
    R@ WRITE-FILE DROP            \ write data
    R> CLOSE-FILE DROP ;          \ close file
