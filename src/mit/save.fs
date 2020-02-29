@@ -1,4 +1,4 @@
-\ (c) Reuben Thomas 2018-2019
+\ (c) Reuben Thomas 2018-2020
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
@@ -15,12 +15,14 @@
 : SAVE-OBJECT   ( a-addr u1 c-addr u2 -- )
    W/O BIN CREATE-FILE DROP      \ open file
    >R                            \ save file-id
-   S" MIT" R@ WRITE-FILE DROP    \ write header
-   0 R@ WRITE-BYTE DROP
-   0 R@ WRITE-BYTE DROP
+   S" mit" R@ WRITE-FILE DROP    \ write header
    0 R@ WRITE-BYTE DROP
    0 R@ WRITE-BYTE DROP          \ FIXME: write correct ENDISM
-   CELL R@ WRITE-BYTE DROP       \ write WORD_SIZE
+   CELL R@ WRITE-BYTE DROP       \ write WORD_BYTES
+   0 R@ WRITE-BYTE DROP          \ ten bytes to pad header
+   0 R@ WRITE-BYTE DROP
+   0 R@ WRITE-WORD DROP
+   0 R@ WRITE-WORD DROP
    DUP CELL/ R@ WRITE-WORD DROP  \ write length
    R@ WRITE-FILE DROP            \ write data
    R> CLOSE-FILE DROP ;          \ close file
