@@ -1206,7 +1206,7 @@ FALSE VALUE INTERACT?
 
 INCLUDE" parse-command-line.fs"
 
-: START
+: START   ( a-addr -- )
    DUP TO LIMIT                      \ set LIMIT
    [ ' (THROW) ] ADDRESS-LITERAL 'THROW!
                                      \ set 'THROW
