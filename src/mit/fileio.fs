@@ -71,7 +71,7 @@ PREVIOUS
 : ARG-COPY   ( n adr u -- len )
    DUP >R  ROT >R                       \ ( adr u )
    OVER SWAP                            \ ( adr adr u )
-   MIT_CURRENT_STATE                    \ ( adr adr u ptr:uint8_t* )
+   MIT_CURRENT_STATE                    \ ( adr adr u ptr:mit_state* )
    NATIVE_ADDRESS_OF_RANGE              \ ( adr dest:char* )
    R> _ARG                              \ ( adr dest:char* src:char* )
    R> STRNCPY                           \ ( adr dest:char* )
