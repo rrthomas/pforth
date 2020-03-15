@@ -128,8 +128,6 @@ INCLUDE" primitive-bracket-does.fs"
 
 \ Stack management
 
-VARIABLE PRIMITIVE-RP
-
 VARIABLE RP
 \ FIXME: >R and R> must be defined as CODE words, because they are needed by
 \ LINK, and UNLINK,
