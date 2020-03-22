@@ -52,6 +52,7 @@ case $BUILD in
         git clone https://github.com/rrthomas/mit.git
         cd mit
         # Make install before make check so Python ctypes's find_library can find libmit
-        ./bootstrap && ./configure --enable-silent-rules WORD_BYTES=4 && $SUDO make install && make check
+        # FIXME: disable "make check" until pForth supports native architecture
+        ./bootstrap && ./configure --enable-silent-rules CC="gcc -m32" && $SUDO make install # && make check
         ;;
 esac

@@ -28,6 +28,7 @@ jobs:
             - latexmk
             - hevea
             - rlwrap
+            - gcc-multilib
     - env:
         - HOST=mit
       addons:
