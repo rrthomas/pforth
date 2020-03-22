@@ -1,5 +1,6 @@
 language: c
 dist: bionic
+os: linux
 
 env:
   global:
@@ -11,10 +12,9 @@ addons:
     - help2man
     update: true
 
-matrix:
+jobs:
   include:
-    - os: linux
-      env:
+    - env:
         - HOST=beetle
       addons:
         apt:
@@ -28,39 +28,34 @@ matrix:
             - latexmk
             - hevea
             - rlwrap
-    - os: linux
-      env:
+    - env:
         - HOST=mit
       addons:
         apt:
           packages:
             - *default_deps
-    - os: linux
-      env:
+    - env:
         - HOST=mit
         - PFORTH_BUILD_FLAVOUR=mit-threaded
       addons:
         apt:
           packages:
             - *default_deps
-    - os: linux
-      env:
+    - env:
         - HOST=beetle
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
       addons:
         apt:
           packages:
             - *default_deps
-    - os: linux
-      env:
+    - env:
         - HOST=mit
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
       addons:
         apt:
           packages:
             - *default_deps
-    - os: linux
-      env:
+    - env:
         - HOST=arm-riscos
         - BUILD=beetle
       addons:
@@ -70,8 +65,7 @@ matrix:
             - qtmultimedia5-dev
             - libqt5multimedia5-plugins
             - *default_deps
-    - os: linux
-      env:
+    - env:
         - HOST=arm-riscos
         - BUILD=beetle
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
