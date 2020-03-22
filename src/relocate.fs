@@ -16,6 +16,8 @@ INCLUDE" relocate-helper.fs"
 \ addresses other than those passed to it as arguments (except for those
 \ being processed as part of relocations, of course). In particular, this is
 \ why current-base is passed as an argument rather than executing 'FORTH.
+\ FIXME: Make relocation entries use relative addresses, and do not update
+\ the relocations (only the base address).
 : RELOCATE ( current-base new-base 'table -- )
    2DUP 2>R                             \ save new-base & 'table
    DUP @                                \ ( curr new 'table old )
