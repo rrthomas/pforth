@@ -23,21 +23,15 @@
 9 CONSTANT MIT_ERROR_DIVISION_BY_ZERO
 127 CONSTANT MIT_ERROR_HALT
 
-\ Native pointers are stored on the stack least significant word deepest
-: PTR@   ( a-addr -- ptr:mit_state* )
-   NATIVE-POINTER-CELLS CELLS  OVER + SWAP DO  I @  CELL +LOOP ;
-: PTR!   ( ptr:mit_state* a-addr -- )
-   NATIVE-POINTER-CELLS 1- CELLS  OVER + DO  I !  -CELL +LOOP ;
-
 \ mit_state * for inner state
-CREATE MIT-STATE  2 ( FIXME: NATIVE-POINTER-CELLS ) CELLS ALLOT
+CREATE MIT-STATE  CELL ALLOT
 
-: CLEAR-IR   0 MIT-STATE PTR@ MIT_SET_IR ;
+: CLEAR-IR   0 MIT-STATE @ MIT_SET_IR ;
 : PUSH-INNER   ( x -- ) ( Inner: -- x )
-   MIT-STATE PTR@ MIT_PUSH_STACK
+   MIT-STATE @ MIT_PUSH_STACK
    ?DUP IF  HALT  THEN ;
 : PUSH-INNER-CALL ( a-addr -- )
-   MIT-STATE PTR@ MIT_SET_PC
+   MIT-STATE @ MIT_SET_PC
    0 PUSH-INNER ;                    \ dummy return address
 
 : INITIALIZE
@@ -46,15 +40,8 @@ CREATE MIT-STATE  2 ( FIXME: NATIVE-POINTER-CELLS ) CELLS ALLOT
    RETURN-STACK-CELLS CELLS -        \ make room for return stack
 
    \ Set up inner Mit state
-   \ MEMORY_WORDS == 0: don't allocate a memory
-   0 STACK-CELLS MIT_NEW_STATE
-   MIT-STATE PTR!
-   \ Set inner `memory` to our `memory`
-   MIT_CURRENT_STATE MIT_GET_MEMORY
-   MIT-STATE PTR@ MIT_SET_MEMORY
-   \ Set inner `memory_words` to our `memory_words`
-   MIT_CURRENT_STATE MIT_GET_MEMORY_WORDS
-   MIT-STATE PTR@ MIT_SET_MEMORY_WORDS
+   STACK-CELLS MIT_NEW_STATE
+   MIT-STATE !
    \ Push TOS to inner stack
    PUSH-INNER
    ['] START PUSH-INNER-CALL
@@ -62,14 +49,14 @@ CREATE MIT-STATE  2 ( FIXME: NATIVE-POINTER-CELLS ) CELLS ALLOT
    \ Error handler loop
    BEGIN
       CLEAR-IR
-      MIT-STATE PTR@ MIT_SPECIALIZER_RUN
+      MIT-STATE @ MIT_SPECIALIZER_RUN
 
       \ Handle error code:
       DUP MIT_ERROR_INVALID_OPCODE = IF
          DROP
-         MIT-STATE PTR@ MIT_GET_IR  $FF ( FIXME: INSTRUCTION-MASK ) AND
+         MIT-STATE @ MIT_GET_IR  $FF ( FIXME: INSTRUCTION-MASK ) AND
          1 ( FIXME: JUMP ) = IF
-            MIT-STATE PTR@ MIT_EXTRA_INSTRUCTION
+            MIT-STATE @ MIT_EXTRA_INSTRUCTION
             ?DUP IF  HALT  THEN
          ELSE
             MIT_ERROR_INVALID_OPCODE HALT
@@ -97,22 +84,18 @@ CREATE MIT-STATE  2 ( FIXME: NATIVE-POINTER-CELLS ) CELLS ALLOT
 CODE PRE-INITIALIZE
 \ Assume that we were called by a call instruction at 'FORTH, and
 \ use our return address to calculate the new value of 'FORTH.
-MLIT MNEGATE MADD MLIT_PC_REL
-2 CELLS ,
+MLIT MNEGATE MADD MLIT_0
+#TARGET-CALL-CELLS CELLS ,
+MDUP MLIT_PC_REL MLIT_2              \ ret 2 CALL-CELLS - 'FORTH !
 ' 'FORTH >BODY OFFSET,
-MLIT_2 MSTORE MLIT MLIT              \ ret 2 CELLS - 'FORTH !
+MSTORE MLIT MADD MLIT_0
 ' MEMORY-SIZE >BODY @ ,
-\ MIT_CURRENT_STATE MIT_GET_MEMORY
-14 ,  $0101 ,
-MLIT NOPALIGN
-6 ,  $0101 ,
-MADD MLIT_0 MDUP MLIT_PC_REL         \ memory-limit RP !
+MDUP MLIT_PC_REL MLIT_2 MSTORE       \ memory-limit RP !; FIXME: constant!
 ' RP >BODY OFFSET,
-MLIT_2 MSTORE MLIT_PC_REL MLIT_2     \ FIXME: constant × 2!
+MLIT_PC_REL MLIT_2 MLOAD MLIT_0      \ FIXME: constant!
 ' 'FORTH >BODY OFFSET,               \ 'FORTH @ DUP
-MLOAD MLIT_0 MDUP MLIT_PC_REL
+MDUP MLIT_PC_REL MLIT_PC_REL MCALL
 HERE 0 ,                             \ ( memory-limit 'FORTH 'FORTH )
-MLIT_PC_REL MCALL NOPALIGN
 ' INITIALIZE OFFSET,
 END-CODE
 ALIGN  HERE OVER -  SWAP !
