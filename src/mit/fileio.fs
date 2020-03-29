@@ -61,7 +61,7 @@ PREVIOUS
 : RESIZE-FILE   >R D>OFF_T R>  RESIZE_FILE ;
 : ABSOLUTE-ARG   ( u1 -- c-addr u2 )
    TOTAL-ARGS OVER > IF \ u1
-      MIT_ARG  DUP STRLEN
+      MIT_ARGV  SWAP CELLS + @  DUP STRLEN
    ELSE
       DROP  0 0
    THEN ;
