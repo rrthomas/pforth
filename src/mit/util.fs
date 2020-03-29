@@ -32,5 +32,5 @@
    R> 8 LSHIFT $01 OR ,       \ compile the library call (FIXME: HACK!)
    END-PRIMITIVE ;            \ finish the definition
 
-: LIBMIT-PRIMITIVE   ( func -- )   LIB_MIT EXT-PRIMITIVE ;
+: LIBMITFEATURES-PRIMITIVE   ( func -- )   LIB_MITFEATURES EXT-PRIMITIVE ;
 : LIBC-PRIMITIVE   ( func -- )   LIB_C EXT-PRIMITIVE ;

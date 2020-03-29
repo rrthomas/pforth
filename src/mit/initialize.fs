@@ -26,12 +26,12 @@
 \ mit_state * for inner state
 CREATE MIT-STATE  CELL ALLOT
 
-: CLEAR-IR   0 MIT-STATE @ MIT_SET_IR ;
+: CLEAR-IR   0 MIT-STATE @ [ MSET_IR ] ;
 : PUSH-INNER   ( x -- ) ( Inner: -- x )
-   MIT-STATE @ MIT_PUSH_STACK
+   MIT-STATE @ [ MPUSH_STACK ]
    ?DUP IF  HALT  THEN ;
 : PUSH-INNER-CALL ( a-addr -- )
-   MIT-STATE @ MIT_SET_PC
+   MIT-STATE @ [ MSET_PC ]
    0 PUSH-INNER ;                    \ dummy return address
 
 : INITIALIZE
@@ -40,7 +40,7 @@ CREATE MIT-STATE  CELL ALLOT
    RETURN-STACK-CELLS CELLS -        \ make room for return stack
 
    \ Set up inner Mit state
-   STACK-CELLS MIT_NEW_STATE
+   STACK-CELLS [ MNEW_STATE ]
    MIT-STATE !
    \ Push TOS to inner stack
    PUSH-INNER
@@ -54,7 +54,7 @@ CREATE MIT-STATE  CELL ALLOT
       \ Handle error code:
       DUP MIT_ERROR_INVALID_OPCODE = IF
          DROP
-         MIT-STATE @ MIT_GET_IR  $FF ( FIXME: INSTRUCTION-MASK ) AND
+         MIT-STATE @ [ MGET_IR ]  $FF ( FIXME: INSTRUCTION-MASK ) AND
          1 ( FIXME: JUMP ) = IF
             MIT-STATE @ MIT_EXTRA_INSTRUCTION
             ?DUP IF  HALT  THEN
