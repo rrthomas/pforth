@@ -49,7 +49,7 @@ CREATE MIT-STATE  CELL ALLOT
    \ Error handler loop
    BEGIN
       CLEAR-IR
-      MIT-STATE @ MIT_SPECIALIZER_RUN
+      MIT-STATE @ [ MRUN ]
 
       \ Handle error code:
       DUP MIT_ERROR_INVALID_OPCODE = IF
