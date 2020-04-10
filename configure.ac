@@ -32,8 +32,7 @@ AS_IF([test "$BUILD_EXECUTOR" = ""],
     [beetle*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [beetle])],
     [mit*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [mit])
             AS_IF([test "$BUILD_EXECUTOR_FLAGS" = ""],
-              [BUILD_EXECUTOR_FLAGS=-O])
-            BUILD_EXECUTOR_FLAGS="$BUILD_EXECUTOR_FLAGS --core-dump"],
+              [BUILD_EXECUTOR_FLAGS=-O])],
     [AS_IF([test "$build" != ""],
        AC_MSG_ERROR([pForth does not support building with $build]))
      AC_PATH_PROGS(BUILD_EXECUTOR, [beetle mit])
