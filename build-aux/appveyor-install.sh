@@ -1,10 +1,21 @@
 #!/bin/sh
-# Pre-install script for appveyor: install build deps
-# (c) Reuben Thomas 2019.
+# Pre-install script for appveyor
+# (c) Reuben Thomas 2019-2020.
 # This file is in the public domain.
 
-# Convert symlink files to actual links
-# From https://stackoverflow.com/questions/5917249/git-symlinks-in-windows
+# Convert symlinks to duplicate files
+# Adapted from https://stackoverflow.com/questions/5917249/git-symlinks-in-windows
+
+# It is tricky to convert multi-level symlinks: changing the
+# files on Windows does not change the git permissions, so git ls-files
+# still shows the files as symlinks after they have been converted to plain files.
+# Hence, simply run git rm-symlinks a few times, and ignore apparently
+# non-existent files (because the contents of what we think are link files
+# are now in fact the actual file contents).
+
+# Directory links must in general remain links (because they can be linked
+# into their own subdirectories), so do not attempt to cope with multi-level
+# directory symlinks.
 git config --global alias.rm-symlinks '!'"$(cat <<'ETX'
 __git_rm_symlinks() {
   case "$1" in (-h)
@@ -30,16 +41,11 @@ __git_rm_symlinks() {
 
     if [ -f "$src" ]; then
       rm -f "$symlink"
-      fsutil hardlink create "$doslnk" "$dossrc"
+      cp "$dossrc" "$doslnk"
     elif [ -d "$src" ]; then
       rm -f "$symlink"
       cmd //C mklink //J "$doslnk" "$dossrc"
-    else
-      printf 'error: git-rm-symlink: Not a valid source\n' >&2
-      printf '%s =/=> %s  (%s =/=> %s)...\n' \
-          "$symlink" "$src" "$doslnk" "$dossrc" >&2
-      false
-    fi || printf 'ESC[%d]: %d\n' "$ppid" "$?"
+    fi
 
     git update-index --assume-unchanged "$symlink"
   done | awk '
@@ -53,4 +59,6 @@ __git_rm_symlinks
 ETX
 )"
 
+git rm-symlinks
+git rm-symlinks
 git rm-symlinks
