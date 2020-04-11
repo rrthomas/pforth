@@ -18,6 +18,7 @@ CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
 INCLUDE" target-util.fs"
 INCLUDE" relocate.fs"   \ Need target's version of RELOCATE for call below
 INCLUDE" assembler.fs"
+INCLUDE" save.fs"
 
 
 \ Meta-compiler utilities
@@ -86,7 +87,6 @@ DECIMAL
 INCLUDE" relocate-compiler.fs"
 INCLUDE" native-call.fs"
 INCLUDE" compiler1.fs"
-INCLUDE" save.fs"
 
 
 \ Special definition of POSTPONE, to cope with FOREIGN vocabularies

@@ -31,10 +31,12 @@ all-local: !pForth/!TestBuild,feb
 	done; \
 	echo "Dir riscos" >> $@; \
 	echo "Copy pforth-new pforth-new-0 ~C F" >> $@; \
-	echo "Run pforth-new-0 make.fs" >> $@; \
+	echo "Delete pforth-new" >> $@; \
+	echo "IfType pforth-new-0 &ff8 Then Run pforth-new-0 make.fs" >> $@; \
 	echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
 	echo "diff pforth-new pforth" >> $@; \
 	echo "If <Sys\$$ReturnCode> <> 0 Then Set TestBuild\$$ExitCode <Sys\$$ReturnCode>" >> $@; \
+	echo "IfType pforth-new &ff8 Then Echo Filetype OK Else Set TestBuild$ExitCode 3" >> $@; \
 	echo "Dir ^" >> $@; \
 	echo "" >> $@; \
 	echo "Dir ^" >> $@
