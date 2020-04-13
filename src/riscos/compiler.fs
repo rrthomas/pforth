@@ -17,7 +17,9 @@
 IMMEDIATE COMPILING
 
 : B>OFFSET   ( instruction -- offset )   $00FFFFFF AND ;
-: >BRANCH   ( from to -- offset )   >-<  2 RSHIFT 2 -  B>OFFSET ;
+: >BRANCH   ( from to -- offset )   >-<  2 ARSHIFT 2 -
+   DUP  24 ARSHIFT  NEGATE  1 RSHIFT  IF  -1 THROW  THEN ( FIXME: ABORT" offset out of range" )
+   B>OFFSET ;
 : BRANCH>   ( from offset -- to )   2 +  8 LSHIFT 6 ARSHIFT  + ;
 : @BRANCH   ( from -- to )   DUP @  B>OFFSET  BRANCH> ;
 : !BRANCH   ( at from to op-mask -- )   -ROT  >BRANCH  OR  SWAP CODE! ;

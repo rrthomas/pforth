@@ -23,7 +23,9 @@
 
 \ Core compiler
 
-: OFFSET   ( from to -- offset )   >-<  CELL/ 1-  $00FFFFFF AND ;
+: OFFSET   ( from to -- offset )   >-<  CELL/ 1-
+   DUP  24 ARSHIFT  NEGATE  1 RSHIFT  IF  -1 THROW  THEN ( FIXME: ABORT" offset out of range" )
+   $00FFFFFF AND ;
 : @BRANCH   ( from -- to )   DUP 1+ CELL- ALIGNED @  8 ARSHIFT  1+ CELLS + ;
 : !BRANCH   ( at from to -- )   OFFSET SWAP FIT! ;
 
