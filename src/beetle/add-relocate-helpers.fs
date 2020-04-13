@@ -7,4 +7,5 @@
 \ RISK.
 
 \ Use special relocation type 1
-: ADDRESS-LITERAL   ALIGN HERE 1 (ADD-RELOCATION)  POSTPONE LITERAL ; IMMEDIATE
+\ FIXME: Don't use (LITERAL)I, as that prevents the build being reproducible.
+: ADDRESS-LITERAL   ALIGN HERE 1 (ADD-RELOCATION)  ( POSTPONE LITERAL ) $5C C,  NOPALIGN  , ; IMMEDIATE
