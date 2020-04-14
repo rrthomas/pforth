@@ -35,13 +35,13 @@ jobs:
         apt:
           packages:
             - *default_deps
-    - env:
-        - HOST=mit
-        - PFORTH_BUILD_FLAVOUR=mit-threaded
-      addons:
-        apt:
-          packages:
-            - *default_deps
+    # - env:
+    #     - HOST=mit
+    #     - PFORTH_BUILD_FLAVOUR=mit-threaded
+    #   addons:
+    #     apt:
+    #       packages:
+    #         - *default_deps
     - env:
         - HOST=beetle
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
