@@ -8,4 +8,4 @@
 
 \ Same as (CREATE) but MUST be inlined
 \ FIXME: different definition from primitives.fs
-: (DOES)   $060C , ; IMMEDIATE COMPILING
+: (DOES)   $060A , 0 , ; IMMEDIATE COMPILING
