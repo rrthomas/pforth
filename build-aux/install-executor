@@ -48,8 +48,10 @@ case $BUILD in
         make
         ;;
     mit)
+        PFORTH_BRANCH=$(git rev-parse --abbrev-ref HEAD)
         cd $HOME
         git clone https://github.com/rrthomas/mit.git
+        git checkout "${PFORTH_BRANCH##mit-}"
         cd mit
         # Make install before make check so Python ctypes's find_library can find libmit
         # FIXME: disable "make check" until pForth supports native architecture
