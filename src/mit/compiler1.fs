@@ -13,7 +13,7 @@
 
 : EXECUTE   STATE @ IF  $03 ,  ELSE  [ $03 , ]  THEN ; IMMEDIATE
 \ FIXME: 2 constant!
-: @EXECUTE   STATE @ IF  $03080A , 2 ,  ELSE  [ $03080A , 2 , ]  THEN ; IMMEDIATE
+: @EXECUTE   STATE @ IF  $030810 , 2 ,  ELSE  [ $030810 , 2 , ]  THEN ; IMMEDIATE
 
 
 \ Data structures
