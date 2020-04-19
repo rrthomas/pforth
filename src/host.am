@@ -11,7 +11,11 @@ include $(srcdir)/../host_src.am
 
 do_build = \
 	export srcs="$(host_SRCS)"; $(do_build_prep) && \
-	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs && \
+	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs
+
+# Build (with triple test if building on host)
+pforth: $(host_SRCS)
+	$(do_build) && \
 	if test "$(host)" = "$(build)" -a "$(target)" = "$(host)"; then \
 		mv pforth-new pforth-new-0 && \
 		$(BUILD_EXECUTOR) $(BUILD_EXECUTOR_FLAGS) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make.fs && \
@@ -20,16 +24,10 @@ do_build = \
 	fi && \
 	mv pforth-new $@
 
-
-# Triple test (if building on host)
-pforth: $(host_SRCS)
-	$(do_build)
-
-# Build with minimal primitives
-pforth-base-minimal-primitives: $(host_SRCS) minimal-primitives.fs
-	export MINIMAL_PRIMITIVES="CREATE MINIMAL-PRIMITIVES"; \
-	echo $$MINIMAL_PRIMITIVES; \
-	$(do_build)
+check-local:
+	$(do_build) && \
+	cmp pforth pforth-new && \
+	rm pforth-new
 
 loc-local:
 	$(CLOC) $(CLOC_OPTS) $(host_SRCS)
