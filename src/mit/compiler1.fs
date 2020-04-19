@@ -1,4 +1,4 @@
-\ (c) Reuben Thomas 2018-2019
+\ (c) Reuben Thomas 2018-2020
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
@@ -21,5 +21,4 @@
 : LITERAL   LITERAL, ; IMMEDIATE COMPILING
 
 : >BODY   2 CELLS + ;
-: CREATE,  $01060C0B , CELL , ; \ LIT_PC_REL ( CELL ) LIT_0 SWAP JUMP
 : (DOES>)   LAST  DUP  R> R>ADDRESS ALIGNED @  CALL ;

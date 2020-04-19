@@ -8,12 +8,13 @@
 
 0 VALUE PRIMITIVE-RP
 : PRIMITIVE-LINK,
-   MLIT_PC_REL MLIT_2 MSTORE NOPALIGN \ FIXME: constant!
-   PRIMITIVE-RP OFFSET, ;
+   MLIT_PC_REL MLIT MSTORE NOPALIGN
+   PRIMITIVE-RP OFFSET,
+   2 , ; \ FIXME: constant!
 
 : PRIMITIVE-UNLINK,
-   MLIT_PC_REL MLIT_2 MLOAD MJUMP \ FIXME: constant!
-   PRIMITIVE-RP OFFSET, ;
+   MLIT_PC_REL MLIT MLOAD MJUMP \ FIXME: constant!
+   PRIMITIVE-RP OFFSET,  2 , ;
 
 \ Create Mit assembler primitives
 : PRIMITIVE   ( args results -- code-start )
