@@ -39,23 +39,19 @@ END-PRIMITIVE
 \ Memory primitives
 
 1 1 PRIMITIVE @
-MLIT MLOAD NOPALIGN
-2 , \ FIXME: constant!
+MLOAD
 END-PRIMITIVE
 
 2 0 PRIMITIVE !
-MLIT MSTORE NOPALIGN
-2 , \ FIXME: constant!
+MSTORE
 END-PRIMITIVE
 
 1 1 PRIMITIVE C@
-MLIT MLOAD NOPALIGN
-0 ,
+MLOAD1
 END-PRIMITIVE
 
 2 0 PRIMITIVE C!
-MLIT MSTORE NOPALIGN
-0 ,
+MSTORE1
 END-PRIMITIVE
 
 
@@ -146,55 +142,47 @@ VARIABLE RP
 \ FIXME: >R and R> must be defined as CODE words, because they are needed by
 \ LINK, and UNLINK,
 1 0 PRIMITIVE >R
-MLIT_PC_REL MLIT MDUP MLIT
+MLIT_PC_REL MLIT MDUP MLOAD
 ' RP >BODY OFFSET,
-0 ,  2 , \ FIXME: constant!
-MLOAD MLIT MADD MLIT
+0 ,
+MLIT MADD MLIT MDUP
 -4 , \ FIXME: target -CELL, not -4
 0 ,
-MDUP MLIT MSWAP MLIT
-1 ,  2 , \ FIXME: constant!
-MSTORE MLIT MSTORE NOPALIGN
-2 , \ FIXME: constant!
+MLIT MSWAP MSTORE MSTORE
+1 ,
 END-PRIMITIVE
 0 INLINE \ Prevent inlining: it's too long to go at the start of each word!
 
 0 1 PRIMITIVE R>
-MLIT_PC_REL MLIT MDUP MLIT
+MLIT_PC_REL MLIT MDUP MLOAD
 ' RP >BODY OFFSET,
-0 ,  2 , \ FIXME: constant!
-MLOAD MLIT MDUP MLIT
+0 ,
+MLIT MDUP MLIT MADD
 0 ,
 4 , \ FIXME: target CELL, not 4
-MADD MLIT MSWAP MLIT
+MLIT MSWAP MLIT MSWAP
 0 ,  1 ,
-MSWAP MLIT MSTORE MLIT
-2 ,  2 , \ FIXME: constant! x 2
-MLOAD
+MSTORE MLOAD
 END-PRIMITIVE
 0 INLINE \ Prevent inlining: it's too long to go at the start of each word!
 
 0 1 PRIMITIVE R@
-MLIT_PC_REL MLIT MLOAD MLIT
+MLIT_PC_REL MLOAD MLOAD
 ' RP >BODY OFFSET,
-2 ,  2 , \ FIXME: constant! × 2
-MLOAD
 END-PRIMITIVE
 0 INLINE \ Prevent inlining because of relative offset to RP
 
 0 1 PRIMITIVE RP@
-MLIT_PC_REL MLIT MLOAD NOPALIGN
+MLIT_PC_REL MLOAD
 ' RP >BODY OFFSET,
-2 , \ FIXME: constant!
 END-PRIMITIVE
 0 INLINE \ Prevent inlining because of relative offset to RP
 
 \ FIXME: -9 THROW if RP is out of range
 \ Must be a primitive as it would mess up its own return
 1 0 PRIMITIVE RP!
-MLIT_PC_REL MLIT MSTORE NOPALIGN
+MLIT_PC_REL MSTORE NOPALIGN
 ' RP >BODY OFFSET,
-2 , \ FIXME: constant!
 END-PRIMITIVE
 0 INLINE \ Prevent inlining because of relative offset to RP
 

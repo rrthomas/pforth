@@ -33,8 +33,8 @@
 
 : CALL,   ( to -- )   NOPALIGN  $0311 ,  HERE - , ;
 \ FIXME: name the phrase ">INFO 2 + C@" INLINE-SIZE
-\ FIXME: 12 + below is a hack to skip over the primitive's prologue
-: COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP 12 + C@ C,  1+  LOOP  DROP
+\ FIXME: 8 + below is a hack to skip over the primitive's prologue
+: COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP 8 + C@ C,  1+  LOOP  DROP
    ELSE CALL,  THEN ;
 
 : LEAVE, ;
