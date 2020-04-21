@@ -121,7 +121,9 @@ END-PRIMITIVE
 
 \ System primitives
 
-0 LIBC-PRIMITIVE HALT
+1 0 PRIMITIVE HALT
+MHALT
+END-PRIMITIVE
 
 
 \ Control primitives

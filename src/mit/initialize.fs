@@ -72,7 +72,7 @@ CREATE MIT-STATE  CELL ALLOT
             MIT_ERROR_DIVISION_BY_ZERO OF  -10  ENDOF
             MIT_ERROR_OK OF  BYE  ENDOF
             \ Otherwise, return error code
-            NEGATE HALT
+            HALT
          ENDCASE
          PUSH-INNER
          ['] THROW PUSH-INNER-CALL
