@@ -28,9 +28,9 @@
 \ Create Mit EXT calls
 : EXT-PRIMITIVE   ( func lib -- )
    >R >R  0 0 PRIMITIVE       \ make a primitive (FIXME: don't call PRIMITIVE)
-   R> MLIT NOPALIGN ,         \ compile the function code
-   R> 8 LSHIFT $01 OR ,       \ compile the library call (FIXME: HACK!)
+   MLIT MLIT MTRAP NOPALIGN
+   R> ,                       \ compile the function code
+   R> ,                       \ compile the library call
    END-PRIMITIVE ;            \ finish the definition
 
-: LIBMITFEATURES-PRIMITIVE   ( func -- )   LIB_MITFEATURES EXT-PRIMITIVE ;
 : LIBC-PRIMITIVE   ( func -- )   LIB_C EXT-PRIMITIVE ;

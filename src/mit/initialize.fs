@@ -50,33 +50,22 @@ CREATE MIT-STATE  CELL ALLOT
       CLEAR-IR
       MIT-STATE @ [ MRUN ]
 
-      \ Handle error code:
-      DUP MIT_ERROR_INVALID_OPCODE = IF
-         DROP
-         MIT-STATE @ [ MGET_IR ]  $FF ( FIXME: INSTRUCTION-MASK ) AND
-         1 ( FIXME: JUMP ) = IF
-            MIT-STATE @ MIT_EXTRA_INSTRUCTION
-            ?DUP IF  NEGATE HALT  THEN
-         ELSE
-            MIT_ERROR_INVALID_OPCODE NEGATE HALT
-         THEN
-      ELSE
-         CASE
-            \ FIXME: signal stack under/overflow
-            MIT_ERROR_STACK_OVERFLOW OF  -1  ENDOF
-            MIT_ERROR_INVALID_STACK_READ OF  -1  ENDOF
-            MIT_ERROR_INVALID_STACK_WRITE OF  -1  ENDOF
-            MIT_ERROR_INVALID_MEMORY_READ OF  -9  ENDOF
-            MIT_ERROR_INVALID_MEMORY_WRITE OF  -9  ENDOF
-            MIT_ERROR_UNALIGNED_ADDRESS OF  -23  ENDOF
-            MIT_ERROR_DIVISION_BY_ZERO OF  -10  ENDOF
-            MIT_ERROR_OK OF  BYE  ENDOF
-            \ Otherwise, return error code
-            HALT
-         ENDCASE
-         PUSH-INNER
-         ['] THROW PUSH-INNER-CALL
-      THEN
+      \ Handle error code
+      CASE
+         \ FIXME: signal stack under/overflow
+         MIT_ERROR_STACK_OVERFLOW OF  -1  ENDOF
+         MIT_ERROR_INVALID_STACK_READ OF  -1  ENDOF
+         MIT_ERROR_INVALID_STACK_WRITE OF  -1  ENDOF
+         MIT_ERROR_INVALID_MEMORY_READ OF  -9  ENDOF
+         MIT_ERROR_INVALID_MEMORY_WRITE OF  -9  ENDOF
+         MIT_ERROR_UNALIGNED_ADDRESS OF  -23  ENDOF
+         MIT_ERROR_DIVISION_BY_ZERO OF  -10  ENDOF
+         MIT_ERROR_OK OF  BYE  ENDOF
+         \ Otherwise, return error code
+         HALT
+      ENDCASE
+      PUSH-INNER
+      ['] THROW PUSH-INNER-CALL
    AGAIN ;
 
 CODE PRE-INITIALIZE
