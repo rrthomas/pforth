@@ -39,8 +39,9 @@ CREATE MIT-STATE  CELL ALLOT
    RETURN-STACK-CELLS CELLS -        \ make room for return stack
 
    \ Set up inner Mit state
-   STACK-CELLS [ MNEW_STATE ]
-   MIT-STATE !
+   [ MSIZEOF_STATE ] -  DUP MIT-STATE !
+   STACK-CELLS CELLS -  DUP MIT-STATE @ [ MSET_STACK ]
+   STACK-CELLS  MIT-STATE @ [ MSET_STACK_WORDS ]
    \ Push TOS to inner stack
    PUSH-INNER
    ['] START PUSH-INNER-CALL
