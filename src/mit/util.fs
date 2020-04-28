@@ -8,13 +8,12 @@
 
 0 VALUE PRIMITIVE-RP
 : PRIMITIVE-LINK,
-   MLIT_PC_REL MLIT MSTORE NOPALIGN
-   PRIMITIVE-RP OFFSET,
-   2 , ; \ FIXME: constant!
+   MPUSHREL MSTORE NOPALIGN
+   PRIMITIVE-RP OFFSET, ;
 
 : PRIMITIVE-UNLINK,
-   MLIT_PC_REL MLIT MLOAD MJUMP \ FIXME: constant!
-   PRIMITIVE-RP OFFSET,  2 , ;
+   MPUSHREL MLOAD MJUMP NOPALIGN
+   PRIMITIVE-RP OFFSET, ;
 
 \ Create Mit assembler primitives
 : PRIMITIVE   ( args results -- code-start )
@@ -29,9 +28,9 @@
 \ Create Mit EXT calls
 : EXT-PRIMITIVE   ( func lib -- )
    >R >R  0 0 PRIMITIVE       \ make a primitive (FIXME: don't call PRIMITIVE)
-   R> MLIT NOPALIGN ,         \ compile the function code
-   R> 8 LSHIFT $01 OR ,       \ compile the library call (FIXME: HACK!)
+   MPUSH MPUSH MTRAP NOPALIGN
+   R> ,                       \ compile the function code
+   R> ,                       \ compile the library call
    END-PRIMITIVE ;            \ finish the definition
 
-: LIBMITFEATURES-PRIMITIVE   ( func -- )   LIB_MITFEATURES EXT-PRIMITIVE ;
 : LIBC-PRIMITIVE   ( func -- )   LIB_C EXT-PRIMITIVE ;
