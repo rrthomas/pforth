@@ -44,6 +44,7 @@ all-local: !pForth/!TestBuild,feb
 # Forth image
 pforth: $(host)/pforth
 	echo "#!$(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS)" | cat - $(host)/pforth > $@
+	chmod +x $@
 
 EXTRA_DIST = $(portable_SRCS)							\
 	!pForth/!TestBuild,feb
@@ -65,6 +66,10 @@ endif
 loc-local:
 	$(CLOC) $(CLOC_OPTS) $(portable_SRCS)
 
-check-local: $(host)/pforth
+# Error code 243 below is 256 + (-13) (Forth error code for "unknown word")
+check-local: pforth
 	cd $(top_srcdir)/extras && \
-	echo foobar | $(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS) $(abs_builddir)/$(host)/pforth tests.fs
+	echo foobar | $(abs_builddir)/pforth tests.fs
+	if test "$(host)" = "$(build)" -a "$(target)" = "$(host)"; then \
+	    ./pforth --evaluate FOO || test $? = 243 ; \
+	fi
