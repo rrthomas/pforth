@@ -129,10 +129,9 @@ END-PRIMITIVE
 \ Control primitives
 
 \ Must NOT be inline, as it needs caller's PC!
-\ FIXME: inline it somehow?
+\ FIXME: inline it using MPUSHRELI
 CODE (CREATE)
-MPUSH MSWAP MJUMP NOPALIGN
-0 ,
+0 MPUSHI MSWAP MJUMP
 END-CODE
 
 INCLUDE" primitive-bracket-does.fs"

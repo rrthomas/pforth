@@ -12,7 +12,7 @@
 \ Compiler
 
 : LINK,   POSTPONE >R ;
-: UNLINK,   POSTPONE R>  $01 , ;
+: UNLINK,   POSTPONE R>  $04 , ;
 : DOES-LINK,   POSTPONE (DOES)  LINK, ;
 
 : DO,   POSTPONE 2>R ; COMPILING
