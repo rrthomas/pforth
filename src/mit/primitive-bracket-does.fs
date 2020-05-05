@@ -8,7 +8,6 @@
 
 \ Same as (CREATE) but MUST be inlined
 0 0 PRIMITIVE (DOES) \ Lie about number of arguments/results!
-MPUSH MSWAP NOPALIGN
-0 ,
+0 MPUSHI MSWAP
 END-PRIMITIVE
 COMPILING

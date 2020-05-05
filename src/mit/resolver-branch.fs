@@ -6,4 +6,8 @@
 \ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 \ RISK.
 
-: RESOLVER-BRANCH   ( at from to -- )   >-< SWAP ! ;
+\ FIXME: use JOIN instead
+: RESOLVER-BRANCH   ( at from to -- )
+   >-< SWAP
+   $0C44 OVER CELL- !
+   ! ;
