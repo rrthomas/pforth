@@ -31,17 +31,21 @@ jobs:
             - gcc-multilib
     - env:
         - HOST=mit
+        - PYTHON=/usr/bin/python3.7
       addons:
         apt:
           packages:
             - *default_deps
+            - python3.7
     # - env:
     #     - HOST=mit
+    #     - PYTHON=/usr/bin/python3.7
     #     - PFORTH_BUILD_FLAVOUR=mit-threaded
     #   addons:
     #     apt:
     #       packages:
     #         - *default_deps
+    #         - python3.7
     - env:
         - HOST=beetle
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
@@ -51,11 +55,13 @@ jobs:
             - *default_deps
     - env:
         - HOST=mit
+        - PYTHON=/usr/bin/python3.7
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
       addons:
         apt:
           packages:
             - *default_deps
+            - python3.7
     - env:
         - HOST=arm-riscos
         - BUILD=beetle

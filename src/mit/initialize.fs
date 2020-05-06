@@ -72,18 +72,15 @@ CREATE MIT-STATE  CELL ALLOT
 CODE PRE-INITIALIZE
 \ Assume that we were called by a call instruction at 'FORTH, and
 \ use our return address to calculate the new value of 'FORTH.
-MPUSH MNEGATE MADD MPUSH
+MPUSH MNEGATE MADD 0 MPUSHI
 #TARGET-CALL-CELLS CELLS ,
-0 ,
-MDUP MPUSHREL MSTORE MPUSH         \ ret 2 CALL-CELLS - 'FORTH !
+MDUP MPUSHREL MSTORE MPUSH           \ ret 2 CALL-CELLS - 'FORTH !
 ' 'FORTH >BODY OFFSET,
 ' MEMORY-SIZE >BODY @ ,
-MADD MPUSH MDUP MPUSHREL
-0 ,
+MADD 0 MPUSHI MDUP MPUSHREL
 ' RP >BODY OFFSET,
-MSTORE MPUSHREL MLOAD MPUSH        \ memory-limit RP !
+MSTORE MPUSHREL MLOAD 0 MPUSHI       \ memory-limit RP !
 ' 'FORTH >BODY OFFSET,               \ 'FORTH @ DUP
-0 ,
 MDUP MPUSHREL MPUSHREL MCALL
 HERE 0 ,                             \ ( memory-limit 'FORTH 'FORTH )
 ' INITIALIZE OFFSET,
