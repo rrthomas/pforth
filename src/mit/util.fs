@@ -25,12 +25,11 @@
    _FETCH HERE \ FIXME: _FETCH is a hack to enable inlining
    PRIMITIVE-UNLINK, END-CODE  >-< INLINE ;
 
-\ Create Mit EXT calls
-: EXT-PRIMITIVE   ( func lib -- )
+\ Create Mit trap calls
+: TRAP   ( func lib -- )
    >R >R  0 0 PRIMITIVE       \ make a primitive (FIXME: don't call PRIMITIVE)
-   MPUSH MPUSH MTRAP NOPALIGN
-   R> ,                       \ compile the function code
-   R> ,                       \ compile the library call
+   MPUSH NOPALIGN  R> ,       \ compile the function code
+   R> INSTRUCTION-BIT LSHIFT  $FF OR , \ compile the lib code
    END-PRIMITIVE ;            \ finish the definition
 
-: LIBC-PRIMITIVE   ( func -- )   LIB_C EXT-PRIMITIVE ;
+: LIBC-PRIMITIVE   ( func -- )   LIB_C TRAP ;
