@@ -1,6 +1,6 @@
 \ Terminal input/output
 \
-\ (c) Reuben Thomas 1995-2019
+\ (c) Reuben Thomas 1995-2020
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
@@ -20,7 +20,8 @@ CREATE IO-BUFFER  CELL ALLOT
 
 : DEL?   DUP 127 =  SWAP 8 =  OR ;
 : CR?   DUP 13 =  SWAP 10 =  OR ;
-: EOL   (S")  [ 1 C, 10 C, ALIGN ] ;
+HERE 10 C,  NOPALIGN \ FIXME: Make SLITERAL work here
+: EOL  ADDRESS-LITERAL 1 ;
 
 \ FIXME: implement GET-ENVIRONMENT-VARIABLE and use it to read $COLUMNS
 77 CONSTANT WIDTH   \ width of display
