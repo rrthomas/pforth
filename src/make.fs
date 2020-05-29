@@ -57,6 +57,8 @@ STUB (LOOP)
 STUB (+LOOP)
 STUB UNLOOP
 STUB (CREATE)
+STUB (C")
+STUB (S")
 
 
 \ Machinery for compiling forward references to defining words' DOES> code
@@ -122,6 +124,7 @@ INCLUDE" util.fs"
 INCLUDE" add-relocate-helpers.fs"
 INCLUDE" control2.fs"
 INCLUDE" control3.fs"
+INCLUDE" strings2b.fs"
 INCLUDE" compiler2.fs"
 INCLUDE" interpreter3.fs"
 INCLUDE" compiler4.fs"

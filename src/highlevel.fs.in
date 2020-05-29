@@ -272,10 +272,9 @@ INCLUDE" defer-fetch-store.fs"
    MOVE  0 R> C! ;
 \ FIXME: caller should allocate buffer!
 : SCRATCH-C0END   ( c-addr1 u1 -- HERE )   SCRATCH 256 C0END  SCRATCH ;
+: ",   ( c-addr u -- )   DUP C,  HERE SWAP  DUP ALLOT  CMOVE ;
 
-: (C")   R>  R>ADDRESS  DUP C@ 1+ CHARS OVER + ALIGNED  >R ;
-: (S")   R>  R>ADDRESS  DUP C@  TUCK 1+ CHARS OVER + ALIGNED  >R
-   CHAR+ SWAP ;
+INCLUDE" strings2a.fs"
 
 
 INCLUDE" fileio.fs"
@@ -289,6 +288,7 @@ INCLUDE" terminal.fs"   \ terminal I/O words
 
 
 INCLUDE" control2.fs"
+INCLUDE" strings2b.fs"
 
 
 \ Memory #2
