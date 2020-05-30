@@ -32,6 +32,7 @@
 \ FIXME: allow arbitrary branches; at the moment we're effectively
 \ restricted to 64Mb.
 : BRANCH   ( at from to -- )   $4D 3 PICK C!  !BRANCH ;
+: CALL   ( at from to -- )   $53 3 PICK C!  !BRANCH ;
 
 : ADR,   ( to opcode -- )   HERE ROT OFFSET  TUCK HERE 1+ FITS
    INVERT IF  NOPALIGN  THEN  1+ C, FIT, ;
