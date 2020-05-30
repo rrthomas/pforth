@@ -146,7 +146,7 @@ MPUSHREL 0 MPUSHI MDUP MLOAD
 0 MPUSHI MSWAP 1 MPUSHI MSWAP
 MSTORE MLOAD
 END-PRIMITIVE
-0 INLINE \ Prevent inlining: it's too long to go at the start of each word!
+0 INLINE \ Prevent inlining: it's too long to go at the end of each word!
 
 0 1 PRIMITIVE R@
 MPUSHREL MLOAD MLOAD
