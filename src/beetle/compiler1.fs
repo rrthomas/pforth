@@ -1,4 +1,4 @@
-\ (c) Reuben Thomas 1995-2019
+\ (c) Reuben Thomas 1995-2020
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
@@ -34,4 +34,4 @@ IMMEDIATE COMPILING
 \ Leave UNLINK, in next cell where it can be patched by DOES>
 : CREATE,   LINK,  $42 C,  $23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
 : >BODY   2 CELLS + ;
-: (DOES>)   LAST CELL+  DUP  R> R>ADDRESS @  BRANCH ;
+: (DOES>)   LAST CELL+  DUP ROT BRANCH ;

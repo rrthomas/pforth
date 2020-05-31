@@ -17,4 +17,4 @@
 
 : >BODY   2 CELLS + ;
 : CREATE,  $01060C0B , CELL , ; \ LIT_PC_REL ( CELL ) LIT_0 SWAP JUMP
-: (DOES>)   $030B  LAST  TUCK !  CELL+  R> R>ADDRESS @  OVER -  SWAP ! ;
+: (DOES>)   $030B  LAST  TUCK !  CELL+  OVER -  SWAP ! ;
