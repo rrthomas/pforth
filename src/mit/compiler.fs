@@ -13,15 +13,6 @@
 
 : NOPALIGN   0 CALIGN ;
 
-: @LITERAL   ALIGNED @ ;
-: !LITERAL   ALIGNED ! ;
-: LITERAL,   ( n -- )
-   DUP 32 +  64 U< IF \ Use a PUSHI instruction if possible
-      2 LSHIFT  $2 OR  C,  NOPALIGN \ FIXME: ALIGN shouldn't be needed
-   ELSE
-      $40 C,  NOPALIGN ,
-   THEN ;
-
 : OFFSET   ( from to -- offset )   >-< CELL- ;
 : OFFSET,   ( to -- )   HERE CELL- SWAP OFFSET , ;
 : JOIN   ( from to -- )   OVER CELL- SWAP OFFSET SWAP ! ;
