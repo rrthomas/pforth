@@ -23,6 +23,9 @@ IMMEDIATE COMPILING
 
 \ Data structures
 
+\ Compile code that will push the cell immediately after it
+: LITERAL,   POSTPONE (LITERAL) ;
+: LITERAL   LITERAL,  , ; IMMEDIATE COMPILING
+
 : CREATE,   LINK,  POSTPONE (CREATE) ;
 : DOES-LINK,   LINK,  POSTPONE (DOES) ;
-: LITERAL   POSTPONE (LITERAL) ALIGN  , ; IMMEDIATE COMPILING

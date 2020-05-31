@@ -26,7 +26,9 @@ PREVIOUS
 
 \ Data structures
 
-: LITERAL   DUP HERE 1+ FITS IF  $5D C, FIT,  ELSE $5C C,  NOPALIGN  ,  THEN ;
+\ Compile code that will push the cell immediately after it
+: LITERAL,   ( n -- a-addr )   $5C C,  NOPALIGN ;
+: LITERAL   DUP HERE 1+ FITS IF  $5D C, FIT,  ELSE LITERAL,  ,  THEN ;
 IMMEDIATE COMPILING
 
 \ Leave UNLINK, in next cell where it can be patched by DOES>

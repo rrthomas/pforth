@@ -17,11 +17,13 @@
 
 \ Data structures
 
+\ Compile code that will push the cell immediately after it
+: LITERAL,   ( n -- a-addr )   $40 C,  NOPALIGN ;
 : LITERAL   ( n -- )
    DUP 32 +  64 U< IF \ Use a PUSHI instruction if possible
       2 LSHIFT  $2 OR  C,  NOPALIGN \ FIXME: ALIGN shouldn't be needed
    ELSE
-      $40 C,  NOPALIGN ,
+      LITERAL, ,
    THEN ; IMMEDIATE COMPILING
 
 : >BODY   2 CELLS + ;
