@@ -179,7 +179,7 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
    \ make 'FORTH point to the start of it minus the initial branch
 'FORTH 4 ROLL !   \ store 'FORTH in RELOCATION-TABLE
 0 #RELOCATIONS !   \ FIXME: incorrect relocations will have been added by
-\ POSTPONE{,-RELATIVE} compiling the meta-compiler
+\ {,RELATIVE-}POSTPONE compiling the meta-compiler
 INCLUDE" target-forth.fs" TO TARGET-'FORTH \ Set value for relocation
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
