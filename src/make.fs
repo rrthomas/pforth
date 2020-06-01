@@ -172,12 +172,14 @@ PREVIOUS
 SIZE DICTIONARY CROSS  \ define a new dictionary
 ' CURRENT-COMPILE, >BODY @   \ save compiler
 ' CURRENT-LITERAL >BODY @
+' CURRENT-LITERAL, >BODY @
 ' COMPILE, TO CURRENT-COMPILE,   \ use target compiler
-' LITERAL TO CURRENT-LITERAL   \ use target compiler
+' LITERAL TO CURRENT-LITERAL
+' LITERAL, TO CURRENT-LITERAL,
 'FORTH   \ save value of 'FORTH
 ' CROSS >BODY @  INCLUDE" init-space.fs" CELLS -  TO 'FORTH
    \ make 'FORTH point to the start of it minus the initial branch
-'FORTH 4 ROLL !   \ store 'FORTH in RELOCATION-TABLE
+'FORTH 5 ROLL !   \ store 'FORTH in RELOCATION-TABLE
 0 #RELOCATIONS !   \ FIXME: incorrect relocations will have been added by
 \ {,RELATIVE-}POSTPONE compiling the meta-compiler
 INCLUDE" target-forth.fs" TO TARGET-'FORTH \ Set value for relocation
@@ -229,7 +231,8 @@ S" pforth-new" SAVE-OBJECT   \ write system image
 
 PREVIOUS PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
-TO CURRENT-LITERAL   \ restore original compiler
+TO CURRENT-LITERAL,   \ restore original compiler
+TO CURRENT-LITERAL
 TO CURRENT-COMPILE,
 
 ALSO META

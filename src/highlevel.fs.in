@@ -713,6 +713,7 @@ DEFER VISIBLE?   \ word visibility test
    0 ;                               \ if not found leave string & 0 flag
 : FIND   ( c-addr -- a-addr n )   ['] ALL-VISIBLE SELECT ;
 
+DEFER CURRENT-LITERAL,  ' LITERAL, IS CURRENT-LITERAL,
 DEFER CURRENT-LITERAL  ' LITERAL IS CURRENT-LITERAL
 : POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
    CURRENT-COMPILE,  ELSE  ['] (POSTPONE) CURRENT-COMPILE,  ALIGN ,  THEN ;
