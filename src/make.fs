@@ -10,6 +10,11 @@
 
 MARKER DISPOSE
 
+\ Halt immediately on exception, for easier debugging
+\ FIXME: Only halt on memory exceptions (or use core dump facility)
+\ : HALT-HANDLER   HALT ;
+\ ' HALT-HANDLER 'THROW!
+
 DEPTH VALUE INITIAL-DEPTH   \ Note initial stack depth
 INCLUDE" platform.fs"
 CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
