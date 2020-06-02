@@ -12,9 +12,9 @@ host_SRCS = $(portable_SRCS) \
 	fileio.fs init-space.fs initialize.fs inner-interpreter.fs		\
 	native-call.fs os-compiler.fs os.fs parse-command-line.fs		\
 	platform.fs primitive-bracket-does.fs primitives.fs			\
-	relocate-compiler.fs relocate-helper.fs resolver-branch.fs save.fs	\
-	strings2a.fs strings2b.fs system-params.fs target-forth.fs		\
-	target-util.fs terminal.fs util.fs
+	relocate-compiler.fs resolver-branch.fs save.fs strings2a.fs		\
+	strings2b.fs system-params.fs target-forth.fs target-util.fs		\
+	terminal.fs util.fs
 
 do_build_prep = \
 	if test $(srcdir) != $(builddir); then \
