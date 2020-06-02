@@ -260,6 +260,7 @@ INCLUDE" os-compiler.fs"   \ words necessary for the machine
 INCLUDE" compiler.fs"
 DEFER CURRENT-COMPILE,  ' COMPILE, IS CURRENT-COMPILE,
 INCLUDE" call-cells.fs" CONSTANT #CALL-CELLS
+: (POSTPONE)   CURRENT-COMPILE, ;
 INCLUDE" compiler1.fs"
 INCLUDE" compiler-postpone.fs"
 INCLUDE" defer-fetch-store.fs"

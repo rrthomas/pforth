@@ -9,7 +9,6 @@
 \ Compiler
 
 : R>ADDRESS ; IMMEDIATE COMPILING
-: (POSTPONE)   CURRENT-COMPILE, ;
 
 : DO,   $55 C, ;
 : LOOP,   $56 ADR, ;
