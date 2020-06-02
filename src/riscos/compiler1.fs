@@ -8,7 +8,7 @@
 
 \ Compiler
 
-: (POSTPONE)   R> R>ADDRESS  DUP 4 + >R  @ CURRENT-COMPILE, ; COMPILING
+: (POSTPONE)   CURRENT-COMPILE, ; COMPILING
 
 
 \ Data structures
