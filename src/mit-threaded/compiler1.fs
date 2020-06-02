@@ -8,7 +8,6 @@
 
 \ Compiler
 
-: R>ADDRESS ; IMMEDIATE COMPILING
 : (RELATIVE-POSTPONE)   HERE - , ;
 
 
