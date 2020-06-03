@@ -6,9 +6,6 @@
 \ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 \ RISK.
 
-\ FIXME: Compile this with the mit back-end for mit-threaded so it can
-\ actually be used for mit-threaded!
-
 \ Relocate literal addresses relative to 'FORTH using the given relocation
 \ table.
 \ N.B. RELOCATE and its callees must not use addresses other than those
