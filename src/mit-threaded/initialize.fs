@@ -17,17 +17,15 @@
 CODE PRE-INITIALIZE
 \ Assume that we were called by a call instruction at 'FORTH, and
 \ use our return address to calculate the new value of 'FORTH.
-MLIT MNEGATE MADD MLIT_0
-#TARGET-CALL-CELLS CELLS ,
-MDUP MLIT_PC_REL MLIT_2              \ ret 2 CALL-CELLS - 'FORTH !
+#TARGET-CALL-CELLS CELLS MPUSHI  MNEGATE MADD  0 MPUSHI
+MDUP MPUSHREL MSTORE MPUSH           \ ret CALL-CELLS - 'FORTH !
 ' 'FORTH >BODY OFFSET,
-MSTORE MLIT MADD MLIT_0
 ' MEMORY-SIZE >BODY @ ,
-MDUP MLIT_PC_REL MLIT_2 MSTORE       \ memory-limit RP !; FIXME: constant!
+MADD 0 MPUSHI MDUP MPUSHREL
 ' RP >BODY OFFSET,
-MLIT_PC_REL MLIT_2 MLOAD MLIT_0      \ FIXME: constant!
+MSTORE MPUSHREL MLOAD 0 MPUSHI       \ memory-limit RP !
 ' 'FORTH >BODY OFFSET,               \ 'FORTH @ DUP
-MDUP MLIT_PC_REL MLIT_PC_REL MCALL
+MDUP MPUSHREL MPUSHREL MCALL
 HERE 0 ,                             \ ( memory-limit 'FORTH 'FORTH )
 ' INITIALIZE OFFSET,
 END-CODE

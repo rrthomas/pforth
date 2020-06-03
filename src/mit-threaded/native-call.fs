@@ -7,6 +7,6 @@
 \ RISK.
 
 ALSO ASSEMBLER
-: NATIVE-CALL   ( at from to -- )   $03 HERE >R  >R  >-< CELL-  SWAP DP !
-   R> INSTRUCTION-BIT LSHIFT $0B OR ,  ,  R> DP ! ;
+: NATIVE-CALL   ( at from to -- )   $0C HERE >R  >R  >-< CELL-  SWAP DP !
+   R> INSTRUCTION-BIT LSHIFT $44 OR ,  ,  R> DP ! ;
 PREVIOUS
