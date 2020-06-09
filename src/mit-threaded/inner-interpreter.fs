@@ -1,6 +1,6 @@
 \ Mit inner interpreter
 \
-\ (c) Reuben Thomas 2019
+\ (c) Reuben Thomas 2019-2020
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
@@ -10,44 +10,38 @@
 
 VARIABLE IP
 CODE DOCOL                              \ thread interpreter:
-MLIT_0 MSWAP MLIT_1 MPOP                \ discard return address
-MLIT_PC_REL MLIT_2 MLOAD MLIT_PC_REL
+0 MPUSHI MSWAP 1 MPUSHI MPOP            \ discard return address
+MPUSHREL MLOAD MPUSHREL MCALL           \ save IP to return stack
 ' IP >BODY OFFSET,
 ' >R OFFSET,
-MCALL MNEXT MNEXT MNEXT                 \ save IP to return stack
 HERE DUP DUP DUP                        \ start of loop (IP on stack)
-MLIT_0 MDUP MLIT MADD                   \ set IP to next cell
-4 ,
-MLIT_PC_REL MLIT_2 MSTORE MNEXT
+0 MPUSHI MDUP 4 MPUSHI MADD             \ set IP to next cell
+MPUSHREL MSTORE MEXTRA MEXTRA
 ' IP >BODY OFFSET,
-MLIT_2 MLOAD MCALL MNEXT                \ @EXECUTE next bead
-MLIT_PC_REL MLIT_2 MLOAD MLIT_PC_REL    \ load IP
+0 MPUSHI MDUP MLOAD MADD                \ load next bead
+MCALL MEXTRA MEXTRA MEXTRA              \ EXECUTE next bead
+MPUSHREL MLOAD HERE SWAP OFFSET MPUSHRELI MJUMP           \ load IP and loop (EXIT exits)
 ' IP >BODY OFFSET,
-OFFSET,
-MJUMP                                   \ loop (EXIT exits)
 END-CODE
 
 CODE EXECUTE
-MLIT_1 MPOP MCALL MNEXT                 \ discard return address, call
-MLIT_PC_REL MLIT_2 MLOAD MLIT_PC_REL    \ load IP
+1 MPUSHI MPOP MCALL MEXTRA              \ discard return address, call
+MPUSHREL MLOAD MPUSHREL MJUMP           \ load IP and loop (EXIT exits)
 ' IP >BODY OFFSET,
 OFFSET,
-MJUMP                                   \ loop (EXIT exits)
 END-CODE
 
 CODE @EXECUTE
-MLIT_1 MPOP MLIT_2 MLOAD                \ discard return address, load
-MCALL MNEXT MNEXT MNEXT                 \ call
-MLIT_PC_REL MLIT_2 MLOAD MLIT_PC_REL    \ load IP
+1 MPUSHI MPOP MLOAD MCALL               \ discard return address, load & call
+MPUSHREL MLOAD MPUSHREL MJUMP           \ load IP and loop (EXIT exits)
 ' IP >BODY OFFSET,
 OFFSET,
-MJUMP                                   \ loop (EXIT exits)
 END-CODE
 
 CODE EXIT
-MLIT_1 MPOP MLIT_PC_REL MCALL   \ Pop return address, then outer IP from return stack
+1 MPUSHI MPOP MPUSHREL MCALL   \ Pop return address, then outer IP from return stack
 ' R> OFFSET,
-MLIT_PC_REL MJUMP   \ Jump into colon interpreter
+MPUSHREL MJUMP                          \ Jump into colon interpreter
 OFFSET,
 END-CODE
 
@@ -55,32 +49,28 @@ END-CODE
 \ encoding calls as bottom bits 00, branch as 10, ?branch as 11, literal as 01
 
 CODE (LITERAL)
-MLIT_PC_REL MLIT_0 MDUP MLIT_2          \ get IP ( ret 'IP 'IP 2 )
+MPUSHREL 0 MPUSHI MDUP MLOAD            \ get IP ( ret 'IP IP )
 ' IP >BODY OFFSET,
-MLOAD MLIT_0 MDUP MLIT                  \ load IP ( ret 'IP IP IP CELL )
-4 ,
-MADD MLIT_0 MSWAP MLIT_1                \ increment it ( ret 'IP IP+CELL IP 1 )
-MSWAP MLIT_2 MSTORE MLIT_2              \ update IP ( ret IP 2 )
-MLOAD MLIT_0 MSWAP MJUMP                \ fetch literal & return ( lit )
+0 MPUSHI MDUP 4 MPUSHI MADD             \ load IP ( ret 'IP 'IP IP IP+CELL )
+0 MPUSHI MSWAP 1 MPUSHI MSWAP           \ increment it ( ret 'IP IP+CELL IP 1 )
+MSTORE MLOAD 0 MPUSHI MSWAP             \ update IP & fetch literal ( lit ret )
+MJUMP                                   \ return ( lit )
 END-CODE
 
 CODE (BRANCH)
-MLIT_PC_REL MLIT_0 MDUP MLIT_2          \ get IP ( ret 'IP 'IP 2 )
+MPUSHREL 0 MPUSHI MDUP MLOAD            \ get IP ( ret 'IP IP )
 ' IP >BODY OFFSET,
-MLOAD MLIT_2 MLOAD MLIT_0               \ load branch address from IP
-MSWAP MLIT_2 MSTORE MJUMP               \ set IP ( ret ) & JUMP: return
+0 MPUSHI MDUP MLOAD MADD                \ load branch address from IP, add IP
+0 MPUSHI MSWAP MSTORE MJUMP             \ set IP ( ret ) & JUMP; return
 END-CODE
 
 CODE (?BRANCH)
-MLIT_PC_REL MLIT_0 MDUP MLIT_2          \ get IP ( flag ret 'IP 'IP 2 )
+MPUSHREL 0 MPUSHI MDUP MLOAD            \ get IP ( flag ret 'IP IP )
 ' IP >BODY OFFSET,
-MLOAD MLIT_0 MSWAP MLIT_2               \ ( flag ret IP 'IP )
-MSWAP MLIT_PC_REL MJUMPZ MLIT           \ ( 'IP ret IP )
-16 ,
-4 ,
-MADD MLIT_PC_REL MJUMP                  \ skip IP over address
-8 ,                                     \ jump to end
-MLIT_2 MLOAD MNEXT MNEXT                \ load branch address
-MLIT_0 MSWAP MLIT_1 MSWAP               \ set IP
-MLIT_2 MSTORE MJUMP                     \ and return
+0 MPUSHI MSWAP 2 MPUSHI MSWAP           \ ( 'IP ret IP flag )
+4 MPUSHRELI MJUMPZ MEXTRA MEXTRA        \ ( 'IP ret IP+CELL )
+4 MPUSHI MADD 4 MPUSHRELI MJUMP         \ skip IP over address; jump to end
+0 MPUSHI MDUP MLOAD MADD                \ load branch offset; compute destination
+0 MPUSHI MSWAP 1 MPUSHI MSWAP           \ set IP
+MSTORE MJUMP                            \ and return
 END-CODE

@@ -59,7 +59,7 @@ $FF     OP   MNEXTFF
    DUP 32 +  63 U> ABORT" PUSHI operand must be -32 <= n < 32"
    2 LSHIFT  $2 OR  INSTRUCTION-MASK AND  INSTRUCTION ;
 : MPUSHRELI   ( n -- )
-   CELL/  DUP 127 +  128 U>  OVER -1 = OR  ABORT" PUSHRELI operand must be -128 <= n < 128, n <> -1"
+   CELL/  DUP 63 +  128 U>  OVER -1 = OR  ABORT" PUSHRELI operand must be -64 <= n < 64, n <> -1"
    1 LSHIFT  $1 OR  INSTRUCTION-MASK AND  INSTRUCTION ;
 
 : EXTRA-INSTRUCTION   ( n -- )

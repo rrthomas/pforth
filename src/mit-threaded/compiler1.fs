@@ -8,11 +8,11 @@
 
 \ Compiler
 
-: (RELATIVE-POSTPONE)   HERE - , ;
+: R>ADDRESS ; IMMEDIATE COMPILING
 
 
 \ Data structures
 
 : >BODY   2 CELLS + ;
-: CREATE,  $01060C0B , CELL , ; \ LIT_PC_REL ( CELL ) LIT_0 SWAP JUMP
-: (DOES>)   $030B  LAST  TUCK !  CELL+  OVER -  SWAP ! ;
+: CREATE,   $04180203 , 0 , ; \ ( 1 MPUSHRELI  0 MPUSHI  MSWAP MJUMP )
+: (DOES>)   $0C44  LAST  TUCK !  TUCK - CELL-  SWAP CELL+ ! ;
