@@ -159,6 +159,7 @@ glossary entries of the relevant words in the standard.
 \item[--]If a \textit{name} that is neither a valid definition name nor a valid number is encountered during text interpretation, the \textit{name} is displayed followed by a question mark, and {\tt ABORT} is executed.
 \item[--]If a definition name exceeds the maximum length allowed, it is truncated to the maximum length (31 characters).
 \item[--]If division by zero is attempted, {\tt -10 THROW} is executed. By default this displays the message ``division by zero'' and executes {\tt ABORT}.
+\item[--]When signed division overflows, the quotient is the largest negative integer, and the remainder is $0$.
 \item[--]When a word with undefined interpretation semantics is interpreted, the message ``compilation only'' is displayed, and {\tt ABORT} is executed.
 \item[--]If the data stack has underflowed when the ``ok'' prompt would usually be displayed by {\tt QUIT}, {\tt ABORT"} is executed with the message ``stack underflow''. All other stack underflow conditions are ignored.
 \item[*]If {\tt RECURSE} appears after {\tt DOES>}, the execution semantics of the word containing the {\tt DOES>} are appended to that word while it is being compiled.
