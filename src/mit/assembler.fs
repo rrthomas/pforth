@@ -39,7 +39,7 @@ PREVIOUS DEFINITIONS
    I-ADDR @ 0= IF  _FETCH  THEN         \ start of a new word
    I-ADDR @ @                           \ ( opcode cur-word )
    OVER  I-SHIFT @ LSHIFT  OR           \ ( opcode new-word )
-   2DUP I-SHIFT @ RSHIFT <> IF          \ if we ran out of space,
+   2DUP I-SHIFT @ ARSHIFT <> IF         \ if we ran out of space,
       _FETCH DROP                       \ advance a word
    ELSE
       NIP                               \ otherwise we're fine
