@@ -1,0 +1,9 @@
+\ Must be CODE, not a PRIMITIVE, because it doesn't save its return address
+CODE EXIT
+1 MPUSHI MPOP MPUSHREL 0 MPUSHI \ discard return address
+' RP >BODY OFFSET,
+MDUP MLOAD 0 MPUSHI MDUP
+4 MPUSHI MADD 0 MPUSHI MSWAP \ FIXME: target CELL, not 4
+1 MPUSHI MSWAP MSTORE MLOAD
+MJUMP
+END-CODE
