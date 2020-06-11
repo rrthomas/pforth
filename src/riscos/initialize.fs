@@ -19,7 +19,7 @@ R10 LR 252 24 LSHIFT # BIC,          \ save LR to calculate 'FORTH
 SWI," OS_GetEnv"
 RP R1 MOV,
 SP RP 32 # SUB,                      \ temporary stack space
-' STACK-CELLS COMPILE,
+' RETURN-STACK-CELLS COMPILE,
 ' CELLS COMPILE,
 SP RP TOP SUB,                       \ set SP properly
 TOP SP PUSH,                         \ dummy top of stack
