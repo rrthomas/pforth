@@ -14,7 +14,7 @@
 \ as an argument rather than executing 'FORTH.
 \ FIXME: Make relocation entries use relative addresses, and do not update
 \ the relocations (only the base address).
-: RELOCATE ( current-base new-base 'table -- )
+: RELOCATE   ( current-base new-base 'table -- )
    2DUP 2>R                             \ save new-base & 'table
    DUP @                                \ ( curr new 'table old )
    SWAP CELL+ DUP @                     \ ( curr new old 'table+CELL #entries )
