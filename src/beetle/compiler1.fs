@@ -26,7 +26,7 @@ PREVIOUS
 \ Data structures
 
 \ Compile code that will push the cell immediately after it
-: LITERAL,   ( n -- a-addr )   $5C C,  NOPALIGN ;
+: LITERAL,   $5C C,  NOPALIGN ;
 : LITERAL   DUP HERE 1+ FITS IF  $5D C, FIT,  ELSE LITERAL,  ,  THEN ;
 IMMEDIATE COMPILING
 
