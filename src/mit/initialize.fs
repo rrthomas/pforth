@@ -25,31 +25,33 @@
 \ mit_state * for inner state
 CREATE MIT-STATE  CELL ALLOT
 
-: CLEAR-IR   0 MIT-STATE @ [ MSET_IR ] ;
+: CLEAR-IR   0 MIT-STATE @ MIT_SET_IR ;
 : PUSH-INNER   ( x -- ) ( Inner: -- x )
-   MIT-STATE @ [ MPUSH_STACK ]
+   MIT-STATE @ MIT_PUSH_STACK
    ?DUP IF  HALT  THEN ;
 : PUSH-INNER-CALL ( a-addr -- )
-   MIT-STATE @ [ MSET_PC ]
+   MIT-STATE @ MIT_SET_PC
    0 PUSH-INNER ;                    \ dummy return address
 
 : INITIALIZE
    RELOCATE                          \ perform relocations (must be done first)
    DUP TO R0                         \ set R0 (RP already set)
    RETURN-STACK-CELLS CELLS -        \ make room for return stack
+   DUP TO S0                         \ set S0 (SP already set)
+   STACK-CELLS CELLS -               \ make room for data stack
 
    \ Set up inner Mit state
-   [ MSIZEOF_STATE ] -  DUP MIT-STATE !
-   STACK-CELLS CELLS -  DUP MIT-STATE @ [ MSET_STACK ]
-   STACK-CELLS  MIT-STATE @ [ MSET_STACK_WORDS ]
-   \ Push TOS to inner stack
-   PUSH-INNER
+   MIT_SIZEOF_STATE -  DUP MIT-STATE !
+   STACK-CELLS CELLS -  DUP MIT-STATE @ MIT_SET_STACK
+   STACK-CELLS  MIT-STATE @ MIT_SET_STACK_WORDS
+   \ Push SP to inner stack
+   SP@ PUSH-INNER
    ['] START PUSH-INNER-CALL
 
    \ Error handler loop
    BEGIN
       CLEAR-IR
-      MIT-STATE @ [ MRUN ]
+      MIT-STATE @ MIT_RUN
 
       \ Handle error code
       CASE
@@ -65,24 +67,28 @@ CREATE MIT-STATE  CELL ALLOT
          \ Otherwise, return error code
          HALT
       ENDCASE
-      PUSH-INNER
+      SP@ PUSH-INNER
       ['] THROW PUSH-INNER-CALL
    AGAIN ;
 
 CODE PRE-INITIALIZE
 \ Assume that we were called by a call instruction at 'FORTH, and
 \ use our return address to calculate the new value of 'FORTH.
-MPUSH MNEGATE MADD 0 MPUSHI
-#TARGET-CALL-CELLS CELLS ,
-MDUP MPUSHREL MSTORE MPUSH           \ ret CALL-CELLS CELLS - 'FORTH !
+MPUSH MADD 0 MPUSHI MDUP
+#TARGET-CALL-CELLS CELLS NEGATE ,
+MPUSHREL MSTORE MPUSH MADD       \ ret CALL-CELLS CELLS - 'FORTH !
 ' 'FORTH >BODY OFFSET,
 ' MEMORY-SIZE >BODY @ ,
-MADD 0 MPUSHI MDUP MPUSHREL
+0 MPUSHI MDUP MPUSHREL MSTORE    \ memory-limit RP !
 ' RP >BODY OFFSET,
-MSTORE MPUSHREL MLOAD 0 MPUSHI       \ memory-limit RP !
-' 'FORTH >BODY OFFSET,               \ 'FORTH @ DUP
-MDUP MPUSHREL MPUSHREL MCALL
-HERE 0 ,                             \ ( memory-limit 'FORTH 'FORTH )
+0 MPUSHI MDUP MPUSH MADD         \ SP = memory-limit - RETURN-STACK-CELLS CELLS
+RETURN-STACK-CELLS CELLS NEGATE ,
+0 MPUSHI MSWAP MPUSHREL MLOAD
+' 'FORTH >BODY OFFSET,
+0 MPUSHI MDUP MPUSHREL           \ SP memory-limit 'FORTH 'FORTH
+HERE 0 ,                         \ ( SP memory-limit 'FORTH 'FORTH 'table )
+4 COMPILE->S                     \ push INITIALIZE's arguments to pForth stack
+MPUSHREL MCALL MEXTRA MEXTRA
 ' INITIALIZE OFFSET,
 END-CODE
 ALIGN  HERE OVER -  SWAP !

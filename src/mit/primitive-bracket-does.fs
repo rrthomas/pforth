@@ -8,6 +8,9 @@
 
 \ Same as (CREATE) but MUST be inlined
 0 0 PRIMITIVE (DOES) \ Lie about number of arguments/results!
-0 MPUSHI MSWAP
+\ FIXME: 1 COMPILE->S, but with two items on stack on top of SP
+2 MPUSHI MDUP -4 MPUSHI MADD \ FIXME: target CELL, not 4
+2 MPUSHI MSWAP -4 MPUSHI MADD \ FIXME: target CELL, not 4
+MSTORE
 END-PRIMITIVE
 COMPILING

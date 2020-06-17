@@ -8,4 +8,5 @@
 
 \ Same as (CREATE) but MUST be inlined
 \ FIXME: different definition from primitives.fs
-: (DOES)   $1802 , ; IMMEDIATE COMPILING
+: (DOES)   $70F2140A ,  $70F2180A ,  $24 , ( FIXME: almost >S, but with 2 items on stack ) ;
+IMMEDIATE COMPILING

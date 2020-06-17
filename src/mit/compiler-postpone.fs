@@ -11,11 +11,26 @@
 
 \ Compiler
 
-: LINK,   POSTPONE >R ;
-: UNLINK,   POSTPONE R>  $04 , ;
+: LINK,   POSTPONE LINK ;
+: UNLINK,   POSTPONE UNLINK ;
 : DOES-LINK,   POSTPONE (DOES)  LINK, ;
 
 : DO,   POSTPONE 2>R ; COMPILING
 : LOOP,   POSTPONE (LOOP)  POSTPONE IF  SWAP JOIN ; COMPILING
 : +LOOP,   POSTPONE (+LOOP)  POSTPONE IF  SWAP JOIN ; COMPILING
 : END-LOOP,   POSTPONE UNLOOP ; COMPILING
+
+
+\ Data structures
+
+\ FIXME: Redesign LITERAL, to return address of cell to store value in
+: LITERAL,   $44 , ['] (LITERAL) OFFSET,  $0C180240 , ( FIXME: PUSH 0 MPUSHI MSWAP MCALL ) ;
+\ Compile code that will push the cell immediately after it
+: LITERAL   ( n -- )
+   DUP 32 +  64 U< IF \ Use a PUSHI instruction if possible
+      2 LSHIFT  $2 OR  C,  NOPALIGN >S, \ FIXME: ALIGN shouldn't be needed
+   ELSE
+      LITERAL, ,
+   THEN ; IMMEDIATE COMPILING
+
+: CREATE,   $0C4403 , ['] (CREATE) OFFSET, ( FIXME: 0 MPUSHRELI MPUSHREL MCALL ) ;

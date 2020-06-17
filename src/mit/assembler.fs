@@ -89,4 +89,32 @@ $101 EXTRA-INSTRUCTION MARGV
 
 0 CONSTANT LIB_C
 
+\ Compile code to move all items from the pForth stack to the Mit stack
+: COMPILE-S>   ( stack-depth -- )
+   ?DUP IF
+      DUP 0 DO
+         I MPUSHI MDUP
+         DUP I 1+ - 4 * ?DUP IF \ FIXME: target CELL, not 4
+            MPUSHI MADD
+         THEN
+         MLOAD
+      LOOP
+      DUP MPUSHI MDUP  DUP 4 * MPUSHI MADD  MPUSHI MSWAP  1 MPUSHI MPOP
+   ELSE
+      EXIT
+   THEN _FETCH ;
+
+\ Compile code to move all items from the Mit stack to the pForth stack
+: COMPILE->S   ( stack-depth -- )
+   ?DUP IF
+      DUP 1 SWAP DO
+         I MPUSHI MDUP
+         I -4 * MPUSHI MADD \ FIXME: target CELL, not 4
+         MSTORE
+      -1 +LOOP
+      -4 * MPUSHI MADD
+   ELSE
+      EXIT
+   THEN _FETCH ;
+
 PREVIOUS DEFINITIONS

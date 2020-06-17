@@ -15,21 +15,25 @@
    MPUSHREL MLOAD MJUMP NOPALIGN
    PRIMITIVE-RP OFFSET, ;
 
-\ Create Mit assembler primitives
-: PRIMITIVE   ( args results -- code-start )
-   2DROP
-   CODE  PRIMITIVE-LINK,                \ make a word
-   _FETCH HERE ; \ FIXME: _FETCH is a hack to enable inlining
 
-: END-PRIMITIVE   ( code-start -- )
+\ Create Mit assembler primitives
+
+: PRIMITIVE   ( args results -- results code-start )
+   SWAP                         \ ( results args )
+   CODE  PRIMITIVE-LINK,        \ make a word
+   _FETCH HERE \ FIXME: _FETCH is a hack to enable inlining
+   SWAP COMPILE-S> ; \ pop arguments from pForth data stack
+
+: END-PRIMITIVE   ( results code-start -- )
+   SWAP COMPILE->S    \ push results to pForth data stack
    _FETCH HERE \ FIXME: _FETCH is a hack to enable inlining
    PRIMITIVE-UNLINK, END-CODE  >-< INLINE ;
 
 \ Create Mit trap calls
 : TRAP   ( func lib -- )
-   >R >R  0 0 PRIMITIVE       \ make a primitive (FIXME: don't call PRIMITIVE)
+   >R >R  PRIMITIVE           \ make a primitive
    MPUSH NOPALIGN  R> ,       \ compile the function code
    R> INSTRUCTION-BIT LSHIFT  $FF OR , \ compile the lib code
    END-PRIMITIVE ;            \ finish the definition
 
-: LIBC-PRIMITIVE   ( func -- )   LIB_C TRAP ;
+: LIBC-PRIMITIVE   ( args results func -- )   LIB_C TRAP ;
