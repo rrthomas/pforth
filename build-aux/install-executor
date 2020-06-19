@@ -56,4 +56,11 @@ case $BUILD in
         # FIXME: disable "make check" until pForth supports native architecture
         ./bootstrap && ./configure --enable-silent-rules CC="gcc -m32" && $SUDO make install # && make check
         ;;
+    bee)
+        cd $HOME
+        git clone https://github.com/rrthomas/bee.git
+        cd bee
+        git checkout "${TRAVIS_BRANCH##bee-}"
+        ./bootstrap && ./configure --enable-silent-rules && make check && $SUDO make install
+        ;;
 esac

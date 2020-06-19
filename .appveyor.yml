@@ -5,7 +5,7 @@ environment:
     GITHUB_TOKEN:
       secure: 3J3HXNPKxCnwyaNtnJAH2xwHg9cG/SEB9YNrBGYoGRQSeNBO19+yVv48x6LfNiA9
     VERBOSE: 1 # Get test logs in output
-    BUILD: beetle
+    BUILD: bee
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       MSYSTEM: MSYS

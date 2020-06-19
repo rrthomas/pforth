@@ -15,7 +15,7 @@ addons:
 jobs:
   include:
     - env:
-        - HOST=beetle
+        - HOST=bee
       addons:
         apt:
           packages: &default_deps
@@ -30,13 +30,18 @@ jobs:
             - rlwrap
             - gcc-multilib
     - env:
-        - HOST=mit
-        - PYTHON=/usr/bin/python3.7
+        - HOST=beetle
       addons:
         apt:
-          packages:
-            - *default_deps
-            - python3.7
+          packages: *default_deps
+    # - env:
+    #     - HOST=mit
+    #     - PYTHON=/usr/bin/python3.7
+    #   addons:
+    #     apt:
+    #       packages:
+    #         - *default_deps
+    #         - python3.7
     # - env:
     #     - HOST=mit
     #     - PYTHON=/usr/bin/python3.7
@@ -47,45 +52,55 @@ jobs:
     #         - *default_deps
     #         - python3.7
     - env:
+        - HOST=bee
+        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
+      addons:
+        apt:
+          packages:
+            - *default_deps
+    - env:
         - HOST=beetle
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
       addons:
         apt:
           packages:
             - *default_deps
-    - env:
-        - HOST=mit
-        - PYTHON=/usr/bin/python3.7
-        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
-      addons:
-        apt:
-          packages:
-            - *default_deps
-            - python3.7
-    - env:
-        - HOST=arm-riscos
-        - BUILD=beetle
-      addons:
-        apt:
-          packages: &riscos_deps
-            - qtbase5-dev
-            - qtmultimedia5-dev
-            - libqt5multimedia5-plugins
-            - *default_deps
-    - env:
-        - HOST=arm-riscos
-        - BUILD=beetle
-        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
-      addons:
-        apt:
-          packages:
-            - *riscos_deps
+    # - env:
+    #     - HOST=mit
+    #     - PYTHON=/usr/bin/python3.7
+    #     - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
+    #   addons:
+    #     apt:
+    #       packages:
+    #         - *default_deps
+    #         - python3.7
+    # - env:
+    #     - HOST=arm-riscos
+    #     - BUILD=beetle
+    #   addons:
+    #     apt:
+    #       packages: &riscos_deps
+    #         - qtbase5-dev
+    #         - qtmultimedia5-dev
+    #         - libqt5multimedia5-plugins
+    #         - *default_deps
+    # - env:
+    #     - HOST=arm-riscos
+    #     - BUILD=beetle
+    #     - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
+    #   addons:
+    #     apt:
+    #       packages:
+    #         - *riscos_deps
+    - os: osx
+      env:
+        - HOST=bee
     - os: osx
       env:
         - HOST=beetle
-    - os: osx
-      env:
-        - HOST=mit
+    # - os: osx
+    #   env:
+    #     - HOST=mit
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then if [[ "$HOST" == "mit" ]]; then pip3 install pyyaml; fi; fi
