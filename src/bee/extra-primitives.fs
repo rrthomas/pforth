@@ -1,0 +1,63 @@
+\ (c) Reuben Thomas 2020
+\
+\ The package is distributed under the GNU GPL version 3, or, at your
+\ option, any later version.
+\
+\ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
+\ RISK.
+
+CR .( Extra primitives )
+
+ALSO ASSEMBLER
+
+
+\ Stack primitives
+
+CODE DUP
+   0 B(LITERAL) BPICK
+   BEXIT
+END-CODE
+3 INLINE
+
+CODE OVER
+   1 B(LITERAL) BPICK
+   BEXIT
+END-CODE
+3 INLINE
+
+CODE ROT
+   2 B(LITERAL) BROLL
+   BEXIT
+END-CODE
+3 INLINE
+
+CODE -ROT
+   2 B(LITERAL) BROLL
+   2 B(LITERAL) BROLL
+   BEXIT
+END-CODE
+6 INLINE
+
+\ Arithmetic and logical primitives
+
+CODE -
+   BNEGATE B+
+   BEXIT
+END-CODE
+2 INLINE
+
+CODE 1+
+   BINVERT BNEGATE
+   BEXIT
+END-CODE
+2 INLINE
+
+CODE 1-
+   BNEGATE
+   BINVERT
+   BEXIT
+END-CODE
+2 INLINE
+
+
+PREVIOUS
