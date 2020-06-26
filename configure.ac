@@ -10,7 +10,7 @@
 
 AC_INIT(pForth, 0.81, rrt@sc3d.org)
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall foreign])
 
 dnl Check for programs
 AC_PROG_LN_S
@@ -105,5 +105,6 @@ AC_CONFIG_FILES([src/highlevel.fs],
   [ln -fs ../highlevel.fs src/beetle/highlevel.fs
    ln -fs ../highlevel.fs src/riscos/highlevel.fs
    ln -fs ../highlevel.fs src/mit/highlevel.fs
-   dnl ln -fs ../highlevel.fs src/mit-threaded/highlevel.fs])
+   dnl ln -fs ../highlevel.fs src/mit-threaded/highlevel.fs
+])
 AC_OUTPUT

@@ -2,19 +2,35 @@
 
 noinst_DATA = pforth
 EXTRA_DIST = $(host_SRCS) pforth
-DISTCLEANFILES = pforth
+DISTCLEANFILES = highlevel.fs
 
 highlevel.fs: $(srcdir)/../highlevel.fs.in
 	cd $(top_builddir); ./config.status --file=src/highlevel.fs
 
 include $(srcdir)/../host_src.am
 
+BUILD_PFORTH = $(BUILD_EXECUTOR) $(BUILD_EXECUTOR_FLAGS) $(abs_top_srcdir)/src/$(build_flavour)/pforth
+
+host_SRCS = $(portable_SRCS) \
+	accept.fs assembler.fs bracket-does.fs call-cells.fs code.fs		\
+	compiler1.fs compiler.fs compiler-postpone.fs extra-primitives.fs	\
+	fileio.fs init-space.fs initialize.fs inner-interpreter.fs		\
+	native-call.fs os-compiler.fs os.fs parse-command-line.fs		\
+	platform.fs primitive-bracket-does.fs primitives.fs			\
+	relocate-compiler.fs resolver-branch.fs save.fs strings2a.fs		\
+	strings2b.fs system-params.fs target-forth.fs target-util.fs		\
+	terminal.fs util.fs
+
 do_build = \
-	export srcs="$(host_SRCS)"; $(do_build_prep) && \
+	if test $(srcdir) != $(builddir); then \
+	    for i in $(host_SRCS); do \
+		$(LN_S) -f $(abs_top_srcdir)/src/$(host)/"$$i" . ; \
+	    done; \
+	fi && \
 	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs
 
 # Build (with triple test if building on host)
-pforth: $(host_SRCS)
+pforth: $(host_SRCS) highlevel.fs
 	$(do_build) && \
 	if test "$(host)" = "$(build)" -a "$(target)" = "$(host)"; then \
 		mv pforth-new pforth-new-0 && \
@@ -30,4 +46,4 @@ check-local:
 	rm pforth-new
 
 loc-local:
-	$(CLOC) $(CLOC_OPTS) $(host_SRCS)
+	cd $(srcdir) && $(CLOC) $(CLOC_OPTS) $(host_SRCS)

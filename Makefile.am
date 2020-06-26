@@ -23,4 +23,10 @@ release: distcheck
 		dist_type=tar.gz
 
 distcheck-hook:
-	touch src/highlevel.fs.in
+	touch $(srcdir)/src/highlevel.fs.in
+
+# Ignore built files that are part of the distribution (specifically,
+# src/*/pforth).
+distcleancheck_listfiles = \
+       find . -type f -exec sh -c 'test -f $(srcdir)/$$1 || echo $$1' \
+	    sh '{}' ';'

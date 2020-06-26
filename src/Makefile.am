@@ -17,6 +17,7 @@ include $(srcdir)/host_src.am
 all-local: !pForth/!TestBuild,feb
 
 !pForth/!TestBuild,feb: Makefile.am
+	$(MKDIR_P) \!pForth; \
 	echo "Set TestBuild\$$ExitCode 0" > $@; \
 	echo "Dir src" >> $@; \
 	echo "" >> $@; \
@@ -49,7 +50,7 @@ pforth: $(host)/pforth
 EXTRA_DIST = $(portable_SRCS)							\
 	!pForth/!TestBuild,feb
 CLEANFILES = pforth
-DISTCLEANFILES = $(host)/pforth
+DISTCLEANFILES =
 
 if HAVE_RLWRAP
 install-exec-hook:
@@ -64,7 +65,7 @@ DISTCLEANFILES += $(host)/pforthi pforthi.tmp
 endif
 
 loc-local:
-	$(CLOC) $(CLOC_OPTS) $(portable_SRCS)
+	cd $(srcdir) && $(CLOC) $(CLOC_OPTS) $(portable_SRCS) $(abs_builddir)/highlevel.fs
 
 # Error code 243 below is 256 + (-13) (Forth error code for "unknown word")
 check-local: pforth
