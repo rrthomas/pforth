@@ -12,8 +12,8 @@
 
 : NOPALIGN   ALIGN ;
 
-: @BRANCH   ( from -- to )   DUP @ + CELL- ;
-: JOIN   ( from to -- )   OVER - CELL+ SWAP ! ;
+: @BRANCH   ( from -- to )   DUP @ + 2 XOR ;
+: JOIN   ( from to -- )   OVER -  2 OR  SWAP ! ;
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP @ ,  CELL+  LOOP  DROP
    ELSE HERE - ,  THEN ;
 : LEAVE, ;

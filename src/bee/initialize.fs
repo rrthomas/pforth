@@ -10,11 +10,11 @@
    \ Assume that we were called by a call instruction at 'FORTH, and
    \ use our return address to calculate the new value of 'FORTH.
    R> CELL- DUP DUP
-   [ 0 B(OFFSET) HERE CELL- DUP ] \ address of relocation table
+   [ HERE 0 ,  DUP ] \ address of relocation table
    RELOCATE   \ perform relocations (must be done first)
    TO 'FORTH
    [ BMEMORY@ ]  RETURN-STACK-CELLS CELLS -  SP! \ set SP
    MEMORY@  RETURN-STACK-CELLS CELLS -  \ now start as if stack were empty
    DUP S0!
    START ;
-ALIGN  HERE >-< CELL+  SWAP !
+ALIGN  HERE >-<  OP_OFFSET OR  SWAP ! \ FIXME: add !OFFSET
