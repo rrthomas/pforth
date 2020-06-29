@@ -29,8 +29,13 @@ PREVIOUS
 : LITERAL,   $5C C,  NOPALIGN ;
 : LITERAL   DUP HERE 1+ FITS IF  $5D C, FIT,  ELSE LITERAL,  ,  THEN ;
 IMMEDIATE COMPILING
+: RELATIVE-LITERAL   NOPALIGN $1E425C , ( FIXME: BLITERAL BEP@ B+ )
+   HERE -  CELL-  , ; IMMEDIATE COMPILING
 
 \ Leave UNLINK, in next cell where it can be patched by DOES>
 : CREATE,   LINK,  $42 C,  $23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
 : >BODY   2 CELLS + ;
-: (DOES>)   LAST CELL+  DUP ROT BRANCH ;
+\ >DOES>, given the xt of a defining word, returns the address of the DOES>
+\ code.
+: >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
+: (DOES>)   >DOES>  LAST CELL+  DUP ROT BRANCH ;

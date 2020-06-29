@@ -13,5 +13,13 @@
 
 \ Data structures
 
+: LITERAL,   159 , ; \ FIXME: BLITERAL
+: LITERAL   LITERAL, , ; IMMEDIATE COMPILING
+\ FIXME: BOFFSET
+: RELATIVE-LITERAL   ALIGN HERE SWAP OFFSET  2 OR , ; IMMEDIATE COMPILING
+
 : >BODY   2 CELLS + ;
-: (DOES>)   LAST CELL+  DUP ROT CALL ;
+\ >DOES>, given the xt of a defining word, returns the address of the DOES>
+\ code.
+: >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
+: (DOES>)   >DOES>  LAST CELL+  DUP ROT CALL ;

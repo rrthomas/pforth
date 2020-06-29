@@ -10,9 +10,6 @@
 \ to their use of POSTPONE
 
 \ Compiler
-: LITERAL,   159 , ; \ FIXME: BLITERAL
-: LITERAL   LITERAL, , ; IMMEDIATE COMPILING
-
 : BRANCH   ( at from to -- )   HERE >R
    ROT DP !  ,  151 , ( FIXME: BBRANCH )  DROP  R> DP ! ;
 
