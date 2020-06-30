@@ -112,9 +112,6 @@ ALSO META  FOREIGN  PREVIOUS
 
 \ ADDRESS- variants are not to be compiled, so no compilation method needed
 : ADDRESS-TO   ' >BODY  DUP ADD-RELOCATION  ! ;
-: HEADER   ( c-addr -- )
-   HEADER
-   LAST >LINK  DUP @ IF  ADD-RELOCATION  ELSE DROP  THEN ;
 INCLUDE" code.fs"
 INCLUDE" util.fs"
 INCLUDE" control2.fs"
@@ -193,7 +190,7 @@ INCLUDE" initialize.fs"
 ' NEW-FORTH >BODY @ @  ' FORTH >BODY @  ADDRESS!   \ patch root wordlist
 ' FORTH >BODY @ CELL+  ' CHAIN >BODY  ADDRESS!   \ patch CHAIN
 ' FORTH >BODY DUP @  SWAP ADDRESS!   \ relocate FORTH
-' FORTH >NAME 4 -  0 OVER !  4 -  0 SWAP !   \ patch FORTH wordlist
+' FORTH >NAME 4 -  0 OVER !  4 -  0 SWAP !   \ terminate new FORTH wordlist
 ' VALUE >DOES>  ALSO META  RESOLVES VALUE  PREVIOUS \ resolve run-times
 ' DEFER >DOES>  ALSO META  RESOLVES DEFER  PREVIOUS
 ' VOCABULARY >DOES>  ALSO META  RESOLVES VOCABULARY  PREVIOUS

@@ -220,6 +220,8 @@ VARIABLE ROOTDP
 : CALIGN   HERE  DUP ALIGNED  >-< 0 ?DO  DUP C,  LOOP  DROP ;
 
 : ADDRESS!   ! ;
+: RELATIVE-LINK,   DUP IF  HERE -  THEN , ;
+: RELATIVE-LINK@   DUP @  ?DUP IF  +  ELSE DROP 0  THEN ;
 
 VARIABLE STATE
 : [   0 STATE ! ; IMMEDIATE COMPILING
@@ -674,7 +676,7 @@ DEFER VISIBLE?   \ word visibility test
 \ if the word is deemed visible by the test.
 : VET-WORDLIST   ( c-addr u wid -- 0 | xt 1 | xt -1 )
    DUP >R                            \ save wid
-   BEGIN  @  ?DUP WHILE              \ for all words in list
+   @ BEGIN  ?DUP WHILE               \ for all words in list
       DUP >NAME                      \ get name field address
       2OVER ROT COUNT                \ COUNT the strings
       COMPARE 0= IF                  \ if the name matches
@@ -691,7 +693,7 @@ DEFER VISIBLE?   \ word visibility test
             THEN
          THEN
       THEN
-      >LINK                          \ leave next link field
+      >LINK RELATIVE-LINK@           \ leave next xt
    REPEAT
    2DROP  R> DROP                    \ get rid of c-addr, u and wid,
    0 ;                               \ and set flag to 0
@@ -723,7 +725,7 @@ IMMEDIATE COMPILING
 ( A header has the following structure:
 
   Name field                         counted string, up to 8 cells
-  Link field                         1 cell, link to LAST
+  Link field                         1 cell, relative link to LAST
   Compilation method                 1 cell
   Info field                         1 cell: bit 31 is IMMEDIATE flag,
                                      bit 30 is COMPILING flag,
@@ -747,7 +749,7 @@ IMMEDIATE COMPILING
    DUP ALLOT                         \ reserve space for name field
    CMOVE                             \ write name in name field
    BL CALIGN                         \ pad with spaces to next cell boundary
-   LAST ,                            \ store link to last word
+   LAST RELATIVE-LINK,               \ store link to last word
    0 ,                               \ store null compilation method
    R> 24 LSHIFT  ,                   \ save length of name field
    HERE GET-CURRENT ! ;              \ update CURRENT word list
@@ -1025,8 +1027,8 @@ VOCABULARY FORTH
    >COMPILE DP !
    CHAIN DUP  BEGIN  @  DUP HERE < UNTIL  OVER !
    BEGIN  @ ?DUP WHILE
-      DUP CELL-  DUP
-      BEGIN  @  DUP HERE < INVERT WHILE  >LINK  REPEAT
+      DUP CELL-  DUP @
+      BEGIN  DUP HERE < INVERT WHILE  >LINK RELATIVE-LINK@  REPEAT
       SWAP !
    REPEAT ;
 : FORGET   ( name )   ' (FORGET) ;
@@ -1056,7 +1058,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 3 CONSTANT GAP
 : WORDLIST-WORDS   ( wid -- )
    NEWLINE                           \ start listing on a new line
-   BEGIN  @ ?DUP WHILE               \ for each word in the chain
+   @ BEGIN  ?DUP WHILE               \ for each word in the chain
       DUP >NAME COUNT                \ get the name
       DUP WRAP? IF  NEWLINE  THEN    \ new line if necessary
       DUP ADVANCE                    \ advance the cursor
@@ -1066,7 +1068,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
       ELSE
          GAP  DUP SPACES  ADVANCE
       THEN
-      >LINK                          \ get link to next word
+      >LINK RELATIVE-LINK@           \ get next xt
    REPEAT
    CURSORX @ IF  NEWLINE  THEN ;     \ ensure we're on a new line
 : WORDS   CONTEXT @  WORDLIST-WORDS ;
