@@ -8,8 +8,6 @@
 
 \ Compiler
 
-: R>ADDRESS ; IMMEDIATE COMPILING
-
 : DO,   $55 C, ;
 : LOOP,   $56 ADR, ;
 : +LOOP,   $58 ADR, ;
