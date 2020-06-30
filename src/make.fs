@@ -69,10 +69,6 @@ STUB (S")
 
 \ Machinery for compiling forward references to defining words' DOES> code
 
-\ >DOES>, given the xt of a defining word, returns the address of the DOES>
-\ code.
-: >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
-
 : ADD-RESOLVE   DUP @  LAST CELL+  TUCK  !  SWAP ! ;
 : (DOES>)   >DOES> ADD-RESOLVE ;
 : DOES-LINK,   0 , ;
