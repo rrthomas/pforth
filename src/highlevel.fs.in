@@ -235,7 +235,7 @@ CREATE CONTEXT  8 CELLS ALLOT \ FIXME: constant
 VARIABLE CURRENT
 : GET-CURRENT   CURRENT @ ;
 : SET-CURRENT   CURRENT ! ;
-: LAST   GET-CURRENT  @ ;
+: LAST   GET-CURRENT  RELATIVE-LINK@ ;
 
 : >LINK   3 CELLS - ;
 : >COMPILE   2 CELLS - ;
@@ -559,9 +559,9 @@ DEFER SCAN-TEST
 : .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
 
 \ Set default PROGRAM-NAME in case for some reason there is no ARG 0
-HERE  S" @PACKAGE@" ",  0 VALUE "PROGRAM-NAME  ADDRESS-TO "PROGRAM-NAME
+HERE  S" @PACKAGE@" ",  VARIABLE "PROGRAM-NAME  ' "PROGRAM-NAME >BODY RELATIVE-LINK!
 
-: ERROR-PREFIX   "PROGRAM-NAME COUNT TYPE  S" : " TYPE ;
+: ERROR-PREFIX   "PROGRAM-NAME RELATIVE-LINK@ COUNT TYPE  S" : " TYPE ;
 
 
 INCLUDE" compiler2.fs"
@@ -679,7 +679,7 @@ DEFER VISIBLE?   \ word visibility test
 \ if the word is deemed visible by the test.
 : VET-WORDLIST   ( c-addr u wid -- 0 | xt 1 | xt -1 )
    DUP >R                            \ save wid
-   @ BEGIN  ?DUP WHILE               \ for all words in list
+   RELATIVE-LINK@ BEGIN  ?DUP WHILE               \ for all words in list
       DUP >NAME                      \ get name field address
       2OVER ROT COUNT                \ COUNT the strings
       COMPARE 0= IF                  \ if the name matches
@@ -755,7 +755,7 @@ IMMEDIATE COMPILING
    LAST RELATIVE-LINK,               \ store link to last word
    0 ,                               \ store null compilation method
    R> 24 LSHIFT  ,                   \ save length of name field
-   HERE GET-CURRENT ! ;              \ update CURRENT word list
+   HERE GET-CURRENT RELATIVE-LINK! ;              \ update CURRENT word list
 
 
 \ Exceptions #2
@@ -793,10 +793,10 @@ VARIABLE HANDLER  0 ' HANDLER >BODY !
    ELSE
       FOREIGN? INVERT                \ to execute, word must be native
    THEN ;
-0 VALUE 'SELECTOR  ' LOCAL? ADDRESS-TO 'SELECTOR
+VARIABLE 'SELECTOR  ' LOCAL?  ' 'SELECTOR >BODY RELATIVE-LINK!
 : INTERPRET
    BEGIN  BL WORD  DUP C@ WHILE      \ while text in input stream
-      'SELECTOR SELECT               \ search for word
+      'SELECTOR RELATIVE-LINK@ SELECT \ search for word
       DUP IF                         \ if word found in dictionary
          STATE @ 0= IF               \ if interpreting, execute it
             DROP                     \ drop found flag
@@ -1008,14 +1008,14 @@ INCLUDE" defining.fs"
 VARIABLE CHAIN  0 ' CHAIN >BODY !
 ( A wordlist has the following structure:
 
-  Head of list         most recently defined word
-  Link field           next wordlist in CHAIN
+  Head of list         relative link to most recently defined word
+  Link field           relative link to next wordlist in CHAIN
   Info field           bit 10 is FOREIGN flag
 )
-: WORDLIST   ALIGN HERE  0 ,  HERE  CHAIN  DUP @ ,  !  0 , ;
+: WORDLIST   ALIGN HERE  0 ,  HERE  CHAIN  DUP RELATIVE-LINK@ RELATIVE-LINK,  RELATIVE-LINK!  0 , ;
 INCLUDE" vocabulary.fs"
 VOCABULARY FORTH
-0 VALUE FORTH-WORDLIST  ' FORTH >BODY @ ADDRESS-TO FORTH-WORDLIST
+: FORTH-WORDLIST   ['] FORTH >BODY RELATIVE-LINK@ ;
 : ALSO   CONTEXT  DUP CELL+  #ORDER @ CELLS  MOVE  1 #ORDER +! ;
 : ONLY   FORTH  1 #ORDER ! ;
 : FOREIGN   CONTEXT @  2 CELLS +  DUP @ 1024 OR  SWAP ! ;
@@ -1032,7 +1032,7 @@ VOCABULARY FORTH
    BEGIN  @ ?DUP WHILE
       DUP CELL-  DUP @
       BEGIN  DUP HERE < INVERT WHILE  >LINK RELATIVE-LINK@  REPEAT
-      SWAP !
+      SWAP RELATIVE-LINK!
    REPEAT ;
 : FORGET   ( name )   ' (FORGET) ;
 : MARKER   ( name )
@@ -1061,7 +1061,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 3 CONSTANT GAP
 : WORDLIST-WORDS   ( wid -- )
    NEWLINE                           \ start listing on a new line
-   @ BEGIN  ?DUP WHILE               \ for each word in the chain
+   RELATIVE-LINK@ BEGIN  ?DUP WHILE               \ for each word in the chain
       DUP >NAME COUNT                \ get the name
       DUP WRAP? IF  NEWLINE  THEN    \ new line if necessary
       DUP ADVANCE                    \ advance the cursor
@@ -1212,7 +1212,8 @@ FALSE VALUE INTERACT?
 
 INCLUDE" parse-command-line.fs"
 
-: START   ( a-addr -- )
+: START   ( limit here -- )
+   ROOTDP !                          \ initialize dictionary pointer
    DUP TO LIMIT                      \ set LIMIT
    [ ' (THROW) ] RELATIVE-LITERAL 'THROW!
                                      \ set 'THROW
