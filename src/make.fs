@@ -43,9 +43,6 @@ VALUE RELOCATIONS  VALUE #RELOCATIONS
    0 (ADD-RELOCATION) ;
 : ADDRESS!   DUP ADD-RELOCATION  ! ;
 
-: <'FORTH   'FORTH -  TARGET-'FORTH + ;
-: >'FORTH   'FORTH +  TARGET-'FORTH - ;
-
 
 \ STUB FOO creates an empty word.
 \ This is used to POSTPONE target words that may not exist on the host.
