@@ -220,8 +220,10 @@ VARIABLE ROOTDP
 : CALIGN   HERE  DUP ALIGNED  >-< 0 ?DO  DUP C,  LOOP  DROP ;
 
 : ADDRESS!   ! ;
-: RELATIVE-LINK,   DUP IF  HERE -  THEN , ;
+: >RELATIVE-LINK   ( from to -- offset )   DUP IF  >-<  ELSE NIP  THEN ;
+: RELATIVE-LINK,   HERE SWAP >RELATIVE-LINK , ;
 : RELATIVE-LINK@   DUP @  ?DUP IF  +  ELSE DROP 0  THEN ;
+: RELATIVE-LINK!   ( to 'link -- )   DUP  ROT >RELATIVE-LINK  SWAP ! ;
 
 VARIABLE STATE
 : [   0 STATE ! ; IMMEDIATE COMPILING
@@ -240,7 +242,8 @@ VARIABLE CURRENT
 : >INFO   CELL- ;
 : >NAME   DUP >INFO 3 + C@  31 AND 1+ CHARS ALIGNED  SWAP >LINK  >-< ;
 
-: IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP !  LAST DUP >COMPILE ! ;
+: IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP !
+   LAST DUP >COMPILE RELATIVE-LINK! ;
 : COMPILING   LAST >INFO  DUP @  $40000000 OR  SWAP ! ;
 : SMUDGE!   ( f a-addr -- )   >INFO  TUCK @  $20000000 DUP INVERT  ROT AND
    -ROT AND  OR  SWAP ! ;
@@ -718,7 +721,7 @@ DEFER VISIBLE?   \ word visibility test
 
 DEFER CURRENT-LITERAL  ' LITERAL IS CURRENT-LITERAL
 DEFER CURRENT-RELATIVE-LITERAL  ' RELATIVE-LITERAL IS CURRENT-RELATIVE-LITERAL
-: POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE @
+: POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE RELATIVE-LINK@
    CURRENT-COMPILE,  ELSE  CURRENT-LITERAL  ['] (POSTPONE) CURRENT-COMPILE,  THEN ;
 IMMEDIATE COMPILING
 
@@ -726,7 +729,7 @@ IMMEDIATE COMPILING
 
   Name field                         counted string, up to 8 cells
   Link field                         1 cell, relative link to LAST
-  Compilation method                 1 cell
+  Compilation method                 1 cell, relative pointer
   Info field                         1 cell: bit 31 is IMMEDIATE flag,
                                      bit 30 is COMPILING flag,
                                      bit 29 is SMUDGE flag,
@@ -802,7 +805,7 @@ VARIABLE HANDLER  0 ' HANDLER >BODY !
             EXECUTE
          ELSE
             0> IF                    \ if immediate, execute compile method
-               >COMPILE @EXECUTE
+               >COMPILE RELATIVE-LINK@ EXECUTE
             ELSE
                CURRENT-COMPILE,      \ if non-immediate, compile it
             THEN
