@@ -63,7 +63,7 @@ STUB (S")
 
 
 VOCABULARY META  ALSO META DEFINITIONS
-FOREIGN  ' NON-META?  ' 'SELECTOR >BODY RELATIVE-LINK! \ build meta-compiler using native compiler
+FOREIGN  ' NON-META?  ' 'SELECTOR >BODY REL! \ build meta-compiler using native compiler
 DECIMAL
 
 \ Check stack is balanced
@@ -87,7 +87,7 @@ INCLUDE" compiler1.fs"
 \ compilation of the rest of META, which is FOREIGN while it is being built.
 ALSO FORTH DEFINITIONS
 
-: POSTPONE   BL WORD FIND ?DUP 0= IF UNDEFINED THEN 0> IF >COMPILE RELATIVE-LINK@
+: POSTPONE   BL WORD FIND ?DUP 0= IF UNDEFINED THEN 0> IF >COMPILE REL@
    CURRENT-COMPILE, ELSE [ ' CURRENT-RELATIVE-LITERAL CURRENT-COMPILE, ] C" (POSTPONE)" ?FIND CURRENT-COMPILE, THEN ;
 IMMEDIATE COMPILING
 
@@ -132,7 +132,7 @@ INCLUDE" resolver-branch.fs"
 DICTIONARY-SIZE CONSTANT SIZE
 INCLUDE" call-cells.fs" CONSTANT #TARGET-CALL-CELLS
 
-NATIVE  ' LOCAL?  ' 'SELECTOR >BODY RELATIVE-LINK! \ now meta-compiler is built, allow it to run
+NATIVE  ' LOCAL?  ' 'SELECTOR >BODY REL! \ now meta-compiler is built, allow it to run
 
 ALSO FORTH   \ use FORTH's VOCABULARY
 VOCABULARY NEW-FORTH   \ define the new root vocabulary
@@ -142,9 +142,9 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 ' CURRENT-COMPILE, >BODY @   \ save compiler
 ' CURRENT-LITERAL >BODY @
 ' CURRENT-RELATIVE-LITERAL >BODY @
-' COMPILE, ' CURRENT-COMPILE, >BODY RELATIVE-LINK!   \ use target compiler
-' LITERAL ' CURRENT-LITERAL >BODY RELATIVE-LINK!
-' RELATIVE-LITERAL ' CURRENT-RELATIVE-LITERAL >BODY RELATIVE-LINK!
+' COMPILE, ' CURRENT-COMPILE, >BODY REL!   \ use target compiler
+' LITERAL ' CURRENT-LITERAL >BODY REL!
+' RELATIVE-LITERAL ' CURRENT-RELATIVE-LITERAL >BODY REL!
 'FORTH   \ save value of 'FORTH
 ' CROSS >BODY @  INCLUDE" init-space.fs" CELLS -  TO 'FORTH
    \ make 'FORTH point to the start of it minus the initial branch
@@ -160,15 +160,15 @@ INCLUDE" system-params.fs"
 INCLUDE" highlevel.fs"
 INCLUDE" initialize.fs"
 
-' NEW-FORTH >BODY RELATIVE-LINK@ RELATIVE-LINK@  ' FORTH >BODY RELATIVE-LINK@  RELATIVE-LINK!   \ patch root wordlist
-' FORTH >BODY RELATIVE-LINK@ CELL+  ' CHAIN >BODY  RELATIVE-LINK!   \ patch CHAIN
+' NEW-FORTH >BODY REL@ REL@  ' FORTH >BODY REL@  REL!   \ patch root wordlist
+' FORTH >BODY REL@ CELL+  ' CHAIN >BODY  REL!   \ patch CHAIN
 ' FORTH >NAME CELL-  0 OVER !  CELL-  0 SWAP !   \ zero FORTH wordlist's info and link fields
 ' VALUE >DOES>  ALSO META  RESOLVES VALUE  PREVIOUS \ resolve run-times
 ' DEFER >DOES>  ALSO META  RESOLVES DEFER  PREVIOUS
 ' VOCABULARY >DOES>  ALSO META  RESOLVES VOCABULARY  PREVIOUS
-' ABORT ' SCAN-TEST >BODY RELATIVE-LINK!
-' ABORT ' VISIBLE? >BODY RELATIVE-LINK!
-' NEW-FORTH >BODY RELATIVE-LINK@ RELATIVE-LINK@  PREVIOUS   \ leave initial branch target on the stack
+' ABORT ' SCAN-TEST >BODY REL!
+' ABORT ' VISIBLE? >BODY REL!
+' NEW-FORTH >BODY REL@ REL@  PREVIOUS   \ leave initial branch target on the stack
 
 ALIGN HERE 'FORTH -   \ ( length ) of binary image
 ROOT HERE OVER ALLOT   \ make space for binary image ( length start )

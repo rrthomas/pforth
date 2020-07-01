@@ -220,10 +220,10 @@ VARIABLE ROOTDP
 : CALIGN   HERE  DUP ALIGNED  >-< 0 ?DO  DUP C,  LOOP  DROP ;
 
 : ADDRESS!   ! ;
-: >RELATIVE-LINK   ( from to -- offset )   DUP IF  >-<  ELSE NIP  THEN ;
-: RELATIVE-LINK,   HERE SWAP >RELATIVE-LINK , ;
-: RELATIVE-LINK@   DUP @  ?DUP IF  +  ELSE DROP 0  THEN ;
-: RELATIVE-LINK!   ( to 'link -- )   DUP  ROT >RELATIVE-LINK  SWAP ! ;
+: >REL   ( from to -- offset )   DUP IF  >-<  ELSE NIP  THEN ;
+: REL,   HERE SWAP >REL , ;
+: REL@   DUP @  ?DUP IF  +  ELSE DROP 0  THEN ;
+: REL!   ( to 'link -- )   DUP  ROT >REL  SWAP ! ;
 
 VARIABLE STATE
 : [   0 STATE ! ; IMMEDIATE COMPILING
@@ -235,7 +235,7 @@ CREATE CONTEXT  8 CELLS ALLOT \ FIXME: constant
 VARIABLE CURRENT
 : GET-CURRENT   CURRENT @ ;
 : SET-CURRENT   CURRENT ! ;
-: LAST   GET-CURRENT  RELATIVE-LINK@ ;
+: LAST   GET-CURRENT  REL@ ;
 
 : >LINK   3 CELLS - ;
 : >COMPILE   2 CELLS - ;
@@ -243,7 +243,7 @@ VARIABLE CURRENT
 : >NAME   DUP >INFO 3 + C@  31 AND 1+ CHARS ALIGNED  SWAP >LINK  >-< ;
 
 : IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP !
-   LAST DUP >COMPILE RELATIVE-LINK! ;
+   LAST DUP >COMPILE REL! ;
 : COMPILING   LAST >INFO  DUP @  $40000000 OR  SWAP ! ;
 : SMUDGE!   ( f a-addr -- )   >INFO  TUCK @  $20000000 DUP INVERT  ROT AND
    -ROT AND  OR  SWAP ! ;
@@ -559,9 +559,9 @@ DEFER SCAN-TEST
 : .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
 
 \ Set default PROGRAM-NAME in case for some reason there is no ARG 0
-HERE  S" @PACKAGE@" ",  VARIABLE "PROGRAM-NAME  ' "PROGRAM-NAME >BODY RELATIVE-LINK!
+HERE  S" @PACKAGE@" ",  VARIABLE "PROGRAM-NAME  ' "PROGRAM-NAME >BODY REL!
 
-: ERROR-PREFIX   "PROGRAM-NAME RELATIVE-LINK@ COUNT TYPE  S" : " TYPE ;
+: ERROR-PREFIX   "PROGRAM-NAME REL@ COUNT TYPE  S" : " TYPE ;
 
 
 INCLUDE" compiler2.fs"
@@ -679,7 +679,7 @@ DEFER VISIBLE?   \ word visibility test
 \ if the word is deemed visible by the test.
 : VET-WORDLIST   ( c-addr u wid -- 0 | xt 1 | xt -1 )
    DUP >R                            \ save wid
-   RELATIVE-LINK@ BEGIN  ?DUP WHILE               \ for all words in list
+   REL@ BEGIN  ?DUP WHILE               \ for all words in list
       DUP >NAME                      \ get name field address
       2OVER ROT COUNT                \ COUNT the strings
       COMPARE 0= IF                  \ if the name matches
@@ -696,7 +696,7 @@ DEFER VISIBLE?   \ word visibility test
             THEN
          THEN
       THEN
-      >LINK RELATIVE-LINK@           \ leave next xt
+      >LINK REL@           \ leave next xt
    REPEAT
    2DROP  R> DROP                    \ get rid of c-addr, u and wid,
    0 ;                               \ and set flag to 0
@@ -721,7 +721,7 @@ DEFER VISIBLE?   \ word visibility test
 
 DEFER CURRENT-LITERAL  ' LITERAL IS CURRENT-LITERAL
 DEFER CURRENT-RELATIVE-LITERAL  ' RELATIVE-LITERAL IS CURRENT-RELATIVE-LITERAL
-: POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE RELATIVE-LINK@
+: POSTPONE   BL WORD FIND  ?DUP 0= IF  UNDEFINED  THEN  0> IF  >COMPILE REL@
    CURRENT-COMPILE,  ELSE  CURRENT-LITERAL  ['] (POSTPONE) CURRENT-COMPILE,  THEN ;
 IMMEDIATE COMPILING
 
@@ -752,10 +752,10 @@ IMMEDIATE COMPILING
    DUP ALLOT                         \ reserve space for name field
    CMOVE                             \ write name in name field
    BL CALIGN                         \ pad with spaces to next cell boundary
-   LAST RELATIVE-LINK,               \ store link to last word
+   LAST REL,                         \ store link to last word
    0 ,                               \ store null compilation method
    R> 24 LSHIFT  ,                   \ save length of name field
-   HERE GET-CURRENT RELATIVE-LINK! ;              \ update CURRENT word list
+   HERE GET-CURRENT REL! ;           \ update CURRENT word list
 
 
 \ Exceptions #2
@@ -793,10 +793,10 @@ VARIABLE HANDLER  0 ' HANDLER >BODY !
    ELSE
       FOREIGN? INVERT                \ to execute, word must be native
    THEN ;
-VARIABLE 'SELECTOR  ' LOCAL?  ' 'SELECTOR >BODY RELATIVE-LINK!
+VARIABLE 'SELECTOR  ' LOCAL?  ' 'SELECTOR >BODY REL!
 : INTERPRET
    BEGIN  BL WORD  DUP C@ WHILE      \ while text in input stream
-      'SELECTOR RELATIVE-LINK@ SELECT \ search for word
+      'SELECTOR REL@ SELECT          \ search for word
       DUP IF                         \ if word found in dictionary
          STATE @ 0= IF               \ if interpreting, execute it
             DROP                     \ drop found flag
@@ -805,7 +805,7 @@ VARIABLE 'SELECTOR  ' LOCAL?  ' 'SELECTOR >BODY RELATIVE-LINK!
             EXECUTE
          ELSE
             0> IF                    \ if immediate, execute compile method
-               >COMPILE RELATIVE-LINK@ EXECUTE
+               >COMPILE REL@ EXECUTE
             ELSE
                CURRENT-COMPILE,      \ if non-immediate, compile it
             THEN
@@ -1012,10 +1012,10 @@ VARIABLE CHAIN  0 ' CHAIN >BODY !
   Link field           relative link to next wordlist in CHAIN
   Info field           bit 10 is FOREIGN flag
 )
-: WORDLIST   ALIGN HERE  0 ,  HERE  CHAIN  DUP RELATIVE-LINK@ RELATIVE-LINK,  RELATIVE-LINK!  0 , ;
+: WORDLIST   ALIGN HERE  0 ,  HERE  CHAIN  DUP REL@ REL,  REL!  0 , ;
 INCLUDE" vocabulary.fs"
 VOCABULARY FORTH
-: FORTH-WORDLIST   ['] FORTH >BODY RELATIVE-LINK@ ;
+: FORTH-WORDLIST   ['] FORTH >BODY REL@ ;
 : ALSO   CONTEXT  DUP CELL+  #ORDER @ CELLS  MOVE  1 #ORDER +! ;
 : ONLY   FORTH  1 #ORDER ! ;
 : FOREIGN   CONTEXT @  2 CELLS +  DUP @ 1024 OR  SWAP ! ;
@@ -1031,8 +1031,8 @@ VOCABULARY FORTH
    CHAIN DUP  BEGIN  @  DUP HERE < UNTIL  OVER !
    BEGIN  @ ?DUP WHILE
       DUP CELL-  DUP @
-      BEGIN  DUP HERE < INVERT WHILE  >LINK RELATIVE-LINK@  REPEAT
-      SWAP RELATIVE-LINK!
+      BEGIN  DUP HERE < INVERT WHILE  >LINK REL@  REPEAT
+      SWAP REL!
    REPEAT ;
 : FORGET   ( name )   ' (FORGET) ;
 : MARKER   ( name )
@@ -1061,7 +1061,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 3 CONSTANT GAP
 : WORDLIST-WORDS   ( wid -- )
    NEWLINE                           \ start listing on a new line
-   RELATIVE-LINK@ BEGIN  ?DUP WHILE               \ for each word in the chain
+   REL@ BEGIN  ?DUP WHILE               \ for each word in the chain
       DUP >NAME COUNT                \ get the name
       DUP WRAP? IF  NEWLINE  THEN    \ new line if necessary
       DUP ADVANCE                    \ advance the cursor
@@ -1071,7 +1071,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
       ELSE
          GAP  DUP SPACES  ADVANCE
       THEN
-      >LINK RELATIVE-LINK@           \ get next xt
+      >LINK REL@           \ get next xt
    REPEAT
    CURSORX @ IF  NEWLINE  THEN ;     \ ensure we're on a new line
 : WORDS   CONTEXT @  WORDLIST-WORDS ;
