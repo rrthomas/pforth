@@ -28,7 +28,6 @@ INCLUDE" save.fs"
 \ Meta-compiler utilities
 
 ALSO ASSEMBLER
-'FORTH VALUE TARGET-'FORTH   \ While building meta-compiler, don't relocate
 64 1024 * CONSTANT DICTIONARY-SIZE
 
 
@@ -149,10 +148,8 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 'FORTH   \ save value of 'FORTH
 ' CROSS >BODY @  INCLUDE" init-space.fs" CELLS -  TO 'FORTH
    \ make 'FORTH point to the start of it minus the initial branch
-INCLUDE" target-forth.fs" TO TARGET-'FORTH \ Set value for relocation
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
-TARGET-'FORTH   \ 'FORTH of new system
 INCLUDE" primitives.fs"
 INCLUDE" inner-interpreter.fs"
 INCLUDE" system-params.fs"

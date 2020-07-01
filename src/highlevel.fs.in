@@ -18,7 +18,7 @@ CR .( @PACKAGE_NAME@ high level words )
 
 \ System variables
 
-VALUE 'FORTH   \ value is put on stack by make.fs
+0 VALUE 'FORTH   \ set in per-platform INITIALIZE
 0 VALUE LIMIT
 
 
