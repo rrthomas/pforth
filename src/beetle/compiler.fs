@@ -17,7 +17,7 @@
 \ FIXME: FIT, should abort on failure
 : FIT,   ( x -- )   HERE DUP ALIGNED >-<  0 ?DO  DUP C,  8 RSHIFT  LOOP
    DROP ;
-: FIT!   ( x a-addr -- )   HERE  SWAP DP !  1 ALLOT  SWAP FIT,  DP ! ;
+: FIT!   ( x addr -- )   HERE  SWAP DP !  1 ALLOT  SWAP FIT,  DP ! ;
 : NOPALIGN   0 FIT, ;
 
 
