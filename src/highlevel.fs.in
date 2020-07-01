@@ -1158,8 +1158,6 @@ VARIABLE ARGC
 
 \ Initialisation and version number
 
-INCLUDE" relocate.fs"
-
 : VERSION   S" @VERSION@" ;
 INCLUDE" platform.fs"
 

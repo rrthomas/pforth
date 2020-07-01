@@ -21,7 +21,6 @@ CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
 
 
 INCLUDE" target-util.fs"
-INCLUDE" relocate.fs"   \ Need target's version of RELOCATE for call below
 INCLUDE" assembler.fs"
 INCLUDE" save.fs"
 
@@ -31,17 +30,6 @@ INCLUDE" save.fs"
 ALSO ASSEMBLER
 'FORTH VALUE TARGET-'FORTH   \ While building meta-compiler, don't relocate
 64 1024 * CONSTANT DICTIONARY-SIZE
-CREATE RELOCATION-TABLE  HERE 0 ,  HERE 0 ,  HERE DICTIONARY-SIZE CELL/ ALLOT
-VALUE RELOCATIONS  VALUE #RELOCATIONS
-: (ADD-RELOCATION)   ( a-addr type -- )
-   OVER CELL 1- AND ABORT" Relocation address must be aligned!"
-   OVER RELOCATION-TABLE < ABORT" Invalid relocation!"
-   DUP CELL < INVERT ABORT" Relocation type must be < CELL!"
-   OR  #RELOCATIONS @ CELLS RELOCATIONS + !
-   1 #RELOCATIONS +! ;
-: ADD-RELOCATION   ( a-addr -- )
-   0 (ADD-RELOCATION) ;
-: ADDRESS!   DUP ADD-RELOCATION  ! ;
 
 
 \ STUB FOO creates an empty word.
@@ -161,9 +149,6 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 'FORTH   \ save value of 'FORTH
 ' CROSS >BODY @  INCLUDE" init-space.fs" CELLS -  TO 'FORTH
    \ make 'FORTH point to the start of it minus the initial branch
-'FORTH 5 ROLL !   \ store 'FORTH in RELOCATION-TABLE
-0 #RELOCATIONS !   \ FIXME: incorrect relocations will have been added by
-\ {,RELATIVE-}POSTPONE compiling the meta-compiler
 INCLUDE" target-forth.fs" TO TARGET-'FORTH \ Set value for relocation
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
@@ -188,19 +173,12 @@ INCLUDE" initialize.fs"
 ' ABORT ' VISIBLE? >BODY RELATIVE-LINK!
 ' NEW-FORTH >BODY RELATIVE-LINK@ RELATIVE-LINK@  PREVIOUS   \ leave initial branch target on the stack
 
-\ Normalize relocations relative to TARGET-'FORTH, to make the built image
-\ reproducible.
-'FORTH TARGET-'FORTH RELOCATION-TABLE RELOCATE
-
 ALIGN HERE 'FORTH -   \ ( length ) of binary image
 ROOT HERE OVER ALLOT   \ make space for binary image ( length start )
 TUCK   \ ( start length start )
 'FORTH  INCLUDE" init-space.fs" CELLS   \ ( s l s 'FORTH nCELLS )
 TUCK + -ROT +   \ ( s l 'FORTH+nCELLS s+nCELLS )
 2 PICK MOVE   \ copy dictionary ( s l )
-RELOCATION-TABLE #RELOCATIONS @ 2 + CELLS   \ ( s l 'relocation-table relocation-table-length )
-TUCK HERE  OVER ALLOT  SWAP MOVE   \ copy relocation table ( s l relocation-table-length )
-+   \ ( s l' )
 
 OVER INCLUDE" init-space.fs" CELLS ERASE   \ zero initial branch space
 OVER SWAP 2SWAP 'FORTH ROT  NATIVE-CALL   \ patch in initial branch
