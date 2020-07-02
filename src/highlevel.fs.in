@@ -679,7 +679,7 @@ DEFER VISIBLE?   \ word visibility test
 \ if the word is deemed visible by the test.
 : VET-WORDLIST   ( c-addr u wid -- 0 | xt 1 | xt -1 )
    DUP >R                            \ save wid
-   REL@ BEGIN  ?DUP WHILE               \ for all words in list
+   BEGIN  REL@ ?DUP WHILE            \ for all words in list
       DUP >NAME                      \ get name field address
       2OVER ROT COUNT                \ COUNT the strings
       COMPARE 0= IF                  \ if the name matches
@@ -696,7 +696,7 @@ DEFER VISIBLE?   \ word visibility test
             THEN
          THEN
       THEN
-      >LINK REL@           \ leave next xt
+      >LINK                          \ leave next link field
    REPEAT
    2DROP  R> DROP                    \ get rid of c-addr, u and wid,
    0 ;                               \ and set flag to 0
@@ -1061,7 +1061,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
 3 CONSTANT GAP
 : WORDLIST-WORDS   ( wid -- )
    NEWLINE                           \ start listing on a new line
-   REL@ BEGIN  ?DUP WHILE               \ for each word in the chain
+   BEGIN  REL@ ?DUP WHILE            \ for each word in the chain
       DUP >NAME COUNT                \ get the name
       DUP WRAP? IF  NEWLINE  THEN    \ new line if necessary
       DUP ADVANCE                    \ advance the cursor
@@ -1071,7 +1071,7 @@ VARIABLE CURSORX   \ cursor x position during WORDS
       ELSE
          GAP  DUP SPACES  ADVANCE
       THEN
-      >LINK REL@           \ get next xt
+      >LINK                          \ get link to next word
    REPEAT
    CURSORX @ IF  NEWLINE  THEN ;     \ ensure we're on a new line
 : WORDS   CONTEXT @  WORDLIST-WORDS ;
