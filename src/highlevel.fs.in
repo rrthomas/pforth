@@ -1162,7 +1162,7 @@ VARIABLE ARGC
 INCLUDE" platform.fs"
 
 : HELP
-   ." Usage: "  "PROGRAM-NAME COUNT TYPE  ."  [OPTION...] [FILENAME...]" CR
+   ." Usage: "  "PROGRAM-NAME REL@ COUNT TYPE  ."  [OPTION...] [FILENAME...]" CR
    CR
    ." Run @PACKAGE_NAME@." CR
    CR
@@ -1182,7 +1182,7 @@ INCLUDE" platform.fs"
 FALSE VALUE INTERACT?
 : DO-START-OPTIONS
    ARGC @ IF
-      HERE TO "PROGRAM-NAME          \ update "PROGRAM-NAME
+      HERE "PROGRAM-NAME REL!        \ update "PROGRAM-NAME
       NEXT-ARG ",                    \ save new name
    THEN
    ARGC @ IF
