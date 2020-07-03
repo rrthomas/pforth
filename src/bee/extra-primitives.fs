@@ -45,6 +45,15 @@ CODE -ROT
 END-CODE
 4 INLINE
 
+CODE 2SWAP
+   1 BPUSH BSWAP
+   0 BPUSH BSWAP
+   2 BPUSH BSWAP
+   0 BPUSH BSWAP
+   BRET
+END-CODE
+8 INLINE
+
 
 \ Arithmetic and logical primitives
 
