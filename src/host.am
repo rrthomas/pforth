@@ -14,11 +14,10 @@ BUILD_PFORTH = $(BUILD_EXECUTOR) $(BUILD_EXECUTOR_FLAGS) $(abs_top_srcdir)/src/$
 host_SRCS = $(portable_SRCS) \
 	accept.fs assembler.fs bracket-does.fs call-cells.fs code.fs		\
 	compiler1.fs compiler.fs compiler-postpone.fs extra-primitives.fs	\
-	fileio.fs init-space.fs initialize.fs inner-interpreter.fs		\
-	native-call.fs os-compiler.fs os.fs parse-command-line.fs		\
-	platform.fs primitive-bracket-does.fs primitives.fs			\
+	fileio.fs init-space.fs initialize.fs native-call.fs os-compiler.fs	\
+	os.fs parse-command-line.fs platform.fs primitives.fs			\
 	relocate-compiler.fs resolver-branch.fs save.fs strings2a.fs		\
-	strings2b.fs system-params.fs target-util.fs terminal.fs util.fs
+	strings2b.fs system-params.fs terminal.fs util.fs
 
 do_build = \
 	if test $(srcdir) != $(builddir); then \

@@ -20,7 +20,6 @@ INCLUDE" platform.fs"
 CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
 
 
-INCLUDE" target-util.fs"
 INCLUDE" assembler.fs"
 INCLUDE" save.fs"
 
@@ -151,7 +150,6 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
 INCLUDE" primitives.fs"
-INCLUDE" inner-interpreter.fs"
 INCLUDE" system-params.fs"
 [UNDEFINED] MINIMAL-PRIMITIVES [IF]
    INCLUDE" extra-primitives.fs"
