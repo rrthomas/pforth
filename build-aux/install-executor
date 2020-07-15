@@ -61,6 +61,6 @@ case $BUILD in
         git clone https://github.com/rrthomas/bee.git
         cd bee
         git checkout "${TRAVIS_BRANCH##bee-}"
-        ./bootstrap && ./configure --enable-silent-rules && make check && $SUDO make install
+        ./bootstrap && ./configure --enable-silent-rules CC="gcc -m32" && make check && $SUDO make install
         ;;
 esac
