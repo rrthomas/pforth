@@ -13,4 +13,4 @@
    MEMORY@ M0@ +
    [ HERE 0 ,  DUP ] \ value of HERE
    START ;
-ALIGN  HERE >-<  OP_OFFSET OR  SWAP ! \ FIXME: add !OFFSET
+ALIGN  HERE >-<  OP_PUSHRELI OR  SWAP ! \ FIXME: add !OFFSET
