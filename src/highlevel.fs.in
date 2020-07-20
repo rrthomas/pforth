@@ -762,7 +762,7 @@ IMMEDIATE COMPILING
 
 VARIABLE HANDLER  0 ' HANDLER >BODY !
 : CATCH
-   SP@ CELL- >R                      \ push data stack pointer
+   SP@ -CELL STACK-DIRECTION * +  >R \ push data stack pointer
    HANDLER @ >R                      \ push pointer to last frame
    SAVE-INPUT>R                      \ push current input source
    RP@ HANDLER !                     \ set pointer to current frame
@@ -973,7 +973,6 @@ INCLUDE" compiler4.fs"
       ['] INTERPRET CATCH ?DUP IF    \ close the file if an exception is
          SOURCE-ID CLOSE-FILE DROP   \ generated, then pass the exception on
          FREE-BUFFER DROP            \ having freed the buffer
-         NIP                         \ and dropped the input source address
          THROW
       THEN
       REFILL
