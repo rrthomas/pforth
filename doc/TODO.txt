@@ -1,4 +1,4 @@
-This file is (c) Reuben Thomas 1995-2020, and is in the public domain.
+This file, written by Reuben Thomas, is in the public domain.
 
 Support CELL = 8
 
