@@ -10,8 +10,6 @@
 
 \ Core compiler
 
-: NOPALIGN   ALIGN ;
-
 : CALL   ( at from to -- )   >-< SWAP ! ;
 
 : @BRANCH   ( from -- to )   DUP @ 2 ARSHIFT + $FFFFFFFC AND ;
