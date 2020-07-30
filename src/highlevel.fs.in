@@ -207,6 +207,8 @@ PROVIDE: MAX   2DUP < IF  SWAP  THEN  DROP ; [THEN]
 
 \ Compiler #1
 
+INCLUDE" compiler-defer.fs"
+
 0 VALUE DP
 : ALLOT   DP +! ;
 : HERE   DP @ ;
@@ -214,9 +216,11 @@ PROVIDE: MAX   2DUP < IF  SWAP  THEN  DROP ; [THEN]
 VARIABLE ROOTDP
 
 : ALIGNED   CELL+ 1-  -CELL AND ;
-: ALIGN   HERE ALIGNED  DP ! ;
-: ,   HERE  CELL ALLOT  ! ;
-: C,   HERE  +CHAR ALLOT  C! ;
+: ALIGN   .ALIGN  HERE ALIGNED  DP ! ;
+: RAW,   HERE  CELL ALLOT  ! ;
+: ,   DUP .INT  RAW, ;
+: RAW-C,   HERE  +CHAR ALLOT  C! ;
+: C,   DUP .BYTE  RAW-C, ;
 : CALIGN   HERE  DUP ALIGNED  >-< 0 ?DO  DUP C,  LOOP  DROP ;
 
 : ADDRESS!   ! ;
@@ -230,7 +234,7 @@ VARIABLE STATE
 : ]   1 STATE ! ;
 
 VARIABLE #ORDER
-CREATE CONTEXT  8 CELLS ALLOT \ FIXME: constant
+CREATE CONTEXT  0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , \ FIXME: 8 CELLS ALLOT \ FIXME: constant
 
 VARIABLE CURRENT
 : GET-CURRENT   CURRENT @ ;
@@ -242,8 +246,9 @@ VARIABLE CURRENT
 : >INFO   CELL- ;
 : >NAME   DUP >INFO 3 + C@  31 AND 1+ CHARS ALIGNED  SWAP >LINK  >-< ;
 
-: IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP !
-   LAST DUP >COMPILE REL! ;
+: SET-IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP ! ;
+: IMMEDIATE   SET-IMMEDIATE
+   LAST DUP >COMPILE  2DUP SWAP >REL LAST >NAME .COMPILE-METHOD  REL! ;
 : COMPILING   LAST >INFO  DUP @  $40000000 OR  SWAP ! ;
 : SMUDGE!   ( f a-addr -- )   >INFO  TUCK @  $20000000 DUP INVERT  ROT AND
    -ROT AND  OR  SWAP ! ;
@@ -265,7 +270,9 @@ INCLUDE" os-compiler.fs"   \ words necessary for the machine
 INCLUDE" compiler.fs"
 DEFER CURRENT-COMPILE,  ' COMPILE, IS CURRENT-COMPILE,
 INCLUDE" call-cells.fs" CONSTANT #CALL-CELLS
+: (RAW-POSTPONE)   CURRENT-COMPILE, ;
 : (POSTPONE)   CURRENT-COMPILE, ;
+VARIABLE CREATED   \ Indicate whether last word was CREATEd
 INCLUDE" compiler1.fs"
 INCLUDE" compiler-postpone.fs"
 INCLUDE" defer-fetch-store.fs"
@@ -278,7 +285,7 @@ INCLUDE" defer-fetch-store.fs"
    MOVE  0 R> C! ;
 \ FIXME: caller should allocate buffer!
 : SCRATCH-C0END   ( c-addr1 u1 -- HERE )   SCRATCH 256 C0END  SCRATCH ;
-: ",   ( c-addr u -- )   DUP C,  HERE SWAP  DUP ALLOT  CMOVE ;
+: ",   ( c-addr u -- )   DUP C,  2DUP .STRING   HERE SWAP  DUP ALLOT  CMOVE ;
 
 INCLUDE" strings2a.fs"
 
@@ -528,6 +535,7 @@ VARIABLE 'RETURN
    'RETURN @ >R ;                    \ restore return address
 
 DEFER SCAN-TEST
+LAST >NAME ' .DEFER-ABORT TO-ASMOUT
 : SCAN   ( char xt -- c-addr u )
    IS SCAN-TEST
    SOURCE CHARS                      \ get input source
@@ -559,7 +567,7 @@ DEFER SCAN-TEST
 : .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
 
 \ Set default PROGRAM-NAME in case for some reason there is no ARG 0
-HERE  S" @PACKAGE@" ",  VARIABLE "PROGRAM-NAME  ' "PROGRAM-NAME >BODY REL!
+HERE  S" @PACKAGE@" ",  CREATE "PROGRAM-NAME  REL,
 
 : ERROR-PREFIX   "PROGRAM-NAME REL@ COUNT TYPE  S" : " TYPE ;
 
@@ -672,6 +680,7 @@ VARIABLE HELD
    I @  -CELL +LOOP  R>  THEN ;
 
 DEFER VISIBLE?   \ word visibility test
+LAST >NAME ' .DEFER-ABORT TO-ASMOUT
 : ALL-VISIBLE   ( wid xt n -- true )   2DROP DROP  TRUE ;
 \ VISIBLE? must be set before VET-WORDLIST is called, with a word whose
 \ stack effect is ( wid xt n -- f ), where wid is the word list and xt the
@@ -738,23 +747,40 @@ IMMEDIATE COMPILING
                                      bytes 0 & 1 are offset to DOES> code for a
                                      defining word
 )
+INCLUDE" mangle.fs"
+: .NAME   COUNT  .MANGLE ;
+: .NAME-LABEL   DUP ." .global " .NAME CR  .NAME ." :" CR ;
+: .COMPILE-FIELD   ." .int " .NAME ." _compilation" CR ;
+\ FIXME: put values for DOES> code, inline code, IMMEDIATE and COMPILING bits into an expression
+: .INFO-FIELD   ." .int " .NAME ." _info " CR ;
+: .INFO   ." .set " .NAME ." _info, 0x" H. CR ;
+: .PREVIOUS-INFO   LAST  DUP >INFO @  SWAP >NAME  ['] .INFO TO-ASMOUT ;
+: .DOES   ." .set " .NAME ." _doer, " .NAME ." _does" CR ;
+: .DOES-LABEL   .NAME ." _does:" CR ;
+: .CREATED   LAST >NAME  ['] .DOES TO-ASMOUT ;
 : HEADER   ( c-addr -- )
+   LAST IF                           \ output previous word's info field
+      .PREVIOUS-INFO
+      CREATED @ ?DUP IF  .CREATED  THEN
+   THEN
+   FALSE CREATED !
+   DUP >R                            \ save name
    ALIGN                             \ align DP for new definition
    DUP C@ 31 MIN                     \ get name (max. 31 chars)
-   2DUP SWAP C!
-   OVER COUNT
-   GET-CURRENT SEARCH-WORDLIST IF    \ check name is unique
-      DROP OVER COUNT TYPE ."  is not unique "
+   OVER C!                           \ set length
+   COUNT
+   2DUP GET-CURRENT SEARCH-WORDLIST IF \ check name is unique
+      DROP 2DUP TYPE ."  is not unique "
    THEN
-   DUP >R                            \ save length
-   CHAR+                             \ length of name field
-   HERE SWAP                         \ beginning of name field
-   DUP ALLOT                         \ reserve space for name field
-   CMOVE                             \ write name in name field
+   TUCK                              \ save length
+   ",                                \ write name in name field
    BL CALIGN                         \ pad with spaces to next cell boundary
    LAST REL,                         \ store link to last word
-   0 ,                               \ store null compilation method
-   R> 24 LSHIFT  ,                   \ save length of name field
+   R@ ['] .COMPILE-FIELD TO-ASMOUT   \ compilation method field
+   0 RAW,
+   R@ ['] .INFO-FIELD TO-ASMOUT
+   24 LSHIFT RAW,                    \ save length of name field
+   R> ['] .NAME-LABEL TO-ASMOUT      \ output label
    HERE GET-CURRENT REL! ;           \ update CURRENT word list
 
 
@@ -793,7 +819,7 @@ VARIABLE HANDLER  0 ' HANDLER >BODY !
    ELSE
       FOREIGN? INVERT                \ to execute, word must be native
    THEN ;
-VARIABLE 'SELECTOR  ' LOCAL?  ' 'SELECTOR >BODY REL!
+CREATE 'SELECTOR  ' LOCAL? REL,
 : INTERPRET
    BEGIN  BL WORD  DUP C@ WHILE      \ while text in input stream
       'SELECTOR REL@ SELECT          \ search for word
@@ -1004,7 +1030,7 @@ INCLUDE" defining.fs"
    DOES>  TO DP ;
 : ROOT   ROOTDP TO DP ;
 
-VARIABLE CHAIN  0 ' CHAIN >BODY !
+CREATE CHAIN  0 ,
 ( A wordlist has the following structure:
 
   Head of list         relative link to most recently defined word
@@ -1209,6 +1235,9 @@ FALSE VALUE INTERACT?
 
 INCLUDE" parse-command-line.fs"
 
+\ FIXME: Capture words defined after this (START and INITIALIZE)
+CREATE ROOT-WORDLIST-HEAD  ' NEW-FORTH >BODY REL@ REL@  REL,
+
 : START   ( limit here -- )
    ROOTDP !                          \ initialize dictionary pointer
    DUP TO LIMIT                      \ set LIMIT
@@ -1222,6 +1251,9 @@ INCLUDE" parse-command-line.fs"
    256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
    'BUFFERS !                        \ set 'BUFFERS
    'BUFFERS @  TUCK -  ERASE         \ erase buffers
+   ROOT-WORDLIST-HEAD REL@  ['] FORTH >BODY REL@ REL!   \ patch root wordlist
+   ['] FORTH >BODY REL@ CELL+  CHAIN REL!   \ patch CHAIN
+   ['] FORTH >NAME CELL-  0 OVER !  CELL-  0 SWAP !   \ zero FORTH wordlist's info and link fields
    ROOT                              \ use ROOT dictionary
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10

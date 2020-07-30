@@ -29,6 +29,20 @@ INCLUDE" save.fs"
 ALSO ASSEMBLER
 64 1024 * CONSTANT DICTIONARY-SIZE
 
+: .ASM(   ['] .( TO-ASMOUT  ['] CR TO-ASMOUT ;
+
+: .CALL   >NAME ." calli " COUNT .MANGLE CR ;
+: ASM-COMPILE,   DUP >INFO 2 + C@  ?DUP IF
+      0 DO  DUP  DUP @ RAW,  DUP @ ['] DISASSEMBLE TO-ASMOUT  CELL+  LOOP  DROP
+   ELSE
+      DUP
+      DUP >INFO 3 + C@ IF
+         ['] .CALL TO-ASMOUT
+      ELSE
+         HERE - .INT
+      THEN
+      HERE - RAW,
+   THEN ;
 
 \ STUB FOO creates an empty word.
 \ This is used to POSTPONE target words that may not exist on the host.
@@ -53,8 +67,9 @@ STUB (S")
 \ Machinery for compiling forward references to defining words' DOES> code
 
 : ADD-RESOLVE   DUP @  LAST CELL+  TUCK  !  SWAP ! ;
-: (DOES>)   >DOES> ADD-RESOLVE ;
+: (DOES>)   DUP >NAME CREATED !  >DOES> ADD-RESOLVE ;
 : DOES-LINK,   0 , ;
+: .DOES-LABEL   .NAME ." _does:" CR ;
 INCLUDE" does.fs"
 
 
@@ -69,6 +84,8 @@ DECIMAL
    THEN ;
 
 
+INCLUDE" compiler-defer.fs"
+INCLUDE" compiler-asm.fs"
 INCLUDE" relocate-compiler.fs"
 INCLUDE" native-call.fs"
 INCLUDE" compiler1.fs"
@@ -78,11 +95,15 @@ INCLUDE" compiler1.fs"
 
 : ?FIND   ( c-addr -- xt )   FIND  0= IF  UNDEFINED  THEN ;
 : (POSTPONE)   >NAME  ?FIND CURRENT-COMPILE, ;
+: (RAW-POSTPONE)   >NAME  ?FIND HERE - RAW, ;
 
 \ POSTPONE itself must be defined in FORTH, so that it can be run during the
 \ compilation of the rest of META, which is FOREIGN while it is being built.
 ALSO FORTH DEFINITIONS
 
+: RAW-POSTPONE   BL WORD FIND ?DUP 0= IF UNDEFINED THEN 0> IF >COMPILE REL@
+   CURRENT-COMPILE, ELSE [ ' CURRENT-RELATIVE-LITERAL CURRENT-COMPILE, ] C" (RAW-POSTPONE)" ?FIND CURRENT-COMPILE, THEN ;
+IMMEDIATE COMPILING
 : POSTPONE   BL WORD FIND ?DUP 0= IF UNDEFINED THEN 0> IF >COMPILE REL@
    CURRENT-COMPILE, ELSE [ ' CURRENT-RELATIVE-LITERAL CURRENT-COMPILE, ] C" (POSTPONE)" ?FIND CURRENT-COMPILE, THEN ;
 IMMEDIATE COMPILING
@@ -99,6 +120,7 @@ INCLUDE" control3.fs"
 INCLUDE" strings2b.fs"
 INCLUDE" compiler2.fs"
 INCLUDE" interpreter3.fs"
+: SET-IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP ! ;
 INCLUDE" compiler4.fs"
 INCLUDE" compiler5.fs"
 \ FIXME: wrap this definition rather than copy-and-modify
@@ -137,7 +159,7 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 ' CURRENT-COMPILE, >BODY @   \ save compiler
 ' CURRENT-LITERAL >BODY @
 ' CURRENT-RELATIVE-LITERAL >BODY @
-' COMPILE, ' CURRENT-COMPILE, >BODY REL!   \ use target compiler
+' ASM-COMPILE, ' CURRENT-COMPILE, >BODY REL!   \ use target compiler
 ' LITERAL ' CURRENT-LITERAL >BODY REL!
 ' RELATIVE-LITERAL ' CURRENT-RELATIVE-LITERAL >BODY REL!
 'FORTH   \ save value of 'FORTH
@@ -145,6 +167,8 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
    \ make 'FORTH point to the start of it minus the initial branch
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
+STDERR-FILENO TO ASMOUT
+.ASM( calli INITIALIZE)
 INCLUDE" primitives.fs"
 INCLUDE" system-params.fs"
 [UNDEFINED] MINIMAL-PRIMITIVES [IF]
@@ -154,9 +178,6 @@ INCLUDE" system-params.fs"
 INCLUDE" highlevel.fs"
 INCLUDE" initialize.fs"
 
-' NEW-FORTH >BODY REL@ REL@  ' FORTH >BODY REL@  REL!   \ patch root wordlist
-' FORTH >BODY REL@ CELL+  ' CHAIN >BODY  REL!   \ patch CHAIN
-' FORTH >NAME CELL-  0 OVER !  CELL-  0 SWAP !   \ zero FORTH wordlist's info and link fields
 ' VALUE >DOES>  ALSO META  RESOLVES VALUE  PREVIOUS \ resolve run-times
 ' DEFER >DOES>  ALSO META  RESOLVES DEFER  PREVIOUS
 ' VOCABULARY >DOES>  ALSO META  RESOLVES VOCABULARY  PREVIOUS
@@ -164,7 +185,9 @@ INCLUDE" initialize.fs"
 ' ABORT ' VISIBLE? >BODY REL!
 ' NEW-FORTH >BODY REL@ REL@  PREVIOUS   \ leave initial branch target on the stack
 
-ALIGN HERE 'FORTH -   \ ( length ) of binary image
+.PREVIOUS-INFO \ output info field of last word defined
+-1 TO ASMOUT
+HERE 'FORTH -   \ ( length ) of binary image
 ROOT HERE OVER ALLOT   \ make space for binary image ( length start )
 TUCK   \ ( start length start )
 'FORTH  INCLUDE" init-space.fs" CELLS   \ ( s l s 'FORTH nCELLS )

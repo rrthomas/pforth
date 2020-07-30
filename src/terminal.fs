@@ -9,7 +9,7 @@
 \ RISK.
 
 \ I/O streams
-CREATE IO-BUFFER  CELL ALLOT
+CREATE IO-BUFFER  0 , \ CELL ALLOT
 0 VALUE STDIN  0 VALUE STDOUT  0 VALUE STDERR
 
 : INITIALIZE-TERMINAL
@@ -31,3 +31,12 @@ HERE 10 C,  0 CALIGN \ FIXME: Make SLITERAL work here
 
 \ FIXME: implement GET-ENVIRONMENT-VARIABLE and use it to read $COLUMNS
 77 CONSTANT WIDTH   \ width of display
+
+: REDIRECT-STDOUT   ( xt fd -- )
+   STDOUT >R
+   TO STDOUT
+   EXECUTE
+   R> TO STDOUT ;
+
+-1 VALUE ASMOUT \ is this really an acceptable way to swallow output?
+: TO-ASMOUT   ASMOUT REDIRECT-STDOUT ;

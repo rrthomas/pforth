@@ -29,11 +29,11 @@ jobs:
             - hevea
             - rlwrap
             - gcc-multilib
-    - env:
-        - HOST=beetle
-      addons:
-        apt:
-          packages: *default_deps
+    # - env:
+    #     - HOST=beetle
+    #   addons:
+    #     apt:
+    #       packages: *default_deps
     # - env:
     #     - HOST=mit
     #     - PYTHON=/usr/bin/python3.7
@@ -58,13 +58,13 @@ jobs:
         apt:
           packages:
             - *default_deps
-    - env:
-        - HOST=beetle
-        - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
-      addons:
-        apt:
-          packages:
-            - *default_deps
+    # - env:
+    #     - HOST=beetle
+    #     - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
+    #   addons:
+    #     apt:
+    #       packages:
+    #         - *default_deps
     # - env:
     #     - HOST=mit
     #     - PYTHON=/usr/bin/python3.7
@@ -95,9 +95,9 @@ jobs:
     - os: osx
       env:
         - HOST=bee
-    - os: osx
-      env:
-        - HOST=beetle
+    # - os: osx
+    #   env:
+    #     - HOST=beetle
     # - os: osx
     #   env:
     #     - HOST=mit
