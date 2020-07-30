@@ -1,3 +1,5 @@
+*.s
+*.o
 highlevel.fs
 /pforthi
 /pforthi.tmp

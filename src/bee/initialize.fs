@@ -11,6 +11,8 @@
    \ use our return address to calculate the new value of 'FORTH.
    R> CELL-  TO 'FORTH
    MEMORY@ M0@ +
-   [ HERE 0 ,  DUP ] \ value of HERE
+   [ HERE  .ASM( pushreli END_OF_IMAGE)  0 RAW,  DUP ] \ value of HERE
    START ;
-ALIGN  HERE >-<  OP_PUSHRELI OR  SWAP ! \ FIXME: add !OFFSET
+ALIGN
+.ASM( END_OF_IMAGE: )
+HERE >-<  OP_PUSHRELI OR  SWAP ! \ FIXME: add !OFFSET

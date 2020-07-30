@@ -8,12 +8,10 @@
 \ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 \ RISK.
 
-CR .( Bee assembler )
-
 
 VOCABULARY ASSEMBLER  ALSO ASSEMBLER DEFINITIONS
 
-: INLINE   ( char -- )   LAST >INFO 2 + C! ;
+: INLINE   ( char -- )   DUP LAST >NAME .INLINE-COUNT  LAST >INFO 2 + C! ;
 
 FORTH DEFINITIONS
 INCLUDE" code.fs"
@@ -31,15 +29,125 @@ ASSEMBLER DEFINITIONS
 2 CONSTANT OP2_TRAP   3 CONSTANT OP2_INSN
 3 CONSTANT OP2_MASK
 
+48 CONSTANT #INSTRUCTIONS
+
+: OPCODE>NAME   ( n -- addr )
+   CASE
+       0 OF C" nop" ENDOF
+       1 OF C" not" ENDOF
+       2 OF C" and" ENDOF
+       3 OF C" or" ENDOF
+       4 OF C" xor" ENDOF
+       5 OF C" lshift" ENDOF
+       6 OF C" rshift" ENDOF
+       7 OF C" arshift" ENDOF
+       8 OF C" pop" ENDOF
+       9 OF C" dup" ENDOF
+      10 OF C" set" ENDOF
+      11 OF C" swap" ENDOF
+      12 OF C" jump" ENDOF
+      13 OF C" jumpz" ENDOF
+      14 OF C" call" ENDOF
+      15 OF C" ret" ENDOF
+      16 OF C" load" ENDOF
+      17 OF C" store" ENDOF
+      18 OF C" load1" ENDOF
+      19 OF C" store1" ENDOF
+      20 OF C" load2" ENDOF
+      21 OF C" store2" ENDOF
+      22 OF C" load4" ENDOF
+      23 OF C" store4" ENDOF
+      24 OF C" neg" ENDOF
+      25 OF C" add" ENDOF
+      26 OF C" mul" ENDOF
+      27 OF C" divmod" ENDOF
+      28 OF C" udivmod" ENDOF
+      29 OF C" eq" ENDOF
+      30 OF C" lt" ENDOF
+      31 OF C" ult" ENDOF
+      32 OF C" pushr" ENDOF
+      33 OF C" popr" ENDOF
+      34 OF C" dupr" ENDOF
+      35 OF C" catch" ENDOF
+      36 OF C" throw" ENDOF
+      37 OF C" break" ENDOF
+      38 OF C" word_bytes" ENDOF
+      39 OF C" get_m0" ENDOF
+      40 OF C" get_msize" ENDOF
+      41 OF C" get_ssize" ENDOF
+      42 OF C" get_sp" ENDOF
+      43 OF C" set_sp" ENDOF
+      44 OF C" get_dsize" ENDOF
+      45 OF C" get_dp" ENDOF
+      46 OF C" set_dp" ENDOF
+      47 OF C" get_handler_sp" ENDOF
+      >R  0  R>
+   ENDCASE ;
+
+
+\ Print the disassembly of the given instruction
+: DISASSEMBLE   ( pc opcode -- )
+   CASE  DUP OP_MASK AND
+      OP_CALLI OF
+         OP_MASK INVERT AND + \ compute address
+         ." calli " >NAME COUNT TYPE
+      ENDOF
+      OP_PUSHI OF
+         NIP
+         2 ARSHIFT \ compute constant
+         ." pushi " DUP . ." # 0x" H.
+      ENDOF
+      OP_PUSHRELI OF
+         OP_MASK INVERT AND + \ compute address
+         ." pushreli 0x" H.
+      ENDOF
+      OP_LEVEL2 OF
+         2 ARSHIFT \ OP_LEVEL2
+         CASE  DUP OP2_MASK AND
+            OP2_JUMPI OF
+               OP_MASK INVERT AND  + \ compute address
+               ." jumpi 0x" H.
+            ENDOF
+            OP2_JUMPZI OF
+               2 ARSHIFT + \ compute address
+               ." jumpzi 0x" H.
+            ENDOF
+            OP2_TRAP OF
+               NIP
+               2 RSHIFT \ compute trap code
+               ." trap 0x" H.
+            ENDOF
+            OP2_INSN OF
+               NIP
+               2 ARSHIFT
+               #INSTRUCTIONS OVER >  SWAP OPCODE>NAME  TUCK AND IF
+                  COUNT TYPE
+               ELSE
+                  DROP ." ; invalid instruction!"
+               THEN
+            ENDOF
+         ENDCASE
+      ENDOF
+   ENDCASE
+   CR ;
+
+: SHOW   ( a-addr len -- )
+   OVER + SWAP DO
+      I DUP @ DISASSEMBLE
+   CELL +LOOP ;
+
 : >OPCODE   ( operand type -- )   SWAP  2 LSHIFT  OR ;
 : >OPCODE2   ( operand type -- )   SWAP  2 LSHIFT  OR  2 LSHIFT   OP_LEVEL2 OR ;
-: TRAP   CREATE OP2_TRAP >OPCODE2 ,  DOES> @ , ;
-: INST   CREATE OP2_INSN >OPCODE2 ,  DOES> @ , ;
+: TRAP   CREATE OP2_TRAP >OPCODE2 ,  DOES> @  HERE OVER ['] DISASSEMBLE TO-ASMOUT  RAW, ;
+: INST   CREATE OP2_INSN >OPCODE2 ,  DOES> @  HERE OVER ['] DISASSEMBLE TO-ASMOUT  RAW, ;
 : INSTS   SWAP 1+ SWAP DO  I INST  LOOP ;
 
-: BCALLI  OP_CALLI >OPCODE , ;
-: BPUSHI   OP_PUSHI >OPCODE , ;
-: BPUSHRELI   HERE SWAP OFFSET 2 ARSHIFT  OP_PUSHRELI >OPCODE , ;
+: (BCALLI)  ." calli 0x" DUP H. CR  OP_CALLI >OPCODE RAW, ;
+: (BPUSHI)   ." pushi 0x" DUP H. CR  OP_PUSHI >OPCODE RAW, ;
+: (BPUSHRELI)   ." pushreli 0x" HERE - DUP H. CR  HERE SWAP OFFSET 2 ARSHIFT  OP_PUSHRELI >OPCODE , ;
+: BCALLI   ['] (BCALLI) TO-ASMOUT ;
+: BPUSHI   ['] (BPUSHI) TO-ASMOUT ;
+: BPUSHRELI   ['] (BPUSHRELI) TO-ASMOUT ;
 
  7  0 INSTS BNOP     BNOT     BAND     BOR      BXOR     BLSHIFT  BRSHIFT  BARSHIFT
 15  8 INSTS BPOP     BDUP     BSET     BSWAP    BJUMP    BJUMPZ   BCALL    BRET

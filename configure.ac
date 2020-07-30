@@ -97,10 +97,10 @@ AC_CONFIG_FILES([
   src/Makefile
   src/pforthi
   src/bee/Makefile
-  src/beetle/Makefile
   doc/Makefile
   extras/Makefile
 ])
+#  src/beetle/Makefile
 #  src/riscos/Makefile
 #  src/mit/Makefile
 #  src/mit-threaded/Makefile

@@ -8,7 +8,7 @@
 # THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 # RISK.
 
-SUBDIRS = beetle bee # riscos mit mit-threaded
+SUBDIRS = bee # beetle riscos mit mit-threaded
 
 bin_SCRIPTS = pforth
 
