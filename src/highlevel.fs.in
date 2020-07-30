@@ -1227,4 +1227,5 @@ INCLUDE" parse-command-line.fs"
    DECIMAL                           \ numbers treated as base 10
    PARSE-COMMAND-LINE
    INITIALIZE-ARGS
+   INITIALIZE-TERMINAL
    DO-START-OPTIONS ;                \ process command-line args
