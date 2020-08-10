@@ -1,4 +1,4 @@
-\ Machine-dependent words (Threaded Mit)
+\ Machine-dependent words (Bee)
 \
 \ (c) Reuben Thomas 2019-2020
 \
