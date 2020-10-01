@@ -39,6 +39,15 @@ pforth: $(host_SRCS) highlevel.fs
 	fi && \
 	mv pforth-new $@
 
+pforth.s: pforth
+	$(BUILD_PFORTH) make.fs 2> $@
+
+.s.o:
+	bee-as --defsym cell=4 -R -o $@ $<
+
+.o.bin:
+	bee-objcopy -O binary $< $@
+
 check-local:
 	$(do_build) && \
 	cmp pforth pforth-new && \

@@ -221,11 +221,12 @@ VARIABLE ROOTDP
 : ,   DUP .INT  RAW, ;
 : RAW-C,   HERE  +CHAR ALLOT  C! ;
 : C,   DUP .BYTE  RAW-C, ;
-: CALIGN   HERE  DUP ALIGNED  >-< 0 ?DO  DUP C,  LOOP  DROP ;
+: CALIGN   HERE  DUP ALIGNED  >-< 0 ?DO  DUP RAW-C,  LOOP  .CALIGN ;
 
 : ADDRESS!   ! ;
 : >REL   ( from to -- offset )   DUP IF  >-<  ELSE NIP  THEN ;
-: REL,   HERE SWAP >REL , ;
+: RAW-REL,   HERE SWAP >REL RAW, ;
+: REL,   DUP RAW-REL,  .REL-OFFSET ;
 : REL@   DUP @  ?DUP IF  +  ELSE DROP 0  THEN ;
 : REL!   ( to 'link -- )   DUP  ROT >REL  SWAP ! ;
 
@@ -247,8 +248,8 @@ VARIABLE CURRENT
 : >NAME   DUP >INFO 3 + C@  31 AND 1+ CHARS ALIGNED  SWAP >LINK  >-< ;
 
 : SET-IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP ! ;
-: IMMEDIATE   SET-IMMEDIATE
-   LAST DUP >COMPILE  2DUP SWAP >REL LAST >NAME .COMPILE-METHOD  REL! ;
+: IMMEDIATE   SET-IMMEDIATE  LAST >NAME .IMMEDIATE-METHOD
+   LAST DUP >COMPILE  REL! ;
 : COMPILING   LAST >INFO  DUP @  $40000000 OR  SWAP ! ;
 : SMUDGE!   ( f a-addr -- )   >INFO  TUCK @  $20000000 DUP INVERT  ROT AND
    -ROT AND  OR  SWAP ! ;
@@ -567,7 +568,7 @@ LAST >NAME ' .DEFER-ABORT TO-ASMOUT
 : .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
 
 \ Set default PROGRAM-NAME in case for some reason there is no ARG 0
-HERE  S" @PACKAGE@" ",  CREATE "PROGRAM-NAME  REL,
+HERE  DUP BACKWARD .LABEL-DEF  S" @PACKAGE@" ",  CREATE "PROGRAM-NAME  REL,
 
 : ERROR-PREFIX   "PROGRAM-NAME REL@ COUNT TYPE  S" : " TYPE ;
 
@@ -750,6 +751,8 @@ IMMEDIATE COMPILING
 INCLUDE" mangle.fs"
 : .NAME   COUNT  .MANGLE ;
 : .NAME-LABEL   DUP ." .global " .NAME CR  .NAME ." :" CR ;
+: (.LINK)   ." .int " ?DUP IF >NAME .NAME ELSE ." . " THEN ."  - ." CR ;
+: .LINK   ['] (.LINK) TO-ASMOUT ;
 : .COMPILE-FIELD   ." .int " .NAME ." _compilation" CR ;
 \ FIXME: put values for DOES> code, inline code, IMMEDIATE and COMPILING bits into an expression
 : .INFO-FIELD   ." .int " .NAME ." _info " CR ;
@@ -775,7 +778,8 @@ INCLUDE" mangle.fs"
    TUCK                              \ save length
    ",                                \ write name in name field
    BL CALIGN                         \ pad with spaces to next cell boundary
-   LAST REL,                         \ store link to last word
+   LAST .LINK                        \ store link to last word
+   LAST RAW-REL,
    R@ ['] .COMPILE-FIELD TO-ASMOUT   \ compilation method field
    0 RAW,
    R@ ['] .INFO-FIELD TO-ASMOUT
@@ -819,7 +823,7 @@ VARIABLE HANDLER  0 ' HANDLER >BODY !
    ELSE
       FOREIGN? INVERT                \ to execute, word must be native
    THEN ;
-CREATE 'SELECTOR  ' LOCAL? REL,
+CREATE 'SELECTOR  ' LOCAL?  DUP RAW-REL,  .LINK
 : INTERPRET
    BEGIN  BL WORD  DUP C@ WHILE      \ while text in input stream
       'SELECTOR REL@ SELECT          \ search for word
@@ -1030,15 +1034,17 @@ INCLUDE" defining.fs"
    DOES>  TO DP ;
 : ROOT   ROOTDP TO DP ;
 
-CREATE CHAIN  0 ,
+CREATE CHAIN  HERE BACKWARD .LABEL-DEF  0 ,
 ( A wordlist has the following structure:
 
   Head of list         relative link to most recently defined word
   Link field           relative link to next wordlist in CHAIN
   Info field           bit 10 is FOREIGN flag
 )
-: WORDLIST   ALIGN HERE  0 ,  HERE  CHAIN  DUP REL@ REL,  REL!  0 , ;
+: WORDLIST   ALIGN HERE  0 RAW,
+   HERE  CHAIN  DUP REL@ RAW-REL,  0 .INT ( FIXME: chain to previous wordlist )  REL!  0 , ;
 INCLUDE" vocabulary.fs"
+HERE BACKWARD .LABEL-DEF  ' .FORTH-ADDRESS TO-ASMOUT
 VOCABULARY FORTH
 : FORTH-WORDLIST   ['] FORTH >BODY REL@ ;
 : ALSO   CONTEXT  DUP CELL+  #ORDER @ CELLS  MOVE  1 #ORDER +! ;
@@ -1235,9 +1241,6 @@ FALSE VALUE INTERACT?
 
 INCLUDE" parse-command-line.fs"
 
-\ FIXME: Capture words defined after this (START and INITIALIZE)
-CREATE ROOT-WORDLIST-HEAD  ' NEW-FORTH >BODY REL@ REL@  REL,
-
 : START   ( limit here -- )
    ROOTDP !                          \ initialize dictionary pointer
    DUP TO LIMIT                      \ set LIMIT
@@ -1251,9 +1254,6 @@ CREATE ROOT-WORDLIST-HEAD  ' NEW-FORTH >BODY REL@ REL@  REL,
    256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
    'BUFFERS !                        \ set 'BUFFERS
    'BUFFERS @  TUCK -  ERASE         \ erase buffers
-   ROOT-WORDLIST-HEAD REL@  ['] FORTH >BODY REL@ REL!   \ patch root wordlist
-   ['] FORTH >BODY REL@ CELL+  CHAIN REL!   \ patch CHAIN
-   ['] FORTH >NAME CELL-  0 OVER !  CELL-  0 SWAP !   \ zero FORTH wordlist's info and link fields
    ROOT                              \ use ROOT dictionary
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
