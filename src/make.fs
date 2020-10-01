@@ -31,7 +31,7 @@ ALSO ASSEMBLER
 
 : .ASM(   ['] .( TO-ASMOUT  ['] CR TO-ASMOUT ;
 
-: .CALL   >NAME ." calli " COUNT .MANGLE CR ;
+: .CALL   ." calli " >NAME .NAME CR ;
 : ASM-COMPILE,   DUP >INFO 2 + C@  ?DUP IF
       0 DO  DUP  DUP @ RAW,  DUP @ ['] DISASSEMBLE TO-ASMOUT  CELL+  LOOP  DROP
    ELSE
@@ -43,6 +43,9 @@ ALSO ASSEMBLER
       THEN
       HERE - RAW,
    THEN ;
+
+: .FORTH-ADDRESS   ." .int last_word - ." CR ;
+: .FORTH-LINK   ." .set last_word, " LAST >NAME .NAME CR ;
 
 \ STUB FOO creates an empty word.
 \ This is used to POSTPONE target words that may not exist on the host.
@@ -127,9 +130,6 @@ INCLUDE" compiler5.fs"
 : [']   ALIGN '  POSTPONE RELATIVE-LITERAL ; IMMEDIATE COMPILING
 INCLUDE" defer-fetch-store.fs"
 INCLUDE" defining.fs"
-\ FIXME: wrap this definition rather than copy-and-modify
-: TO   ' >BODY ! ;
-   :NONAME   ' >BODY  ALIGN POSTPONE RELATIVE-LITERAL  POSTPONE ! ;IMMEDIATE
 INCLUDE" vocabulary.fs"
 INCLUDE" resolver-branch.fs"
 
@@ -178,6 +178,10 @@ INCLUDE" system-params.fs"
 INCLUDE" highlevel.fs"
 INCLUDE" initialize.fs"
 
+' .FORTH-LINK TO-ASMOUT
+' NEW-FORTH >BODY REL@ REL@  ' FORTH >BODY REL@ REL!   \ patch root wordlist
+' FORTH >BODY REL@ CELL+  CHAIN REL!   \ patch CHAIN
+' FORTH >NAME CELL-  0 OVER !  CELL-  0 SWAP !   \ zero FORTH wordlist's info and link fields
 ' VALUE >DOES>  ALSO META  RESOLVES VALUE  PREVIOUS \ resolve run-times
 ' DEFER >DOES>  ALSO META  RESOLVES DEFER  PREVIOUS
 ' VOCABULARY >DOES>  ALSO META  RESOLVES VOCABULARY  PREVIOUS

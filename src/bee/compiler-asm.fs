@@ -1,9 +1,9 @@
-: (.SKIP)   ." .skip " . CR ;
-:NONAME   ['] (.SKIP)  TO-ASMOUT ; IS .SKIP
-: (.ALIGN)   ." .balign " CELL . CR ;
+: (.ALIGN)   ." .balign cell" CR ;
 :NONAME   ['] (.ALIGN)  TO-ASMOUT ; IS .ALIGN
-: (.CALIGN)   ." .balign " CELL . ." , 0x" H. CR ;
+: (.CALIGN)   ." .balign cell, 0x" H. CR ;
 :NONAME   ['] (.CALIGN)  TO-ASMOUT ; IS .CALIGN
+: (.REL-OFFSET)   ." .int "  ?DUP IF   BACKWARD .LABEL ."  - ."  ELSE ." 0"  THEN CR  ;
+:NONAME   ['] (.REL-OFFSET)  TO-ASMOUT ; IS .REL-OFFSET
 : (.INT)   ." .int " . CR ;
 :NONAME   ['] (.INT)  TO-ASMOUT ; IS .INT
 : (.BYTE)   ." .byte 0x" H. CR ;
@@ -33,13 +33,17 @@
 :NONAME   ['] (.LABEL)  TO-ASMOUT ; IS .LABEL
 : (.LABEL-DEF)   .LABEL ." :" CR ;
 :NONAME   ['] (.LABEL-DEF)  TO-ASMOUT ; IS .LABEL-DEF
+: (.BODY-LABEL-DEF)   >NAME .NAME ." _body:" CR ;
+:NONAME   ['] (.BODY-LABEL-DEF)  TO-ASMOUT ; IS .BODY-LABEL-DEF
 : (.BRANCH)   ." jumpi " .LABEL CR ;
 :NONAME   ['] (.BRANCH)  TO-ASMOUT ; IS .BRANCH
 : (.IF)   ." jumpzi " .LABEL CR ;
 :NONAME   ['] (.IF)  TO-ASMOUT ; IS .IF
 : (.RET)   ." ret" CR ;
 :NONAME   ['] (.RET)  TO-ASMOUT ; IS .RET
-: (.COMPILE-METHOD)   ." .set " .NAME ." _compilation, 0x" H. CR ;
+: (.IMMEDIATE-METHOD)   ." .set " .NAME ." _compilation, (2 * cell)" CR ;
+:NONAME   ['] (.IMMEDIATE-METHOD)  TO-ASMOUT ; IS .IMMEDIATE-METHOD
+: (.COMPILE-METHOD)   ." .set " TUCK .NAME ." _compilation, " NONAME .LABEL ."  - (" .NAME ."  - 2 * cell)" CR ;
 :NONAME   ['] (.COMPILE-METHOD)  TO-ASMOUT ; IS .COMPILE-METHOD
 : (.INLINE-COUNT)   ." .set " .NAME ." _inline, " 0 U.R CR ;
 :NONAME   ['] (.INLINE-COUNT)  TO-ASMOUT ; IS .INLINE-COUNT
