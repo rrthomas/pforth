@@ -1,5 +1,5 @@
 #!/bin/sh
-# Pre-install script for appveyor
+# Convert symlinks on Windows.
 # (c) Reuben Thomas 2019-2020.
 # This file is in the public domain.
 

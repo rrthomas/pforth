@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install executor (used for Travis & AppVeyor build)
+# Install executor (used for AppVeyor build)
 #
 # (c) Reuben Thomas 2018-2020
 #
@@ -21,7 +21,7 @@ case $BUILD in
     beetle)
         cd $HOME
         # From https://gist.github.com/steinwaywhw/a4cd19cda655b8249d908261a62687f8
-        # Authentication is needed to prevent exceeding API limits from Travis/AppVeyor
+        # Authentication is needed to prevent exceeding API limits from AppVeyor
         LATEST_RELEASE=`curl "${GITHUB_HEADER[@]}" https://api.github.com/repos/rrthomas/beetle/releases/latest | grep tag_name | sed -e 's/.*tag_name": "\([^"]*\).*/\1/'`
         LATEST_RELEASE_NUMBER=`echo $LATEST_RELEASE | sed -e s/^v//`
         FILE=beetle-$LATEST_RELEASE_NUMBER.tar.gz
@@ -51,7 +51,7 @@ case $BUILD in
         cd $HOME
         git clone https://github.com/rrthomas/mit.git
         cd mit
-        git checkout "${TRAVIS_BRANCH##mit-}"
+        git checkout "${APPVEYOR_REPO_BRANCH##mit-}"
         # Make install before make check so Python ctypes's find_library can find libmit
         # FIXME: disable "make check" until pForth supports native architecture
         ./bootstrap && ./configure --enable-silent-rules CC="gcc -m32" && $SUDO make install # && make check
@@ -60,7 +60,7 @@ case $BUILD in
         cd $HOME
         git clone https://github.com/rrthomas/bee.git
         cd bee
-        git checkout "${TRAVIS_BRANCH##bee-}"
+        git checkout "${APPVEYOR_REPO_BRANCH##bee-}"
         ./bootstrap && ./configure --enable-silent-rules CC="gcc -m32" && make check && $SUDO make install
         ;;
 esac
