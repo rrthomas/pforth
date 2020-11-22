@@ -6,24 +6,53 @@ environment:
       secure: 3J3HXNPKxCnwyaNtnJAH2xwHg9cG/SEB9YNrBGYoGRQSeNBO19+yVv48x6LfNiA9
     VERBOSE: 1 # Get test logs in output
     BUILD: bee
+    HOST: bee
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      MSYSTEM: MSYS
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      MSYSTEM: MINGW64
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+    # pForth is not yet 64-bit, and Mingw's and macOS's toolchains are not multiarch
+    # - APPVEYOR_BUILD_WORKER_IMAGE: macos
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   MSYSTEM: MSYS
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   MSYSTEM: MINGW64
+    #   # Define _POSIX to get a full set of POSIX signal names from signal.h on mingw (for Bee)
+    #   CPPFLAGS: -D_POSIX
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       MSYSTEM: MINGW32
+      # Define _POSIX to get a full set of POSIX signal names from signal.h on mingw (for Bee)
+      CPPFLAGS: -D_POSIX
+
+for:
+-
+  matrix:
+    only:
+      - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+  init:
+    - sudo apt-get -y install texlive-latex-extra texlive-science texlive-fonts-recommended texlive-fonts-extra tex-gyre help2man latexmk hevea rlwrap gcc-multilib linux-libc-dev:i386
+-
+  matrix:
+    only:
+      - APPVEYOR_BUILD_WORKER_IMAGE: macos
+  init:
+    - brew install help2man
+  cache:
+    - '/usr/local/Cellar/'
+-
+  matrix:
+    only:
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+  init:
+    - cmd: git config --global core.autocrlf input
 
 test: off
 
-init:
-  - cmd: git config --global core.autocrlf input
-
-# `git rm-symlinks` in pforth (defined in build-aux/appveyor-install.sh) to
-# fix symlinks for Windows.
 install:
-  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/appveyor-install.sh"
+  - sh: ./build-aux/install-executor $BUILD
+  - sh: if [[ "$APPVEYOR_BUILD_WORKER_IMAGE" == "Ubuntu" ]]; then sudo ldconfig; fi
+  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/fix-links-windows.sh"
 
 build_script:
+  - sh: git submodule update --init --recursive && autoreconf -i && ./configure --enable-silent-rules --build=$BUILD --host=$HOST BUILD_FLAVOUR=$PFORTH_BUILD_FLAVOUR
+  - sh: if [[ "$APPVEYOR_BUILD_WORKER_IMAGE" == "macos" ]]; then make check; else make distcheck; fi
   - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/install-executor --no-sudo $BUILD"
   - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && git submodule update --init --recursive && autoreconf -fi && ./configure --enable-silent-rules && make check"
