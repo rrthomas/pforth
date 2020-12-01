@@ -31,13 +31,6 @@ ALSO ASSEMBLER
 
 : .ASM(   ['] .( TO-ASMOUT  ['] CR TO-ASMOUT ;
 
-: .SYMBOL
-   DUP >INFO 3 + C@ IF
-      >NAME .NAME
-   ELSE
-      NONAME .LABEL
-   THEN ;
-
 : .CALL   ." calli " .SYMBOL CR ;
 : ASM-COMPILE,   DUP >INFO 2 + C@  ?DUP IF
       0 DO  DUP  DUP @ RAW,  DUP @ ['] DISASSEMBLE TO-ASMOUT  CELL+  LOOP  DROP
