@@ -21,7 +21,7 @@
 :NONAME   ['] (.STRING)  TO-ASMOUT ; IS .STRING
 : (.PUSHI)   ." pushi " . CR ;
 :NONAME   ['] (.PUSHI)  TO-ASMOUT ; IS .PUSHI
-: (.PUSHRELI)   ." pushreli " . CR ;
+: (.PUSHRELI)   ." pushreli " .SYMBOL CR ;
 :NONAME   ['] (.PUSHRELI)  TO-ASMOUT ; IS .PUSHRELI
 : (.PUSH)   HERE ." calli " DUP FORWARD .LABEL CR
    SWAP (.INT)
