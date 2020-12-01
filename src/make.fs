@@ -138,8 +138,6 @@ INCLUDE" interpreter3.fs"
 : SET-IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP ! ;
 INCLUDE" compiler4.fs"
 INCLUDE" compiler5.fs"
-\ FIXME: wrap this definition rather than copy-and-modify
-: [']   ALIGN '  POSTPONE RELATIVE-LITERAL ; IMMEDIATE COMPILING
 INCLUDE" defer-fetch-store.fs"
 INCLUDE" defining.fs"
 INCLUDE" vocabulary.fs"
