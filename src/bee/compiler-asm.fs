@@ -45,7 +45,11 @@
 :NONAME   ['] (.IMMEDIATE-METHOD)  TO-ASMOUT ; IS .IMMEDIATE-METHOD
 : (.COMPILE-METHOD)   ." .set " TUCK .NAME ." _compilation, " NONAME .LABEL ."  - (" .NAME ."  - 2 * cell)" CR ;
 :NONAME   ['] (.COMPILE-METHOD)  TO-ASMOUT ; IS .COMPILE-METHOD
+: (.CALL-COMPILE-METHOD)   ." calli " DUP .NAME ."  - (2 * cell) + " .NAME ." _compilation" CR ;
+:NONAME   ['] (.CALL-COMPILE-METHOD)  TO-ASMOUT ; IS .CALL-COMPILE-METHOD
 : (.INLINE-COUNT)   ." .set " .NAME ." _inline, " 0 U.R CR ;
 :NONAME   ['] (.INLINE-COUNT)  TO-ASMOUT ; IS .INLINE-COUNT
 : (.CREATED-CODE)   ." calli " .NAME ." _doer" CR ;
 :NONAME   ['] (.CREATED-CODE)  TO-ASMOUT ; IS .CREATED-CODE
+: (.PUSHRELI-SYMBOL)   ." pushreli " .NAME CR ;
+:NONAME   ['] (.PUSHRELI-SYMBOL)  TO-ASMOUT ; IS .PUSHRELI-SYMBOL

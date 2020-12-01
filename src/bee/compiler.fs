@@ -12,6 +12,7 @@
 
 : CALL   ( at from to -- )   >-< SWAP ! ;
 
+: CALL,   HERE -  RAW, ;
 : BRANCH,     3 RAW, ( FIXME: OP2_JUMPI 2 LSHIFT OP_LEVEL2 OR ) ;
 : IF,   7 RAW, ( FIXME: OP2_JUMPZI 2 LSHIFT OP_LEVEL2 OR) ;
 
