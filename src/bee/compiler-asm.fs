@@ -4,6 +4,8 @@
 :NONAME   ['] (.CALIGN)  TO-ASMOUT ; IS .CALIGN
 : (.REL-OFFSET)   ." .int "  ?DUP IF   BACKWARD .LABEL ."  - ."  ELSE ." 0"  THEN CR  ;
 :NONAME   ['] (.REL-OFFSET)  TO-ASMOUT ; IS .REL-OFFSET
+: (.NOP)   ." nop " CR ;
+:NONAME   ['] (.NOP)  TO-ASMOUT ; IS .NOP
 : (.INT)   ." .int " . CR ;
 :NONAME   ['] (.INT)  TO-ASMOUT ; IS .INT
 : (.BYTE)   ." .byte 0x" H. CR ;
