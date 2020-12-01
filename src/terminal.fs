@@ -26,8 +26,8 @@ CREATE IO-BUFFER  0 , \ CELL ALLOT
 
 : DEL?   DUP 127 =  SWAP 8 =  OR ;
 : CR?   DUP 13 =  SWAP 10 =  OR ;
-HERE 10 C,  0 CALIGN \ FIXME: Make SLITERAL work here
-: EOL  RELATIVE-LITERAL 1 ;
+CREATE EOL" 10 C,  0 CALIGN \ FIXME: Make SLITERAL work here
+: EOL  EOL" 1 ;
 
 \ FIXME: implement GET-ENVIRONMENT-VARIABLE and use it to read $COLUMNS
 77 CONSTANT WIDTH   \ width of display
