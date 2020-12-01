@@ -31,16 +31,18 @@ ALSO ASSEMBLER
 
 : .ASM(   ['] .( TO-ASMOUT  ['] CR TO-ASMOUT ;
 
-: .CALL   ." calli " >NAME .NAME CR ;
+: .SYMBOL
+   DUP >INFO 3 + C@ IF
+      >NAME .NAME
+   ELSE
+      NONAME .LABEL
+   THEN ;
+
+: .CALL   ." calli " .SYMBOL CR ;
 : ASM-COMPILE,   DUP >INFO 2 + C@  ?DUP IF
       0 DO  DUP  DUP @ RAW,  DUP @ ['] DISASSEMBLE TO-ASMOUT  CELL+  LOOP  DROP
    ELSE
-      DUP
-      DUP >INFO 3 + C@ IF
-         ['] .CALL TO-ASMOUT
-      ELSE
-         HERE - .INT
-      THEN
+      DUP  ['] .CALL TO-ASMOUT
       CALL,
    THEN ;
 
