@@ -8,8 +8,6 @@
 
 CR .( Extra primitives )
 
-ALSO ASSEMBLER
-
 
 \ Stack primitives
 
@@ -80,6 +78,3 @@ CODE ARSHIFT
    BRET
 END-CODE
 1 INLINE
-
-
-PREVIOUS
