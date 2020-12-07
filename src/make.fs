@@ -26,7 +26,7 @@ INCLUDE" save.fs"
 
 \ Meta-compiler utilities
 
-ALSO ASSEMBLER
+\ ALSO ASSEMBLER
 64 1024 * CONSTANT DICTIONARY-SIZE
 
 : .ASM(   ['] .( TO-ASMOUT  ['] CR TO-ASMOUT ;
@@ -208,7 +208,7 @@ OVER SWAP 2SWAP 'FORTH ROT  NATIVE-CALL   \ patch in initial branch
 
 S" pforth-new" SAVE-OBJECT   \ write system image
 
-PREVIOUS PREVIOUS DEFINITIONS   \ restore original order
+( PREVIOUS) PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
 TO CURRENT-RELATIVE-LITERAL   \ restore original compiler
 TO CURRENT-LITERAL
