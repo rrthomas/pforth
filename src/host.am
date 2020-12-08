@@ -15,7 +15,7 @@ host_SRCS = $(portable_SRCS) \
 	accept.fs assembler.fs call-cells.fs code.fs compiler1.fs		\
 	compiler.fs compiler-asm.fs compiler-defer.fs compiler-postpone.fs	\
 	extra-primitives.fs fileio.fs init-space.fs initialize.fs mangle.fs	\
-	native-call.fs os-compiler.fs os.fs parse-command-line.fs		\
+	native-call.fs opcodes.fs os-compiler.fs os.fs parse-command-line.fs	\
 	platform.fs primitives.fs relocate-compiler.fs resolver-branch.fs	\
 	save.fs strings2a.fs strings2b.fs system-params.fs terminal.fs		\
 	util.fs
@@ -42,6 +42,7 @@ pforth: $(host_SRCS) highlevel.fs
 pforth.s: pforth
 	$(BUILD_PFORTH) make.fs 2> $@
 
+# FIXME: cell should be set to 4 OR 8
 .s.o:
 	bee-as --defsym cell=4 -R -o $@ $<
 
