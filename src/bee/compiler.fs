@@ -19,7 +19,7 @@
 : @BRANCH   ( from -- to )   DUP @ 2 ARSHIFT + $FFFFFFFC AND ;
 : !BRANCH   ( from to -- )   OVER - 2 LSHIFT  OVER @ $F AND  OR  SWAP ! ;
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP @ ,  CELL+  LOOP  DROP
-   ELSE HERE - ,  THEN ;
+   ELSE CALL,  THEN ;
 
 : ADDR>LABEL   'FORTH - CELL/ ;
 CHAR b CONSTANT BACKWARD
