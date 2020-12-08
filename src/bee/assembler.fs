@@ -76,47 +76,46 @@ INCLUDE" opcodes.fs"
 
 \ Print the disassembly of the given instruction
 : DISASSEMBLE   ( pc opcode -- )
-   CASE  DUP OP_MASK AND
+   CASE  DUP OPCODE>
       OP_CALLI OF
-         OP_MASK INVERT AND + \ compute address
+         OP1_SHIFT ARSHIFT CELLS  + \ compute address
          ." calli " >NAME COUNT TYPE
       ENDOF
       OP_PUSHI OF
          NIP
-         2 ARSHIFT \ compute constant
+         OP1_SHIFT ARSHIFT \ compute constant
          ." pushi " DUP . ." # 0x" H.
       ENDOF
       OP_PUSHRELI OF
-         OP_MASK INVERT AND + \ compute address
+         OP1_SHIFT ARSHIFT CELLS  + \ compute address
          ." pushreli 0x" H.
       ENDOF
-      OP_LEVEL2 OF
-         2 ARSHIFT \ OP_LEVEL2
-         CASE  DUP OP2_MASK AND
-            OP2_JUMPI OF
-               OP_MASK INVERT AND  + \ compute address
-               ." jumpi 0x" H.
-            ENDOF
-            OP2_JUMPZI OF
-               2 ARSHIFT + \ compute address
-               ." jumpzi 0x" H.
-            ENDOF
-            OP2_TRAP OF
-               NIP
-               2 RSHIFT \ compute trap code
-               ." trap 0x" H.
-            ENDOF
-            OP2_INSN OF
-               NIP
-               2 ARSHIFT
-               #INSTRUCTIONS OVER >  SWAP OPCODE>NAME  TUCK AND IF
-                  COUNT TYPE
-               ELSE
-                  DROP ." ; invalid instruction!"
-               THEN
-            ENDOF
-         ENDCASE
-      ENDOF
+      >R
+      CASE  DUP OPCODE2>
+         OP2_JUMPI OF
+            OP2_SHIFT ARSHIFT CELLS  + \ compute address
+            ." jumpi 0x" H.
+         ENDOF
+         OP2_JUMPZI OF
+            OP2_SHIFT ARSHIFT CELLS  + \ compute address
+            ." jumpzi 0x" H.
+         ENDOF
+         OP2_TRAP OF
+            NIP
+            OP2_SHIFT RSHIFT \ compute trap code
+            ." trap 0x" H.
+         ENDOF
+         OP2_INSN OF
+            NIP
+            OP2_SHIFT RSHIFT
+            #INSTRUCTIONS OVER >  SWAP OPCODE>NAME  TUCK AND IF
+               COUNT TYPE
+            ELSE
+               DROP ." ; invalid instruction!"
+            THEN
+         ENDOF
+      ENDCASE
+      R>
    ENDCASE
    CR ;
 
