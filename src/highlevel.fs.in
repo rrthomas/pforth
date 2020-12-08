@@ -27,6 +27,9 @@ CR .( @PACKAGE_NAME@ high level words )
 PROVIDE: TRUE   -1 ; [THEN]
 PROVIDE: FALSE   0 ; [THEN]
 
+S" ADDRESS-UNIT-BITS" ENVIRONMENT? 0= [IF] ABORT [THEN]  CELLS CONSTANT CELL-BITS
+1 CELL-BITS 1- LSHIFT CONSTANT TOP-BIT-SET
+
 PROVIDE: -   NEGATE + ; [THEN]
 
 PROVIDE: 1+   1 + ; [THEN]
@@ -83,7 +86,7 @@ PROVIDE: U<   SWAP U> ; [THEN]
 PROVIDE: U>   SWAP U< ; [THEN]
 
 PROVIDE: ARSHIFT   OVER OVER  RSHIFT -ROT
-   NEGATE [ S" ADDRESS-UNIT-BITS" ENVIRONMENT? DROP  CELLS ] LITERAL +
+   NEGATE CELL-BITS +
    SWAP 0 <  SWAP LSHIFT  OR ; [THEN]
 
 PROVIDE: <>   = INVERT ; [THEN]
@@ -247,11 +250,14 @@ VARIABLE CURRENT
 : >INFO   CELL- ;
 : >NAME   DUP >INFO 3 + C@  31 AND 1+ CHARS ALIGNED  SWAP >LINK  >-< ;
 
-: SET-IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP ! ;
+TOP-BIT-SET CONSTANT IMMEDIATE-BIT
+: SET-IMMEDIATE   LAST >INFO  DUP @  IMMEDIATE-BIT OR  SWAP ! ;
 : IMMEDIATE   SET-IMMEDIATE  LAST >NAME .IMMEDIATE-METHOD
    LAST DUP >COMPILE  REL! ;
-: COMPILING   LAST >INFO  DUP @  $40000000 OR  SWAP ! ;
-: SMUDGE!   ( f a-addr -- )   >INFO  TUCK @  $20000000 DUP INVERT  ROT AND
+TOP-BIT-SET 1 RSHIFT CONSTANT COMPILING-BIT
+: COMPILING   LAST >INFO  DUP @  COMPILING-BIT OR  SWAP ! ;
+TOP-BIT-SET 2 RSHIFT CONSTANT SMUDGE-BIT
+: SMUDGE!   ( f a-addr -- )   >INFO  TUCK @  SMUDGE-BIT DUP INVERT  ROT AND
    -ROT AND  OR  SWAP ! ;
 : SMUDGE   ( f -- )   LAST  SMUDGE! ;
 
@@ -425,11 +431,13 @@ CELL+ CONSTANT /BLOCK-BUFFER   \ uses value saved above
 : 'BUFFER   'BUFFERS @  1280 + ;   \ address of block buffer
 : >BLOCK   CELL+ ;
 
-: UPDATE   'BUFFER  DUP @ $80000000 OR  SWAP ! ;
+TOP-BIT-SET CONSTANT UPDATED-BIT
+: UPDATE   'BUFFER  DUP @ UPDATED-BIT OR  SWAP ! ;
 : UPDATED?   ( -- f )   'BUFFER @  0< ;
 : (BUFFER)   ( u -- c-addr f )
    'BUFFER                           \ address of block buffer
-   TUCK @ $7FFFFFFF AND  OVER = IF   \ if the current block was requested,
+   TUCK @
+   UPDATED-BIT INVERT AND  OVER = IF \ if the current block was requested,
       DROP >BLOCK  TRUE EXIT         \ leave address and true flag, and exit
    THEN
    UPDATED? IF                       \ was the last block updated?
@@ -694,7 +702,7 @@ LAST >NAME ' .DEFER-ABORT TO-ASMOUT
       2OVER ROT COUNT                \ COUNT the strings
       COMPARE 0= IF                  \ if the name matches
          DUP >INFO @                 \ and the word is not SMUDGEd
-         $20000000 AND 0= IF
+         SMUDGE-BIT AND 0= IF
             R@ OVER                  \ get wid and xt of word
             DUP >INFO @ 0< 2* INVERT \ get immediacy flag
             DUP >R                   \ save flag
@@ -842,7 +850,7 @@ CREATE 'SELECTOR  ' LOCAL?  DUP RAW-REL,  .LINK
       DUP IF                         \ if word found in dictionary
          STATE @ 0= IF               \ if interpreting, execute it
             DROP                     \ drop found flag
-            DUP >INFO @ $40000000 AND
+            DUP >INFO @ COMPILING-BIT AND
             IF  -14 THROW  THEN
             EXECUTE
          ELSE
@@ -985,7 +993,7 @@ INCLUDE" compiler4.fs"
 : THRU   1+ SWAP DO  I LOAD  LOOP ;
 : SAVE-BUFFERS
    UPDATED? IF                       \ if the buffer was updated
-      'BUFFER  DUP @ $7FFFFFFF AND   \ get the block number
+      'BUFFER  DUP @ UPDATED-BIT INVERT AND \ get the block number
       OVER >BLOCK OVER !BLOCK        \ save the block
       SWAP !                         \ mark the buffer as not updated
    THEN ;

@@ -130,7 +130,7 @@ INCLUDE" control3.fs"
 INCLUDE" strings2b.fs"
 INCLUDE" compiler2.fs"
 INCLUDE" interpreter3.fs"
-: SET-IMMEDIATE   LAST >INFO  DUP @  $80000000 OR  SWAP ! ;
+: SET-IMMEDIATE   LAST >INFO  DUP @  TOP-BIT-SET OR  SWAP ! ;
 INCLUDE" compiler4.fs"
 INCLUDE" compiler5.fs"
 INCLUDE" defer-fetch-store.fs"
