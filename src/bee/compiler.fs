@@ -27,8 +27,8 @@ INCLUDE" opcodes.fs"
    THEN ;
 : PUSHREL,   HERE SWAP OFFSET CELL/ OP_PUSHRELI >OPCODE RAW, ;
 
-: @BRANCH   ( from -- to )   DUP @ 2 ARSHIFT + $FFFFFFFC AND ;
-: !BRANCH   ( from to -- )   OVER - 2 LSHIFT  OVER @ $F AND  OR  SWAP ! ;
+: @BRANCH   ( from -- to )   DUP @ OP2_SHIFT ARSHIFT CELLS + ;
+: !BRANCH   ( from to -- )   OVER SWAP OFFSET CELL/  OVER @ OPCODE2>  >OPCODE2  SWAP ! ;
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP @ ,  CELL+  LOOP  DROP
    ELSE CALL,  THEN ;
 
