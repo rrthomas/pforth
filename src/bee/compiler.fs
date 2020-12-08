@@ -8,6 +8,9 @@
 \ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 \ RISK.
 
+INCLUDE" opcodes.fs"
+
+
 \ Core compiler
 
 : CALL   ( at from to -- )   >-< SWAP ! ;
