@@ -29,7 +29,8 @@ INCLUDE" save.fs"
 \ ALSO ASSEMBLER
 64 1024 * CONSTANT DICTIONARY-SIZE
 
-: .ASM(   ['] .( TO-ASMOUT  ['] CR TO-ASMOUT ;
+: .[   [CHAR] ] PARSE TYPE ; IMMEDIATE
+: .ASM[   ['] .[ TO-ASMOUT  ['] CR TO-ASMOUT ;
 
 : .CALL   ." calli " .SYMBOL CR ;
 : ASM-COMPILE,   DUP >INFO 2 + C@  ?DUP IF
@@ -173,7 +174,13 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
 STDERR-FILENO TO ASMOUT
-.ASM( calli INITIALIZE)
+.ASM[ calli INITIALIZE]
+.ASM[ .set _byte_bits, 8]
+.ASM[ .set _cell_bits, cell * _byte_bits]
+.ASM[ .set _immediate_bit, 1 << (_cell_bits - 1)]
+.ASM[ .set _compiling_bit, 1 << (_cell_bits - 2)]
+.ASM[ .set _smudge_bit, 1 << (_cell_bits - 3)]
+.ASM[ .set _name_length_bits, _cell_bits - _byte_bits]
 INCLUDE" primitives.fs"
 INCLUDE" system-params.fs"
 [UNDEFINED] MINIMAL-PRIMITIVES [IF]
