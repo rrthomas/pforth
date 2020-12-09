@@ -42,9 +42,9 @@ pforth: $(host_SRCS) highlevel.fs
 pforth.s: pforth
 	$(BUILD_PFORTH) make.fs 2> $@
 
-# FIXME: cell should be set to 4 OR 8
+CELL ?= 4
 .s.o:
-	bee-as --defsym cell=4 -R -o $@ $<
+	bee-as --defsym cell=$(CELL) -R -o $@ $<
 
 .o.bin:
 	bee-objcopy -O binary $< $@
