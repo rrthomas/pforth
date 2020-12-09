@@ -27,7 +27,8 @@ CR .( @PACKAGE_NAME@ high level words )
 PROVIDE: TRUE   -1 ; [THEN]
 PROVIDE: FALSE   0 ; [THEN]
 
-S" ADDRESS-UNIT-BITS" ENVIRONMENT? 0= [IF] ABORT [THEN]  CELLS CONSTANT CELL-BITS
+S" ADDRESS-UNIT-BITS" ENVIRONMENT? 0= [IF] ABORT [THEN]  CONSTANT BYTE-BITS
+BYTE-BITS CELLS CONSTANT CELL-BITS
 1 CELL-BITS 1- LSHIFT CONSTANT TOP-BIT-SET
 
 PROVIDE: -   NEGATE + ; [THEN]
@@ -749,19 +750,18 @@ DEFER CURRENT-RELATIVE-LITERAL  ' RELATIVE-LITERAL IS CURRENT-RELATIVE-LITERAL
    THEN ;
 IMMEDIATE COMPILING
 
-( A header has the following structure:
-
-  Name field                         counted string, up to 8 cells
-  Link field                         1 cell, relative link to LAST
-  Compilation method                 1 cell, relative pointer
-  Info field                         1 cell: bit 31 is IMMEDIATE flag,
-                                     bit 30 is COMPILING flag,
-                                     bit 29 is SMUDGE flag,
-                                     rest of MS byte is length of name field,
-                                     byte 2 is reserved for the back-end
-                                     bytes 0 & 1 are offset to DOES> code for a
-                                     defining word
-)
+\ A header has the following structure:
+\
+\  Name field                         counted string, up to 32 chars, space-padded to cell
+\  Link field                         1 cell, relative link to LAST
+\  Compilation method                 1 cell, relative pointer
+\  Info field                         1 cell: MS byte bit 7 is IMMEDIATE flag,
+\                                     bit 6 is COMPILING flag,
+\                                     bit 5 is SMUDGE flag,
+\                                     rest of MS byte is length of name field,
+\                                     bytes 2-(MS byte - 1) are reserved for the back-end
+\                                     bytes 0 & 1 are offset in cells to DOES> code for a
+\                                     defining word
 INCLUDE" mangle.fs"
 : .NAME   COUNT  .MANGLE ;
 : .NAME-LABEL   DUP ." .global " .NAME CR  .NAME ." :" CR ;
@@ -770,7 +770,15 @@ INCLUDE" mangle.fs"
 : .COMPILE-FIELD   ." .int " .NAME ." _compilation" CR ;
 \ FIXME: put values for DOES> code, inline code, IMMEDIATE and COMPILING bits into an expression
 : .INFO-FIELD   ." .int " .NAME ." _info " CR ;
-: .INFO   ." .set " .NAME ." _info, 0x" H. CR ;
+: .INFO   ." .set " .NAME ." _info, "
+   DUP IMMEDIATE-BIT AND IF ." _immediate_bit" ELSE ." 0" THEN
+   IMMEDIATE-BIT INVERT AND  ."  | "
+   DUP COMPILING-BIT AND IF ." _compiling_bit" ELSE ." 0" THEN
+   COMPILING-BIT INVERT AND  ."  | "
+   DUP SMUDGE-BIT AND IF ." _smudge_bit" ELSE ." 0" THEN
+   SMUDGE-BIT INVERT AND  ."  | "
+   CELL-BITS BYTE-BITS -  2DUP  RSHIFT ." (" . ." <<" ." _name_length_bits) | 0x"
+   1 SWAP LSHIFT 1- AND  H. CR ;
 : .PREVIOUS-INFO   LAST  DUP >INFO @  SWAP >NAME  ['] .INFO TO-ASMOUT ;
 : .DOES   ." .set " .NAME ." _doer, " .NAME ." _does" CR ;
 : .DOES-LABEL   .NAME ." _does:" CR ;
