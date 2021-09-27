@@ -1,7 +1,7 @@
 \ Machine-dependent words (Beetle)
 \ FIXME: Use assembler
 \
-\ (c) Reuben Thomas 1995-2019
+\ (c) Reuben Thomas 1995-2021
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
@@ -31,22 +31,22 @@
 
 \ FIXME: allow arbitrary branches; at the moment we're effectively
 \ restricted to 64Mb.
-: BRANCH   ( at from to -- )   $4D 3 PICK C!  !BRANCH ;
-: CALL   ( at from to -- )   $53 3 PICK C!  !BRANCH ;
+: BRANCH   ( at from to -- )   $43 3 PICK C!  !BRANCH ;
+: CALL   ( at from to -- )   $49 3 PICK C!  !BRANCH ;
 
 : ADR,   ( to opcode -- )   HERE ROT OFFSET  TUCK HERE 1+ FITS
    INVERT IF  NOPALIGN  THEN  1+ C, FIT, ;
-: CALL,   ( to -- )   $52 ADR, ;
+: CALL,   ( to -- )   $48 ADR, ;
 : COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP C@ C,  1+  LOOP  DROP
    ELSE CALL,  THEN ;
 
-: AHEAD   NOPALIGN  HERE DUP $4C ADR, ; IMMEDIATE COMPILING
-: IF   NOPALIGN  HERE DUP $4E ADR, ; IMMEDIATE COMPILING
+: AHEAD   NOPALIGN  HERE DUP $42 ADR, ; IMMEDIATE COMPILING
+: IF   NOPALIGN  HERE DUP $44 ADR, ; IMMEDIATE COMPILING
 : JOIN   ( from to -- )   OVER SWAP !BRANCH ;
 
 : BEGIN   NOPALIGN HERE ; IMMEDIATE COMPILING
 : THEN   NOPALIGN HERE JOIN ; IMMEDIATE COMPILING
 
 : LINK, ;
-: UNLINK,   $54 C, ;
-: LEAVE,   $5A C, ;
+: UNLINK,   $4A C, ;
+: LEAVE,   $50 C, ;

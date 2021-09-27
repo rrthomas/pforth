@@ -1,4 +1,4 @@
-\ (c) Reuben Thomas 1995-2020
+\ (c) Reuben Thomas 1995-2021
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
@@ -8,28 +8,28 @@
 
 \ Compiler
 
-: DO,   $55 C, ;
-: LOOP,   $56 ADR, ;
-: +LOOP,   $58 ADR, ;
+: DO,   $4B C, ;
+: LOOP,   $4C ADR, ;
+: +LOOP,   $4E ADR, ;
 : END-LOOP, ;
 
 ALSO ASSEMBLER
-: EXECUTE   STATE @ IF  $50 C,  NOPALIGN  ELSE [ $50 C,  NOPALIGN ]
+: EXECUTE   STATE @ IF  $46 C,  NOPALIGN  ELSE [ $46 C,  NOPALIGN ]
    THEN ; IMMEDIATE
-: @EXECUTE   STATE @ IF  $51 C,  NOPALIGN  ELSE [ $51 C,  NOPALIGN ]
+: @EXECUTE   STATE @ IF  $47 C,  NOPALIGN  ELSE [ $47 C,  NOPALIGN ]
    THEN ; IMMEDIATE
 PREVIOUS
 
 
 \ Data structures
 
-: LITERAL   DUP HERE 1+ FITS IF  $5D C, FIT,  ELSE $5C C,  NOPALIGN  ,  THEN ;
+: LITERAL   DUP HERE 1+ FITS IF  $53 C, FIT,  ELSE $52 C,  NOPALIGN  ,  THEN ;
 IMMEDIATE COMPILING
-: RELATIVE-LITERAL   NOPALIGN $1E425C , ( FIXME: BLITERAL BEP@ B+ )
+: RELATIVE-LITERAL   NOPALIGN $1E5652 , ( FIXME: BLITERAL BEP@ B+ )
    HERE -  CELL-  , ; IMMEDIATE COMPILING
 
 \ Leave UNLINK, in next cell where it can be patched by DOES>
-: CREATE,   LINK,  $42 C,  $23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
+: CREATE,   LINK,  $56 C,  $23 C,  NOPALIGN  UNLINK,  NOPALIGN ;
 : >BODY   2 CELLS + ;
 \ >DOES>, given the xt of a defining word, returns the address of the DOES>
 \ code.

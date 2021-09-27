@@ -1,4 +1,4 @@
-\ (c) Reuben Thomas 1995-2019
+\ (c) Reuben Thomas 1995-2021
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
@@ -35,7 +35,5 @@ CODE FALSE   B0 BEXIT END-CODE  1 INLINE
 \ System primitives
 CODE BYE   B0 BHALT END-CODE  2 INLINE
 1 PRIMITIVES LINK
-2 PRIMITIVES FLUSH-FILE RENAME-FILE
-4 PRIMITIVES DELETE-FILE FILE-SIZE RESIZE-FILE FILE-STATUS
 
 PREVIOUS
