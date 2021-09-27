@@ -1176,7 +1176,7 @@ INCLUDE" platform.fs"
 
 : BANNER
    ." @PACKAGE_NAME@ v" VERSION TYPE ."  (platform: " "PLATFORM TYPE ." )"
-   CR ." (c) Reuben Thomas 1991-2020" CR ;
+   CR ." (c) Reuben Thomas 1991-2021" CR ;
 
 FALSE VALUE INTERACT?
 : DO-START-OPTIONS
