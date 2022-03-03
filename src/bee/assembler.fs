@@ -54,9 +54,9 @@ INCLUDE" opcodes.fs"
       29 OF C" eq" ENDOF
       30 OF C" lt" ENDOF
       31 OF C" ult" ENDOF
-      32 OF C" pushr" ENDOF
-      33 OF C" popr" ENDOF
-      34 OF C" dupr" ENDOF
+      32 OF C" pushs" ENDOF
+      33 OF C" pops" ENDOF
+      34 OF C" dups" ENDOF
       35 OF C" catch" ENDOF
       36 OF C" throw" ENDOF
       37 OF C" break" ENDOF

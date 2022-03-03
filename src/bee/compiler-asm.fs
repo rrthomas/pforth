@@ -28,7 +28,7 @@
 : (.PUSH)   HERE ." calli " DUP FORWARD .LABEL CR
    SWAP (.INT)
    FORWARD .LABEL-DEF
-   ." popr" CR
+   ." pops" CR
    ." load" CR ;
 :NONAME   ['] (.PUSH)  TO-ASMOUT ; IS .PUSH
 : (.LABEL)   SWAP ." .L" ADDR>LABEL 0 U.R EMIT ;
