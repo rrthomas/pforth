@@ -2,12 +2,12 @@
 :NONAME   ['] (.ALIGN)  TO-ASMOUT ; IS .ALIGN
 : (.CALIGN)   ." .balign cell, 0x" H. CR ;
 :NONAME   ['] (.CALIGN)  TO-ASMOUT ; IS .CALIGN
-: (.REL-OFFSET)   ." .int "  ?DUP IF   BACKWARD .LABEL ."  - ."  ELSE ." 0"  THEN CR  ;
+: (.REL-OFFSET)   ." .word "  ?DUP IF   BACKWARD .LABEL ."  - ."  ELSE ." 0"  THEN CR  ;
 :NONAME   ['] (.REL-OFFSET)  TO-ASMOUT ; IS .REL-OFFSET
 : (.NOP)   ." nop " CR ;
 :NONAME   ['] (.NOP)  TO-ASMOUT ; IS .NOP
-: (.INT)   ." .int " . CR ;
-:NONAME   ['] (.INT)  TO-ASMOUT ; IS .INT
+: (.WORD)   ." .word " . CR ;
+:NONAME   ['] (.WORD)  TO-ASMOUT ; IS .WORD
 : (.BYTE)   ." .byte 0x" H. CR ;
 :NONAME   ['] (.BYTE)  TO-ASMOUT ; IS .BYTE
 : (.STRING)   ." .ascii "
@@ -26,7 +26,7 @@
 : (.PUSHRELI)   ." pushreli " .SYMBOL CR ;
 :NONAME   ['] (.PUSHRELI)  TO-ASMOUT ; IS .PUSHRELI
 : (.PUSH)   HERE ." calli " DUP FORWARD .LABEL CR
-   SWAP (.INT)
+   SWAP (.WORD)
    FORWARD .LABEL-DEF
    ." pops" CR
    ." load" CR ;

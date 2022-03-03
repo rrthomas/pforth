@@ -40,7 +40,7 @@ INCLUDE" save.fs"
       CALL,
    THEN ;
 
-: .FORTH-ADDRESS   ." .int last_word - ." CR ;
+: .FORTH-ADDRESS   ." .word last_word - ." CR ;
 : .FORTH-LINK   ." .set last_word, " LAST >NAME .NAME CR ;
 
 \ STUB FOO creates an empty word.

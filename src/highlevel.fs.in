@@ -222,7 +222,7 @@ VARIABLE ROOTDP
 : ALIGNED   CELL+ 1-  -CELL AND ;
 : ALIGN   .ALIGN  HERE ALIGNED  DP ! ;
 : RAW,   HERE  CELL ALLOT  ! ;
-: ,   DUP .INT  RAW, ;
+: ,   DUP .WORD  RAW, ;
 : RAW-C,   HERE  +CHAR ALLOT  C! ;
 : C,   DUP .BYTE  RAW-C, ;
 : CALIGN   HERE  DUP ALIGNED  >-< 0 ?DO  DUP RAW-C,  LOOP  .CALIGN ;
@@ -765,11 +765,11 @@ IMMEDIATE COMPILING
 INCLUDE" mangle.fs"
 : .NAME   COUNT  .MANGLE ;
 : .NAME-LABEL   DUP ." .global " .NAME CR  .NAME ." :" CR ;
-: (.LINK)   ." .int " ?DUP IF >NAME .NAME ELSE ." . " THEN ."  - ." CR ;
+: (.LINK)   ." .word " ?DUP IF >NAME .NAME ELSE ." . " THEN ."  - ." CR ;
 : .LINK   ['] (.LINK) TO-ASMOUT ;
-: .COMPILE-FIELD   ." .int " .NAME ." _compilation" CR ;
+: .COMPILE-FIELD   ." .word " .NAME ." _compilation" CR ;
 \ FIXME: put values for DOES> code, inline code, IMMEDIATE and COMPILING bits into an expression
-: .INFO-FIELD   ." .int " .NAME ." _info " CR ;
+: .INFO-FIELD   ." .word " .NAME ." _info " CR ;
 : .INFO   ." .set " .NAME ." _info, "
    DUP IMMEDIATE-BIT AND IF ." _immediate_bit" ELSE ." 0" THEN
    IMMEDIATE-BIT INVERT AND  ."  | "
@@ -1070,7 +1070,7 @@ CREATE CHAIN  HERE BACKWARD .LABEL-DEF  0 ,
   Info field           bit 10 is FOREIGN flag
 )
 : WORDLIST   ALIGN HERE  0 RAW,
-   HERE  CHAIN  DUP REL@ RAW-REL,  0 .INT ( FIXME: chain to previous wordlist )  REL!  0 , ;
+   HERE  CHAIN  DUP REL@ RAW-REL,  0 .WORD ( FIXME: chain to previous wordlist )  REL!  0 , ;
 INCLUDE" vocabulary.fs"
 HERE BACKWARD .LABEL-DEF  ' .FORTH-ADDRESS TO-ASMOUT
 VOCABULARY FORTH
