@@ -1,6 +1,6 @@
 \ pForth high level words
 \
-\ (c) Reuben Thomas 1991-2020
+\ (c) Reuben Thomas 1991-2022
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
@@ -430,7 +430,7 @@ VARIABLE SCR
 : !BLOCK   ( c-addr u -- )   W/O OPEN-BLOCKS  >R  1- 10 LSHIFT U>UD
    R@ REPOSITION-FILE DROP  /BLOCK R@ WRITE-FILE DROP  R> CLOSE-FILE DROP ;
 
-CELL+ CONSTANT /BLOCK-BUFFER   \ uses value saved above
+: /BLOCK-BUFFER   LITERAL CELL+ ;   \ uses value saved above
 : 'BUFFER   'BUFFERS @  1280 + ;   \ address of block buffer
 : >BLOCK   CELL+ ;
 
