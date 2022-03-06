@@ -18,7 +18,8 @@ to someone.
 (I am aware that there are other Forth compilers called pForth; the
 duplication was unintentional.)
 
-pForth comes pre-compiled for Bee (`src/bee/pforth`).
+pForth comes pre-compiled for Bee (`src/bee/pforth-32` and
+`src/bee/pforth-64`).
 
 See `doc/pforth.pdf` for ANSI conformance information.
 
@@ -33,10 +34,7 @@ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER'S RISK.
 
 ## Installation
 
-Bee is required (see above).
-
-To give the path to a VM executor, set the `HOST_EXECUTOR` or
-`BUILD_EXECUTOR` variables.
+Bee is required (see above) in either a 32- or 64-bit build. By default, `configure`.
 
 See `./configure --help` for more information.
 

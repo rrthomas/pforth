@@ -6,10 +6,3 @@ highlevel.fs
 /pforthi.tmp
 /pforth
 /*/pforth-new
-pforth-new,ffd
-pforth-new,ff8
-pforth-new-0,ff8
-pforth-base-minimal-primitives
-/!pForth/!TestBuild,feb
-/!pForth/rpcemu-*
-/!pForth/roms.zip

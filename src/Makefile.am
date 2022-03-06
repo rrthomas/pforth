@@ -15,8 +15,8 @@ bin_SCRIPTS = pforth
 include $(srcdir)/host_src.am
 
 # Forth image
-pforth: $(host)/pforth
-	echo "#!$(HOST_EXECUTOR) $(HOST_EXECUTOR_FLAGS)" | cat - $(host)/pforth > $@
+pforth: bee/pforth-$(bee_word_bits)
+	echo "#!$(BEE)" | cat - bee/pforth-$(bee_word_bits) > $@
 	chmod +x $@
 
 EXTRA_DIST = $(portable_SRCS)
