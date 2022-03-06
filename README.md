@@ -7,11 +7,9 @@ by Reuben Thomas <rrt@sc3d.org>
 pForth is a simple ANS Forth compiler, intended for portability and study.
 It has been principally used as an environment for building other Forth
 compilers: metacompiling itself for the
-[Bee](https://github.com/rrthomas/bee),
-[Beetle](https://github.com/rrthomas/beetle) and
-[Mit](https://github.com/rrthomas/mit) portable virtual machines and
-the ARM-based [RISC OS](https://www.riscosopen.org/); compiling a cut-down
-version called mForth (now defunct) for RISC OS and Beetle, and building
+[Bee](https://github.com/rrthomas/bee) portable virtual machine; compiling a
+cut-down version called mForth (now defunct) for RISC OS and the
+[Beetle](https://github.com/rrthomas/beetle) virtual machine, and building
 [Machine Forth](https://rrt.sc3d.org/Software/Forth) systems.
 
 pForth is released purely in the hope that it might be interesting or useful
@@ -20,9 +18,7 @@ to someone.
 (I am aware that there are other Forth compilers called pForth; the
 duplication was unintentional.)
 
-pForth comes pre-compiled for Bee (`src/bee/pforth`), Beetle
-(`src/beetle/pforth`), the Mit (`src/mit/pforth`), and for RISC OS 3
-(`!pForth`).
+pForth comes pre-compiled for Bee (`src/bee/pforth`).
 
 See `doc/pforth.pdf` for ANSI conformance information.
 
@@ -37,12 +33,7 @@ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER'S RISK.
 
 ## Installation
 
-Bee, Beetle, Mit or RISC OS is required (see above). If the native build
-architecture is not supported, Bee, Beetle and Mit are automatically
-searched for, in that order.
-
-To choose the host and/or build system manually, pass the `--host=ARCH` or
-`--build=ARCH` arguments to `configure`; to choose the flavour (e.g. `mit-threaded`), pass the `HOST_FLAVOUR` or `BUILD_FLAVOUR` variable.
+Bee is required (see above).
 
 To give the path to a VM executor, set the `HOST_EXECUTOR` or
 `BUILD_EXECUTOR` variables.

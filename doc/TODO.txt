@@ -72,31 +72,28 @@ especially those whose semantics are extended more than once. pForth's own
 words such as the forward refs compiler tools ought to have their own
 wordsets.
 
-3. Separate OS from processor, so that e.g. mit and ARM versions of RISC OS
-pForth can use the same OS interface and code.
-
-4. Add memory allocation and use for transient buffers. Using for
+3. Add memory allocation and use for transient buffers. Using for
 dictionaries has two obvious problems: first, need to auto-extend areas being
 compiled into (or shrink to fit at end); second, generating a meta-compiled
 image will be harder.
 
-5. Make general-purpose forward-reference mechanism (using CATCH/THROW around
+4. Make general-purpose forward-reference mechanism (using CATCH/THROW around
 ordinary INTERPRET, and existing forward resolution mechanism). Needs memory
 allocation to be able to start a new definition when half-way through the
 current one.
 
-6. Reorganize the mess over wordlists (FOREIGN &c.); there must be a simpler
+5. Reorganize the mess over wordlists (FOREIGN &c.); there must be a simpler
 way of handling metacompilation using a more OOP approach (so that even
 different dictionary structures can be accomodated). Wordlists in the search
 order should call their method (inherited from their dictionary) for
 scanning themselves, and report whether the word found is executable on the
 current system or not.
 
-7. Need a mechanism for handling system-specific replacement code; then can
+6. Need a mechanism for handling system-specific replacement code; then can
 replace bits all the way from a simple VM implementation (Tau?) down to a
 highly OS-integrated one which replaces ACCEPT &c. Again, use objects.
 
-8. Don't interpret, always compile, by default as a :NONAME. Use separate
+7. Don't interpret, always compile, by default as a :NONAME. Use separate
 control stack: if when the input source becomes empty the control stack is
 empty, execute. (Defining words put a placeholder on the control stack; [
 and ] must temporarily stash the top value.) This gets rid of STATE and

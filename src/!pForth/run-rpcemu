@@ -1,6 +1,0 @@
-#!/bin/bash
-set -e
-
-cp -a hostfs rpcemu/* rpcemu-*/
-cd rpcemu-*/
-./rpcemu-interpreter -platform offscreen

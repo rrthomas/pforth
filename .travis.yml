@@ -29,28 +29,6 @@ jobs:
             - hevea
             - rlwrap
             - gcc-multilib
-    # - env:
-    #     - HOST=beetle
-    #   addons:
-    #     apt:
-    #       packages: *default_deps
-    # - env:
-    #     - HOST=mit
-    #     - PYTHON=/usr/bin/python3.7
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - *default_deps
-    #         - python3.7
-    # - env:
-    #     - HOST=mit
-    #     - PYTHON=/usr/bin/python3.7
-    #     - PFORTH_BUILD_FLAVOUR=mit-threaded
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - *default_deps
-    #         - python3.7
     - env:
         - HOST=bee
         - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
@@ -58,53 +36,11 @@ jobs:
         apt:
           packages:
             - *default_deps
-    # - env:
-    #     - HOST=beetle
-    #     - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - *default_deps
-    # - env:
-    #     - HOST=mit
-    #     - PYTHON=/usr/bin/python3.7
-    #     - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - *default_deps
-    #         - python3.7
-    # - env:
-    #     - HOST=arm-riscos
-    #     - BUILD=beetle
-    #   addons:
-    #     apt:
-    #       packages: &riscos_deps
-    #         - qtbase5-dev
-    #         - qtmultimedia5-dev
-    #         - libqt5multimedia5-plugins
-    #         - *default_deps
-    # - env:
-    #     - HOST=arm-riscos
-    #     - BUILD=beetle
-    #     - MINIMAL_PRIMITIVES="CREATE MINIMAL_PRIMITIVES"
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - *riscos_deps
     - os: osx
       env:
         - HOST=bee
-    # - os: osx
-    #   env:
-    #     - HOST=beetle
-    # - os: osx
-    #   env:
-    #     - HOST=mit
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then if [[ "$HOST" == "mit" ]]; then pip3 install pyyaml; fi; fi
-  - if [[ "$HOST" == "" ]]; then export HOST=$BUILD; fi
   - ./build-aux/install-executor $BUILD
   - if [[ "$BUILD" != "$HOST" ]]; then ./build-aux/install-executor $HOST; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ldconfig; fi
@@ -112,4 +48,3 @@ install:
 script:
   - autoreconf -i && ./configure --enable-silent-rules --build=$BUILD --host=$HOST BUILD_FLAVOUR=$PFORTH_BUILD_FLAVOUR
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make check; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then if [[ "$HOST" == "arm-riscos" ]]; then cd src; make \!pForth/\!TestBuild,feb; cd \!pForth; ./run-rpcemu; else make distcheck; fi; fi

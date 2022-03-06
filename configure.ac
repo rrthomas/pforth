@@ -28,13 +28,10 @@ AC_ARG_VAR([BUILD_EXECUTOR_FLAGS], [flags to pass to build executor])
 AC_ARG_VAR([BUILD_FLAVOUR], [build flavour])
 AS_IF([test "$BUILD_EXECUTOR" = ""],
   [AS_CASE([$build],
-    [arm*-riscos], [BUILD_EXECUTOR=""; build=riscos],
     [bee], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [bee])],
-    [beetle], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [beetle])],
-    [mit*], [PFORTH_CHECK_EXECUTOR([BUILD_EXECUTOR], [mit])],
     [AS_IF([test "$build" != ""],
        AC_MSG_ERROR([pForth does not support building with $build]))
-     AC_PATH_PROGS(BUILD_EXECUTOR, [bee beetle mit])
+     AC_PATH_PROGS(BUILD_EXECUTOR, [bee])
      AS_IF([test "$ac_cv_path_BUILD_EXECUTOR" = ""],
        AC_MSG_ERROR([No build executor found for pForth]))
      build=`basename $BUILD_EXECUTOR`])],
@@ -57,10 +54,7 @@ AC_ARG_VAR([HOST_FLAVOUR], [host flavour])
 AS_IF([test "$HOST_EXECUTOR" = ""],
   [AS_CASE([$host],
     [""], [HOST_EXECUTOR=$BUILD_EXECUTOR; host=$build],
-    [arm*-riscos], [HOST_EXECUTOR=""],
     [bee], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [bee])],
-    [beetle], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [beetle])],
-    [mit*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [mit])],
     [AC_MSG_ERROR([pForth does not support host $host])])],
   [AS_IF([test "$host" = ""],
    [AC_MSG_ERROR([HOST_EXECUTOR is set, but --host is not!])],
@@ -100,15 +94,6 @@ AC_CONFIG_FILES([
   doc/Makefile
   extras/Makefile
 ])
-#  src/beetle/Makefile
-#  src/riscos/Makefile
-#  src/mit/Makefile
-#  src/mit-threaded/Makefile
 AC_CONFIG_FILES([src/highlevel.fs],
-  [ln -fs ../highlevel.fs src/bee/highlevel.fs
-   ln -fs ../highlevel.fs src/beetle/highlevel.fs
-   dnl ln -fs ../highlevel.fs src/riscos/highlevel.fs
-   dnl ln -fs ../highlevel.fs src/mit/highlevel.fs
-   dnl ln -fs ../highlevel.fs src/mit-threaded/highlevel.fs
-])
+  [ln -fs ../highlevel.fs src/bee/highlevel.fs])
 AC_OUTPUT
