@@ -8,20 +8,67 @@
 # THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 # RISK.
 
-SUBDIRS = bee
-
 bin_SCRIPTS = pforth
 
-include $(srcdir)/host_src.am
+noinst_DATA = pforth-$(bee_word_bits)
+EXTRA_DIST =  $(portable_SRCS) $(host_SRCS) pforth
+DISTCLEANFILES = highlevel.fs
+
+highlevel.fs: highlevel.fs.in
+	cd $(top_builddir); ./config.status --file=src/highlevel.fs
+
+portable_SRCS = compiler2.fs compiler4.fs compiler5.fs control1.fs		\
+	control2.fs control3.fs defer-fetch-store.fs defining.fs does.fs	\
+	interpreter3.fs make.fs vocabulary.fs
+
+BUILD_PFORTH = $(BEE) $(abs_top_srcdir)/src/pforth-$(bee_word_bits)
+
+host_SRCS = $(portable_SRCS) \
+	accept.fs assembler.fs call-cells.fs code.fs compiler1.fs		\
+	compiler.fs compiler-asm.fs compiler-defer.fs compiler-postpone.fs	\
+	extra-primitives.fs fileio.fs init-space.fs initialize.fs mangle.fs	\
+	native-call.fs opcodes.fs os-compiler.fs os.fs parse-command-line.fs	\
+	platform.fs primitives.fs resolver-branch.fs save.fs strings2a.fs	\
+	strings2b.fs system-params.fs terminal.fs util.fs
+
+do_build = \
+	if test $(srcdir) != $(builddir); then \
+	    for i in $(host_SRCS); do \
+		$(LN_S) -f $(abs_top_srcdir)/src/"$$i" . ; \
+	    done; \
+	fi && \
+	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs
+
+# Build with triple test
+# FIXME: make this work for both word sizes
+pforth-$(bee_word_bits): $(host_SRCS) highlevel.fs
+	$(do_build) && \
+	mv pforth-new pforth-new-0 && \
+	$(BEE32) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make.fs && \
+	cmp pforth-new pforth-new-0 && \
+	rm pforth-new-0; \
+	mv pforth-new $@
+
+pforth.s: pforth-$(bee_word_bits)
+	$(BUILD_PFORTH) make.fs 2> $@
+
+.s.o:
+	$(AS) --defsym cell=`expr $(bee_word_bits) / 8` -R -o $@ $<
+
+.o.bin:
+	$(OBJCOPY) -O binary $< $@
+
+check-local:
+
+loc-local:
+	cd $(srcdir) && $(CLOC) $(CLOC_OPTS) $(host_SRCS) $(portable_SRCS) $(abs_builddir)/highlevel.fs
 
 # Forth image
-pforth: bee/pforth-$(bee_word_bits)
-	echo "#!$(BEE)" | cat - bee/pforth-$(bee_word_bits) > $@
+pforth: pforth-$(bee_word_bits)
+	echo "#!$(BEE)" | cat - pforth-$(bee_word_bits) > $@
 	chmod +x $@
 
-EXTRA_DIST = $(portable_SRCS)
 CLEANFILES = pforth
-DISTCLEANFILES =
 
 if HAVE_RLWRAP
 install-exec-hook:
@@ -32,16 +79,14 @@ install-exec-hook:
 uninstall-hook:
 	rm $(DESTDIR)$(bindir)/`echo pforthi | sed '$(transform)'`
 
-DISTCLEANFILES += $(host)/pforthi pforthi.tmp
+DISTCLEANFILES += pforthi pforthi.tmp
 endif
-
-loc-local:
-	cd $(srcdir) && $(CLOC) $(CLOC_OPTS) $(portable_SRCS) $(abs_builddir)/highlevel.fs
 
 # Error code 243 below is 256 + (-13) (Forth error code for "unknown word")
 check-local: pforth
+	$(do_build) && \
+	cmp pforth-$(bee_word_bits) pforth-new && \
+	rm pforth-new && \
 	cd $(top_srcdir)/extras && \
-	echo foobar | $(abs_builddir)/pforth tests.fs
-	if test "$(host)" = "$(build)" -a "$(target)" = "$(host)"; then \
-	    ./pforth --evaluate FOO || test $? = 243 ; \
-	fi
+	echo foobar | $(abs_builddir)/pforth tests.fs;
+	./pforth --evaluate FOO || test $$? = 243

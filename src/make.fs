@@ -85,7 +85,7 @@ DECIMAL
 
 INCLUDE" compiler-defer.fs"
 INCLUDE" compiler-asm.fs"
-INCLUDE" relocate-compiler.fs"
+INCLUDE" compiler.fs"
 INCLUDE" native-call.fs"
 INCLUDE" compiler1.fs"
 

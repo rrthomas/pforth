@@ -1,4 +1,4 @@
-\ (c) Reuben Thomas 2019
+\ (c) Reuben Thomas 2019-2020
 \
 \ The package is distributed under the GNU GPL version 3, or, at your
 \ option, any later version.
