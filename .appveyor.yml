@@ -5,18 +5,16 @@ environment:
     GITHUB_TOKEN:
       secure: 3J3HXNPKxCnwyaNtnJAH2xwHg9cG/SEB9YNrBGYoGRQSeNBO19+yVv48x6LfNiA9
     VERBOSE: 1 # Get test logs in output
-    BUILD: bee
-    HOST: bee
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
-    # pForth is not yet 64-bit, and Mingw's and macOS's toolchains are not multiarch
-    # - APPVEYOR_BUILD_WORKER_IMAGE: macos
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-    #   MSYSTEM: MSYS
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-    #   MSYSTEM: MINGW64
-    #   # Define _POSIX to get a full set of POSIX signal names from signal.h on mingw (for Bee)
-    #   CPPFLAGS: -D_POSIX
+    pForth is not yet 64-bit, and Mingw's and macOS's toolchains are not multiarch
+    - APPVEYOR_BUILD_WORKER_IMAGE: macos
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      MSYSTEM: MSYS
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      MSYSTEM: MINGW64
+      # Define _POSIX to get a full set of POSIX signal names from signal.h on mingw (for Bee)
+      CPPFLAGS: -D_POSIX
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       MSYSTEM: MINGW32
       # Define _POSIX to get a full set of POSIX signal names from signal.h on mingw (for Bee)
@@ -47,12 +45,11 @@ for:
 test: off
 
 install:
-  - sh: ./build-aux/install-executor $BUILD
+  - sh: ./build-aux/install-executor
   - sh: if [[ "$APPVEYOR_BUILD_WORKER_IMAGE" == "Ubuntu" ]]; then sudo ldconfig; fi
-  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/fix-links-windows.sh"
 
 build_script:
-  - sh: git submodule update --init --recursive && autoreconf -i && ./configure --enable-silent-rules --build=$BUILD --host=$HOST BUILD_FLAVOUR=$PFORTH_BUILD_FLAVOUR
+  - sh: git submodule update --init --recursive && autoreconf -i && ./configure --enable-silent-rules
   - sh: if [[ "$APPVEYOR_BUILD_WORKER_IMAGE" == "macos" ]]; then make check; else make distcheck; fi
-  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/install-executor --no-sudo $BUILD"
+  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/install-executor --no-sudo"
   - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && git submodule update --init --recursive && autoreconf -fi && ./configure --enable-silent-rules && make check"

@@ -1,7 +1,7 @@
 #!/bin/bash
-# Install executor (used for AppVeyor build)
+# Install Bee (used for AppVeyor build)
 #
-# (c) Reuben Thomas 2018-2020
+# (c) Reuben Thomas 2018-2022
 #
 # This file is in the public domain.
 
@@ -15,14 +15,8 @@ if test "$GITHUB_TOKEN" != ""; then
     GITHUB_HEADER=(-H "Authorization: token $GITHUB_TOKEN")
 fi
 
-BUILD=$1
-
-case $BUILD in
-    bee)
-        cd $HOME
-        git clone https://github.com/rrthomas/bee.git
-        cd bee
-        git checkout "${APPVEYOR_REPO_BRANCH##bee-}"
-        ./bootstrap && ./configure --enable-silent-rules CC="gcc -m32" && make check && $SUDO make install
-        ;;
-esac
+cd $HOME
+git clone https://github.com/rrthomas/bee.git
+cd bee
+git checkout "${APPVEYOR_REPO_BRANCH##bee-}"
+./bootstrap && ./configure --enable-silent-rules && make check && $SUDO make install
