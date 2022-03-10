@@ -7,7 +7,6 @@ environment:
     VERBOSE: 1 # Get test logs in output
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
-    pForth is not yet 64-bit, and Mingw's and macOS's toolchains are not multiarch
     - APPVEYOR_BUILD_WORKER_IMAGE: macos
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       MSYSTEM: MSYS
