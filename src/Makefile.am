@@ -44,7 +44,7 @@ do_build = \
 pforth-$(bee_word_bits): $(host_SRCS) highlevel.fs
 	$(do_build) && \
 	mv pforth-new pforth-new-0 && \
-	$(BEE32) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make.fs && \
+	$(BEE) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make.fs && \
 	cmp pforth-new pforth-new-0 && \
 	rm pforth-new-0; \
 	mv pforth-new $@
