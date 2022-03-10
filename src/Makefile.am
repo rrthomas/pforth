@@ -11,7 +11,7 @@
 bin_SCRIPTS = pforth
 
 noinst_DATA = pforth-$(bee_word_bits)
-EXTRA_DIST =  $(portable_SRCS) $(host_SRCS) pforth
+EXTRA_DIST =  $(portable_SRCS) $(host_SRCS) pforth pforth-32 pforth-64
 DISTCLEANFILES = highlevel.fs
 
 highlevel.fs: highlevel.fs.in
