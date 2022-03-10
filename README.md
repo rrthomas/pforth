@@ -34,16 +34,12 @@ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER'S RISK.
 
 ## Installation
 
-Bee is required (see above) in either a 32- or 64-bit build. By default, `configure`.
-
-See `./configure --help` for more information.
+Bee is required (see above) in either a 32- or 64-bit build.
 
 To build the documentation, a comprehensive TeX system such as TeXLive is
 required.
 
 ### Building from a release tarball
-
-(For building from git, first see below.)
 
 From an unpacked release tarball, run:
 
@@ -69,9 +65,8 @@ and then proceed as above for a release build.
 
 ## Acknowledgements
 
-Thanks to Hanno Schwalm for improved 0=, U< and U> primitives for the ARM
-version, and to the authors of RISC Forth, the first Forth system I studied
-closely, which inspired me to write pForth.
+Thanks to the authors of RISC Forth, the first Forth system I studied closely,
+which inspired me to write pForth.
 
 
 ## Bugs and comments
