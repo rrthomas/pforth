@@ -25,6 +25,7 @@ for:
     only:
       - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
   init:
+    - sudo apt-get update
     - sudo apt-get -y install texlive-latex-extra texlive-science texlive-fonts-recommended texlive-fonts-extra tex-gyre help2man latexmk hevea rlwrap gcc-multilib linux-libc-dev:i386
 -
   matrix:
@@ -44,8 +45,10 @@ for:
 test: off
 
 install:
+  - sh: export PATH="/usr/local/opt/m4/bin:$PATH"
   - sh: ./build-aux/install-executor
   - sh: if [[ "$APPVEYOR_BUILD_WORKER_IMAGE" == "Ubuntu" ]]; then sudo ldconfig; fi
+  - cmd: C:\msys64\usr\bin\bash.exe -lc "pacman --noconfirm -S libtool autoconf automake help2man"
 
 build_script:
   - sh: git submodule update --init --recursive && autoreconf -i && ./configure --enable-silent-rules
