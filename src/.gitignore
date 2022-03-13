@@ -1,8 +1,6 @@
-*.s
 *.o
-*.bin
 highlevel.fs
 /pforthi
 /pforthi.tmp
 /pforth
-/*/pforth-new
+/pforth-new

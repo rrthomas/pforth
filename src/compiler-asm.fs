@@ -1,6 +1,6 @@
-: (.ALIGN)   ." .balign cell" CR ;
+: (.ALIGN)   ." .balign bee_word_bytes" CR ;
 :NONAME   ['] (.ALIGN)  TO-ASMOUT ; IS .ALIGN
-: (.CALIGN)   ." .balign cell, 0x" H. CR ;
+: (.CALIGN)   ." .balign bee_word_bytes, 0x" H. CR ;
 :NONAME   ['] (.CALIGN)  TO-ASMOUT ; IS .CALIGN
 : (.REL-OFFSET)   ." .word "  ?DUP IF   BACKWARD .LABEL ."  - ."  ELSE ." 0"  THEN CR  ;
 :NONAME   ['] (.REL-OFFSET)  TO-ASMOUT ; IS .REL-OFFSET
@@ -43,11 +43,11 @@
 :NONAME   ['] (.IF)  TO-ASMOUT ; IS .IF
 : (.RET)   ." ret" CR ;
 :NONAME   ['] (.RET)  TO-ASMOUT ; IS .RET
-: (.IMMEDIATE-METHOD)   ." .set " .NAME ." _compilation, (2 * cell)" CR ;
+: (.IMMEDIATE-METHOD)   ." .set " .NAME ." _compilation, (2 * bee_word_bytes)" CR ;
 :NONAME   ['] (.IMMEDIATE-METHOD)  TO-ASMOUT ; IS .IMMEDIATE-METHOD
-: (.COMPILE-METHOD)   ." .set " TUCK .NAME ." _compilation, " NONAME .LABEL ."  - (" .NAME ."  - 2 * cell)" CR ;
+: (.COMPILE-METHOD)   ." .set " TUCK .NAME ." _compilation, " NONAME .LABEL ."  - (" .NAME ."  - 2 * bee_word_bytes)" CR ;
 :NONAME   ['] (.COMPILE-METHOD)  TO-ASMOUT ; IS .COMPILE-METHOD
-: (.CALL-COMPILE-METHOD)   ." calli " DUP .NAME ."  - (2 * cell) + " .NAME ." _compilation" CR ;
+: (.CALL-COMPILE-METHOD)   ." calli " DUP .NAME ."  - (2 * bee_word_bytes) + " .NAME ." _compilation" CR ;
 :NONAME   ['] (.CALL-COMPILE-METHOD)  TO-ASMOUT ; IS .CALL-COMPILE-METHOD
 : (.INLINE-COUNT)   ." .set " .NAME ." _inline, " 0 U.R CR ;
 :NONAME   ['] (.INLINE-COUNT)  TO-ASMOUT ; IS .INLINE-COUNT
