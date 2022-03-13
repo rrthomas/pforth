@@ -1,7 +1,5 @@
 This file, written by Reuben Thomas, is in the public domain.
 
-Support CELL = 8
-
 Have SIGINT handler in interpreter loop. Process Ctrl+D as normal.
 
 Add startup script support using environment variable PFORTH_INIT (needs
