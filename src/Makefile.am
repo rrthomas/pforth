@@ -14,9 +14,6 @@ noinst_DATA = pforth-$(bee_word_bits)
 EXTRA_DIST =  $(portable_SRCS) $(host_SRCS) pforth pforth-32 pforth-64
 DISTCLEANFILES = highlevel.fs
 
-highlevel.fs: highlevel.fs.in
-	cd $(top_builddir); ./config.status --file=src/highlevel.fs
-
 portable_SRCS = compiler2.fs compiler4.fs compiler5.fs control1.fs		\
 	control2.fs control3.fs defer-fetch-store.fs defining.fs does.fs	\
 	interpreter3.fs make.fs vocabulary.fs
