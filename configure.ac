@@ -23,7 +23,7 @@ AC_PATH_PROG([BEE], [bee])
 AS_IF([test "$ac_cv_path_BEE" = ""],
     AC_MSG_ERROR([Could not find Bee]))
   AS_IF([$ac_cv_path_BEE --version | $GREP -q 64-bit], [bee_word_bits=64], [bee_word_bits=32])
-  AS_IF([! $ac_cv_path_BEE $srcdir/src/pforth-$bee_word_bits --evaluate BYE],
+  AS_IF([! $ac_cv_path_BEE $srcdir/src/pforth-$bee_word_bits.bin --evaluate BYE],
     [AC_MSG_ERROR([$ac_cv_path_BEE does not work!])])
 AC_SUBST([bee_word_bits])
 AC_PATH_PROG([AS], [bee-as])
