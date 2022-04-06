@@ -36,7 +36,7 @@ pforth-$(bee_word_bits).bin: $(host_SRCS) highlevel.fs
 	mv pforth-new pforth-new-0 && \
 	$(BEE) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make.fs && \
 	cmp pforth-new pforth-new-0 && \
-	rm pforth-new-0; \
+	rm pforth-new-0 && \
 	mv pforth-new $@
 
 pforth.s: pforth-$(bee_word_bits).bin
