@@ -418,39 +418,6 @@ INCLUDE" control3.fs"
 
 \ Mass storage input/output #2
 
-0 VALUE "BLOCK
-VARIABLE SCR
-64 DUP CONSTANT /LINE
-16 DUP CONSTANT LINES/BLOCK
-* DUP CONSTANT /BLOCK   \ save value for later
-: OPEN-BLOCKS   ( fam -- fid )   "BLOCK ?DUP IF  COUNT ROT OPEN-FILE
-   ABORT" blocks file can't be opened"  ELSE TRUE ABORT" no blocks file"  THEN ;
-: @BLOCK   ( c-addr u -- )   R/O OPEN-BLOCKS  >R  1- 10 LSHIFT U>UD
-   R@ REPOSITION-FILE DROP  /BLOCK R@ READ-FILE 2DROP  R> CLOSE-FILE DROP ;
-: !BLOCK   ( c-addr u -- )   W/O OPEN-BLOCKS  >R  1- 10 LSHIFT U>UD
-   R@ REPOSITION-FILE DROP  /BLOCK R@ WRITE-FILE DROP  R> CLOSE-FILE DROP ;
-
-: /BLOCK-BUFFER   LITERAL CELL+ ;   \ uses value saved above
-: 'BUFFER   'BUFFERS @  1280 + ;   \ address of block buffer
-: >BLOCK   CELL+ ;
-
-: UPDATED-BIT   TOP-BIT-SET ;
-: UPDATE   'BUFFER  DUP @ UPDATED-BIT OR  SWAP ! ;
-: UPDATED?   ( -- f )   'BUFFER @  0< ;
-: (BUFFER)   ( u -- c-addr f )
-   'BUFFER                           \ address of block buffer
-   TUCK @
-   UPDATED-BIT INVERT AND  OVER = IF \ if the current block was requested,
-      DROP >BLOCK  TRUE EXIT         \ leave address and true flag, and exit
-   THEN
-   UPDATED? IF                       \ was the last block updated?
-      OVER >BLOCK OVER !BLOCK        \ if so, save it
-   THEN
-   OVER !                            \ set new block no., & clear update flag
-   >BLOCK  FALSE ;                   \ leave address and false flag
-: BUFFER   ?DUP IF  (BUFFER) DROP  THEN ;
-: BLOCK   ?DUP IF  DUP (BUFFER) IF  NIP  ELSE DUP ROT @BLOCK  THEN  THEN ;
-
 1024 CONSTANT /FILE-BUFFER
 16 CONSTANT #FILE-BUFFERS
 VARIABLE FILE-BUFFER#  0 ' FILE-BUFFER# >BODY !   \ next file buffer to use
@@ -468,8 +435,6 @@ INCLUDE" accept.fs"
 
 VARIABLE >IN
 
-VARIABLE BLK
-
 VARIABLE EVALUAND
 VARIABLE #EVALUAND
 
@@ -481,45 +446,35 @@ VARIABLE #FIB
 
 0 VALUE SOURCE-ID
 : SOURCE
-   BLK @ ?DUP IF
-      BLOCK /BLOCK
-   ELSE
-      CASE SOURCE-ID
-         -1 OF  EVALUAND @  #EVALUAND @  ENDOF
-         0 OF  TIB  #TIB @  ENDOF
-         >R  FIB  #FIB @  R>
-      ENDCASE
-   THEN ;
+   CASE SOURCE-ID
+      -1 OF  EVALUAND @  #EVALUAND @  ENDOF
+      0 OF  TIB  #TIB @  ENDOF
+      >R  FIB  #FIB @  R>
+   ENDCASE ;
 
 \ SAVE-INPUT returns the current input source immediately under the number of
 \ items returned, encoded as:
 \       0 = user input device, -1 = string
-\       1 = block,              2 = file
+\       2 = file
 : SAVE-INPUT   ( -- xn...x1 n )
    >IN @                             \ get >IN
-   BLK @ ?DUP IF                     \ if input source is a block,
-      1 3                            \ leave >IN BLK 1
-   ELSE
-      CASE SOURCE-ID                 \ otherwise look at SOURCE-ID
-         0 OF  0 2  ENDOF            \ if 0, leave >IN 0
-         -1 OF                       \ if -1, leave >IN EVALUAND
-            EVALUAND @ #EVALUAND @   \ #EVALUAND -1
-            -1 4
-         ENDOF
-         >R  FIB #FIB @ SOURCE-ID 2 5  R>
-                                     \ if a file leave >IN FIB #FIB fid 2
-      ENDCASE
-   THEN ;
+   CASE SOURCE-ID                    \ look at SOURCE-ID
+      0 OF  0 2  ENDOF               \ if 0, leave >IN 0
+      -1 OF                          \ if -1, leave >IN EVALUAND
+         EVALUAND @ #EVALUAND @      \ #EVALUAND -1
+         -1 4
+      ENDOF
+      >R  FIB #FIB @ SOURCE-ID 2 5  R>
+      \ if a file leave >IN FIB #FIB fid 2
+   ENDCASE ;
 \ RESTORE-INPUT always succeeds unless the input source buffer being restored
 \ has been altered, which it has no way of telling.
 : RESTORE-INPUT   ( xn...x1 n -- f )
    DROP
    CASE
-      0 OF  0 BLK !  0 TO SOURCE-ID  ENDOF
-      1 OF  BLK !  ENDOF
-      2 OF  0 BLK !  TO SOURCE-ID  #FIB !  TO FIB  ENDOF
-      -1 OF
-         0 BLK !   #EVALUAND ! EVALUAND !  -1 TO SOURCE-ID
+      0 OF  0 TO SOURCE-ID  ENDOF
+      2 OF  TO SOURCE-ID  #FIB !  TO FIB  ENDOF
+      -1 OF  #EVALUAND ! EVALUAND !  -1 TO SOURCE-ID
       ENDOF
    ENDCASE
    >IN !
@@ -665,23 +620,6 @@ VARIABLE HELD
    R>                                \ and flag as appropriate
    R> BASE !                         \ restore BASE
    R> DROP ;                         \ drop address of string
-
-
-\ Mass storage input/output #3
-
-: LIST   ( u -- )
-   BASE @ SWAP  DECIMAL              \ save BASE and switch to decimal
-   DUP SCR !                         \ set SCR to block displayed
-   CR  ." Block " DUP .              \ print heading
-   BLOCK                             \ fetch block
-   LINES/BLOCK 0 DO                  \ for each line
-      CR SPACE  I 2 .R  SPACE        \ print line number
-      DUP /LINE TYPE                 \ print text
-      /LINE +                        \ advance pointer to block
-   LOOP
-   CR                                \ put CR at end of last line
-   DROP                              \ get rid of pointer
-   BASE ! ;                          \ restore BASE
 
 
 \ Compiler #3
@@ -886,31 +824,27 @@ CREATE 'SELECTOR  ' LOCAL?  DUP RAW-REL,  .LINK
    REPEAT DROP ;                     \ get rid of input address
 
 : EVALUATE   SAVE-INPUT>R  -1 TO SOURCE-ID  #EVALUAND !  EVALUAND !  0 >IN !
-   0 BLK !  INTERPRET  R>RESTORE-INPUT ;
+   INTERPRET  R>RESTORE-INPUT ;
 
 : REFILL   ( -- f )
-   BLK @ IF                          \ if interpreting a block
-      1 BLK +!  0 >IN !  TRUE        \ go on to next block
-   ELSE
-      CASE SOURCE-ID                 \ switch on SOURCE-ID
-         0 OF                        \ if user input device
-            TIB 80 ACCEPT            \ get a line of text to TIB
-            #TIB !  0 >IN !  TRUE
-         ENDOF
-         -1 OF  FALSE  ENDOF         \ if a string, return false
-         >R                          \ save switch
-         FIB /FILE-BUFFER R@ READ-LINE \ else read a line from file
-         ABORT" file read error during REFILL"
+   CASE SOURCE-ID                    \ switch on SOURCE-ID
+      0 OF                           \ if user input device
+         TIB 80 ACCEPT               \ get a line of text to TIB
+         #TIB !  0 >IN !  TRUE
+      ENDOF
+      -1 OF  FALSE  ENDOF            \ if a string, return false
+      >R                             \ save switch
+      FIB /FILE-BUFFER R@ READ-LINE  \ else read a line from file
+      ABORT" file read error during REFILL"
                                      \ if an exception occurred, abort
-         SWAP #FIB !  0 >IN !        \ set no. of chars in line
-         R>                          \ restore switch
-      ENDCASE
-   THEN ;
+      SWAP #FIB !  0 >IN !           \ set no. of chars in line
+      R>                             \ restore switch
+   ENDCASE ;
 
 : ?STACK   DEPTH 0< ABORT" stack underflow" ;
 : REPL
    POSTPONE [
-   0 BLK !  0 TO SOURCE-ID
+   0 TO SOURCE-ID
    BEGIN  CR REFILL WHILE
       INTERPRET  ?STACK  STATE @ 0= IF  ." ok"  THEN
    REPEAT
@@ -988,8 +922,7 @@ INCLUDE" compiler4.fs"
       REFILL 0=                      \ found, refill and parse again
    UNTIL THEN ; IMMEDIATE
 
-: \   BLK @ IF  >IN  DUP @ CHARS  /LINE +  /LINE / /LINE *  CHAR/ SWAP !
-   ELSE  SOURCE NIP >IN ! THEN ; IMMEDIATE
+: \   SOURCE NIP >IN ! ; IMMEDIATE
 : ?   @ . ;
 : .S   ?STACK  DEPTH ?DUP IF  1- 0 SWAP DO  I PICK .  -1 +LOOP
    ELSE ." stack empty "  THEN ;
@@ -997,24 +930,9 @@ INCLUDE" compiler4.fs"
 
 \ Mass storage input/output #4
 
-: FROM   ( name )   BL WORD COUNT  HERE TO "BLOCK  ", ;
-
-: LOAD   SAVE-INPUT>R  BLK !  0 >IN !  INTERPRET  R>RESTORE-INPUT ;
-: THRU   1+ SWAP DO  I LOAD  LOOP ;
-: SAVE-BUFFERS
-   UPDATED? IF                       \ if the buffer was updated
-      'BUFFER  DUP @ UPDATED-BIT INVERT AND \ get the block number
-      OVER >BLOCK OVER !BLOCK        \ save the block
-      SWAP !                         \ mark the buffer as not updated
-   THEN ;
-: EMPTY-BUFFERS   0 'BUFFER ! ;
-: FLUSH   SAVE-BUFFERS EMPTY-BUFFERS ;
-
-: -->   0 >IN !  1 BLK +! ;
-
 : INCLUDE-FILE   ( i*x fid -- j*x )
    SAVE-INPUT>R                      \ save current input source
-   TO SOURCE-ID  0 BLK !             \ set up new input source
+   TO SOURCE-ID                      \ set up new input source
    ALLOCATE-BUFFER IF                \ allocate new file buffer
       SOURCE-ID CLOSE-FILE
       TRUE ABORT" no more file buffers"
@@ -1147,8 +1065,8 @@ VARIABLE CURSORX   \ cursor x position during WORDS
       S" /HOLD"              "OF  256                "ENDOF
       S" /PAD"               "OF  256                "ENDOF
       S" ADDRESS-UNIT-BITS"  "OF  8                  "ENDOF
-      S" BLOCK"              "OF  TRUE               "ENDOF
-      S" BLOCK-EXT"          "OF  TRUE               "ENDOF
+      S" BLOCK"              "OF  FALSE              "ENDOF
+      S" BLOCK-EXT"          "OF  FALSE              "ENDOF
       S" CORE"               "OF  TRUE               "ENDOF
       S" CORE-EXT"           "OF  FALSE              "ENDOF
       S" DOUBLE"             "OF  FALSE              "ENDOF
@@ -1278,8 +1196,7 @@ INCLUDE" parse-command-line.fs"
                                      \ set 'THROW
    0 HANDLER !                       \ reset HANDLER
    0 FILE-BUFFER# !                  \ reset FILE-BUFFER#
-   DUP /BLOCK-BUFFER -               \ reserve block buffer,
-   #FILE-BUFFERS /FILE-BUFFER * -    \ file buffers,
+   DUP #FILE-BUFFERS /FILE-BUFFER * - \ file buffers,
    DUP TO FIRST-FILE
    256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
    'BUFFERS !                        \ set 'BUFFERS
