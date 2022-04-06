@@ -59,8 +59,8 @@ compiler or metacompiler (this is really contexts).
 
 1. Factor long definitions. Especially, re-engineer code that deals with
 input source in a much more OOP manner into one package for each type of
-input stream (string, terminal, blocks, files): have an input source object
-whose methods (SOURCE-ID, SOURCE, SAVE-INPUT, RESTORE-INPUT &c.) can be called.
+input stream (string, terminal, files): have an input source object whose
+methods (SOURCE-ID, SOURCE, SAVE-INPUT, RESTORE-INPUT &c.) can be called.
 
 2. Break up HighLevel into multiple source files: do it by wordset: then can
 build versions of pForth with any specified wordsets, and later wordsets
