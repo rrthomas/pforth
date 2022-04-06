@@ -66,7 +66,6 @@ pForth is an ANS Forth System
 \vspace{-3mm}
 \begin{itemize}
 \item[]providing the Core Extensions word set (except {\tt CONVERT}, {\tt EXPECT}, {\tt SPAN} and {\tt UNUSED}),
-\item[]providing the Block Extensions word set,
 \item[]providing {\tt D+}, {\tt D.}, {\tt D.R}, {\tt D0=}, {\tt D>S}, {\tt DABS}, {\tt DNEGATE}, {\tt M+} and {\tt 2ROT} from the Double-Number Extensions word set,
 \item[]providing the Exception Extensions word set,
 \item[]providing {\tt (}, {\tt BIN}, {\tt CLOSE-FILE}, {\tt CREATE-FILE}, {\tt OPEN-FILE}, {\tt R/O}, {\tt R/W}, {\tt READ-}\-{\tt FILE}, {\tt REPOSITION-}\-{\tt FILE}, {\tt W/O} and {\tt WRITE-FILE} from the File Extensions word set,
@@ -117,13 +116,6 @@ pForth is an ANS Forth System
 \item[--]The current definition cannot be found after {\tt DOES>} is compiled.
 \end{itemize}
 
-\subsubsection{Block word set}
-
-\begin{itemize}
-\item[--]{\tt LIST} displays ``Block'' followed by the block number in decimal, then the block as sixteen lines each of sixty-four characters, numbered from nought to fifteen in decimal.
-\item[--]{\tt \verb$\$} discards up to the next multiple of sixty-four characters when used in a block.
-\end{itemize}
-
 \subsubsection{Exception word set}
 
 \begin{itemize}
@@ -170,14 +162,6 @@ glossary entries of the relevant words in the standard.
 \item[*]If {\tt POSTPONE} is applied to {\tt TO}, the compilation semantics of {\tt TO} are appended to the current definition.
 \end{itemize}
 
-\subsubsection{Block word set}
-
-\begin{itemize}
-\item[--]If a correct block read was not possible because the blocks file could not be opened, the message ``blocks file not found'' is displayed and {\tt ABORT} is executed. Other reasons for a block read failing are not detected or handled.
-\item[*]If a program alters {\tt BLK} directly input is redirected to the block number stored in {\tt BLK}; {\tt >IN} retains its current value. If this is larger than the size of a block, other effects will occur.
-\item[*]If there is no current block buffer, the buffer whose number is contained in the variable {\tt VALID} is updated.
-\end{itemize}
-
 \subsubsection{Double-Number word set}
 
 \begin{itemize}
@@ -210,13 +194,6 @@ glossary entries of the relevant words in the standard.
 \item[--]4096 cells of return stack space is available.
 \item[--]4096 cells of data stack space is available.
 \item[--]The system dictionary space required depends on the implementation, and is typically under 32 kilobytes.
-\end{itemize}
-
-\subsubsection{Block word set}
-
-\begin{itemize}
-\item[--]No multiprogramming system is provided, so there are no additional restrictions on the use of buffer addresses.
-\item[--]The number of blocks available depends on the system configuration.
 \end{itemize}
 
 
