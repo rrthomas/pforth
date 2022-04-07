@@ -6,6 +6,10 @@
 :NONAME   ['] (.REL-OFFSET)  TO-ASMOUT ; IS .REL-OFFSET
 : (.NOP)   ." nop " CR ;
 :NONAME   ['] (.NOP)  TO-ASMOUT ; IS .NOP
+: (.ALLOT)   ." .ds.b " . CR ;
+:NONAME   ['] (.ALLOT)  TO-ASMOUT ; IS .ALLOT
+: (.ALLOT-CELLS)   ." .ds.b " . ." * bee_word_bytes" CR ;
+:NONAME   ['] (.ALLOT-CELLS)  TO-ASMOUT ; IS .ALLOT-CELLS
 : (.WORD)   ." .word " . CR ;
 :NONAME   ['] (.WORD)  TO-ASMOUT ; IS .WORD
 : (.BYTE)   ." .byte 0x" H. CR ;
