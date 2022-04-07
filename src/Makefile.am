@@ -28,6 +28,8 @@ host_SRCS = $(portable_SRCS) \
 	platform.fs primitives.fs resolver-branch.fs save.fs strings2a.fs	\
 	strings2b.fs system-params.fs terminal.fs util.fs
 
+ETAGS_ARGS = --language forth $(portable_SRCS) $(host_SRCS) highlevel.fs.in
+
 do_build = $(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs
 
 # Build with triple test
