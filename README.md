@@ -18,8 +18,8 @@ to someone.
 (I am aware that there are other Forth compilers called pForth; the
 duplication was unintentional.)
 
-pForth comes pre-compiled for Bee (`src/bee/pforth-32` and
-`src/bee/pforth-64`).
+pForth comes pre-compiled for Bee (`src/bee/pforth-32.bin` and
+`src/bee/pforth-64.bin`).
 
 See `doc/pforth.pdf` for ANSI conformance information.
 
