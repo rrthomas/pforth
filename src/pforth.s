@@ -12754,72 +12754,10 @@ ret
 .set _2E_PUSHRELI_2D_SYMBOL_defer, .L10484n
 .set _28__2E_PUSHRELI_2D_SYMBOL_29__info, 0 | 0 | 0 | (18 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
-.byte 0x9 
-.ascii "SAVE-FILE"
-.balign bee_word_bytes, 0x20 
-.word _28__2E_PUSHRELI_2D_SYMBOL_29_ - .
-.word SAVE_2D_FILE_compilation
-.word SAVE_2D_FILE_info 
-.global SAVE_2D_FILE
-SAVE_2D_FILE:
-pushi 6 # 0x6 
-trap 0x0 
-calli BIN
-calli CREATE_2D_FILE
-pop
-pushs
-dups
-calli WRITE_2D_FILE
-pop
-pops
-pushi 11 # 0xB 
-trap 0x0 
-pop
-ret
-.set SAVE_2D_FILE_info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
-.balign bee_word_bytes
-.byte 0xB 
-.ascii "SAVE-OBJECT"
-.balign bee_word_bytes, 0x20 
-.word SAVE_2D_FILE - .
-.word SAVE_2D_OBJECT_compilation
-.word SAVE_2D_OBJECT_info 
-.global SAVE_2D_OBJECT
-SAVE_2D_OBJECT:
-calli SAVE_2D_FILE
-ret
-.set SAVE_2D_OBJECT_info, 0 | 0 | 0 | (11 <<_name_length_bits) | 0x0 
-.balign bee_word_bytes
-.byte 0xA 
-.ascii "SAVE-IMAGE"
-.balign bee_word_bytes, 0x20 
-.word SAVE_2D_OBJECT - .
-.word SAVE_2D_IMAGE_compilation
-.word SAVE_2D_IMAGE_info 
-.global SAVE_2D_IMAGE
-SAVE_2D_IMAGE:
-calli _27_FORTH
-pushi 1 # 0x1 
-swap
-pushi 0 # 0x0 
-swap
-calli ALIGN
-calli HERE
-calli _27_FORTH
-neg
-add
-pushi 1 # 0x1 
-swap
-pushi 0 # 0x0 
-swap
-calli SAVE_2D_OBJECT
-ret
-.set SAVE_2D_IMAGE_info, 0 | 0 | 0 | (10 <<_name_length_bits) | 0x0 
-.balign bee_word_bytes
 .byte 0x4 
 .ascii "ARGC"
 .balign bee_word_bytes, 0x20 
-.word SAVE_2D_IMAGE - .
+.word _28__2E_PUSHRELI_2D_SYMBOL_29_ - .
 .word ARGC_compilation
 .word ARGC_info 
 .global ARGC
@@ -13069,28 +13007,28 @@ INTERACT_3F__body:
 DO_2D_START_2D_OPTIONS:
 calli ARGC
 load
-jumpzi .L10735f
+jumpzi .L10688f
 calli HERE
 calli _22_PROGRAM_2D_NAME
 calli REL_21_
 calli NEXT_2D_ARG
 calli _22__2C_
-.L10735f:
+.L10688f:
 calli ARGC
 load
-jumpzi .L10743f
-.L10744b:
+jumpzi .L10696f
+.L10697b:
 calli NEXT_2D_ARG
 pushi 1 # 0x1 
 dup
-jumpzi .L10747f
+jumpzi .L10700f
 pushi 1 # 0x1 
 dup
 load1
 pushi 45 
 eq
 neg
-jumpzi .L10754f
+jumpzi .L10707f
 calli _28_S_22__29_
 .byte 0x6 
 .ascii "--help"
@@ -13098,12 +13036,12 @@ calli _28_S_22__29_
 calli _32_OVER
 calli COMPARE
 calli _30__3D_
-jumpzi .L10760f
+jumpzi .L10713f
 calli _32_DROP
 calli HELP
 calli BYE
-jumpi .L10764f
-.L10760f:
+jumpi .L10717f
+.L10713f:
 calli _28_S_22__29_
 .byte 0x9 
 .ascii "--version"
@@ -13111,12 +13049,12 @@ calli _28_S_22__29_
 calli _32_OVER
 calli COMPARE
 calli _30__3D_
-jumpzi .L10771f
+jumpzi .L10724f
 calli _32_DROP
 calli BANNER
 calli BYE
-jumpi .L10775f
-.L10771f:
+jumpi .L10728f
+.L10724f:
 calli _28_S_22__29_
 .byte 0xA 
 .ascii "--evaluate"
@@ -13124,12 +13062,12 @@ calli _28_S_22__29_
 calli _32_OVER
 calli COMPARE
 calli _30__3D_
-jumpzi .L10782f
+jumpzi .L10735f
 calli _32_DROP
 calli NEXT_2D_ARG
 calli EVALUATE
-jumpi .L10786f
-.L10782f:
+jumpi .L10739f
+.L10735f:
 calli _28_S_22__29_
 .byte 0xA 
 .ascii "--interact"
@@ -13137,13 +13075,13 @@ calli _28_S_22__29_
 calli _32_OVER
 calli COMPARE
 calli _30__3D_
-jumpzi .L10793f
+jumpzi .L10746f
 calli _32_DROP
 calli TRUE
 pushreli INTERACT_3F__body
 store
-jumpi .L10798f
-.L10793f:
+jumpi .L10751f
+.L10746f:
 calli HERE
 calli _27_THROWN
 store
@@ -13151,26 +13089,26 @@ calli _22__2C_
 pushi -512 
 calli THROW
 calli _32_DROP
-.L10798f:
-.L10786f:
-.L10775f:
-.L10764f:
-jumpi .L10806f
-.L10754f:
+.L10751f:
+.L10739f:
+.L10728f:
+.L10717f:
+jumpi .L10759f
+.L10707f:
 calli INCLUDED
-.L10806f:
-jumpi .L10744b
-.L10747f:
+.L10759f:
+jumpi .L10697b
+.L10700f:
 calli _32_DROP
 calli INTERACT_3F_
 not
-jumpzi .L10812f
+jumpzi .L10765f
 calli BYE
-.L10812f:
-jumpi .L10814f
-.L10743f:
+.L10765f:
+jumpi .L10767f
+.L10696f:
 calli BANNER
-.L10814f:
+.L10767f:
 calli _28_QUIT_29_
 ret
 .set DO_2D_START_2D_OPTIONS_info, 0 | 0 | 0 | (16 <<_name_length_bits) | 0x0 

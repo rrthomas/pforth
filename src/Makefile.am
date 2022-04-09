@@ -23,26 +23,17 @@ BUILD_PFORTH = $(BEE) $(abs_top_srcdir)/src/pforth-$(bee_word_bits).bin
 host_SRCS = $(portable_SRCS) \
 	accept.fs assembler.fs call-cells.fs code.fs compiler1.fs		\
 	compiler.fs compiler-asm.fs compiler-defer.fs compiler-postpone.fs	\
-	extra-primitives.fs fileio.fs init-space.fs initialize.fs mangle.fs	\
-	native-call.fs opcodes.fs os-compiler.fs os.fs parse-command-line.fs	\
-	platform.fs primitives.fs resolver-branch.fs save.fs strings2a.fs	\
-	strings2b.fs system-params.fs terminal.fs util.fs
+	extra-primitives.fs fileio.fs initialize.fs mangle.fs opcodes.fs	\
+	os-compiler.fs os.fs parse-command-line.fs platform.fs			\
+	primitives.fs strings2a.fs strings2b.fs system-params.fs		\
+	terminal.fs util.fs
 
 ETAGS_ARGS = --language forth $(portable_SRCS) $(host_SRCS) highlevel.fs.in
 
 do_build = $(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs
 
-# Build with triple test
-pforth-$(bee_word_bits).bin: $(host_SRCS) highlevel.fs
-	$(do_build) && \
-	mv pforth-new pforth-new-0 && \
-	$(BEE) pforth-new-0 --evaluate "$$MINIMAL_PRIMITIVES" make.fs && \
-	cmp pforth-new pforth-new-0 && \
-	rm pforth-new-0 && \
-	mv pforth-new $@
-
-pforth.s: pforth-$(bee_word_bits).bin
-	$(BUILD_PFORTH) make.fs 2> $@
+pforth.s: $(host_SRCS) highlevel.fs
+	$(do_build) 2> $@
 
 %-32.o: %.s
 	$(AS) -m32 -R -o $@ $<
@@ -50,10 +41,11 @@ pforth.s: pforth-$(bee_word_bits).bin
 %-64.o: %.s
 	$(AS) -m64 -R -o $@ $<
 
+.o.s:
+	$(AS) -R -o $@ $<
+
 .o.bin:
 	$(OBJCOPY) -O binary $< $@
-
-check-local:
 
 loc-local:
 	cd $(srcdir) && $(CLOC) $(CLOC_OPTS) $(host_SRCS) $(portable_SRCS) $(abs_builddir)/highlevel.fs
@@ -77,11 +69,12 @@ uninstall-hook:
 DISTCLEANFILES += pforthi pforthi.tmp
 endif
 
+# Check we can run pforth, and do a triple-test build
 # Error code 243 below is 256 + (-13) (Forth error code for "unknown word")
 check-local: pforth
-	$(do_build) && \
-	cmp pforth-$(bee_word_bits).bin pforth-new && \
-	rm pforth-new && \
-	cd $(top_srcdir)/extras && \
-	echo foobar | $(abs_builddir)/pforth tests.fs;
-	./pforth --evaluate FOO || test $$? = 243
+	( ./pforth --evaluate FOO || test $$? = 243 ) && \
+	./pforth make.fs 2> pforth-new.s && \
+	$(MAKE) pforth-new.bin && \
+	./pforth make.fs 2> pforth-new-0.s && \
+	diff pforth-new.s pforth-new-0.s && \
+	rm pforth-new.s pforth-new-0.s pforth-new.bin

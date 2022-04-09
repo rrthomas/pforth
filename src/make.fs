@@ -21,7 +21,6 @@ CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
 
 
 INCLUDE" assembler.fs"
-INCLUDE" save.fs"
 
 
 \ Meta-compiler utilities
@@ -63,15 +62,6 @@ STUB (C")
 STUB (S")
 
 
-\ Machinery for compiling forward references to defining words' DOES> code
-
-: ADD-RESOLVE   DUP @  LAST CELL+  TUCK  !  SWAP ! ;
-: (DOES>)   DUP >NAME CREATED !  >DOES> ADD-RESOLVE ;
-: DOES-LINK,   0 , ;
-: .DOES-LABEL   .NAME ." _does:" CR ;
-INCLUDE" does.fs"
-
-
 VOCABULARY META  ALSO META DEFINITIONS
 FOREIGN  ' NON-META?  ' 'SELECTOR >BODY REL! \ build meta-compiler using native compiler
 DECIMAL
@@ -86,7 +76,6 @@ DECIMAL
 INCLUDE" compiler-defer.fs"
 INCLUDE" compiler-asm.fs"
 INCLUDE" compiler.fs"
-INCLUDE" native-call.fs"
 INCLUDE" compiler1.fs"
 
 
@@ -137,17 +126,6 @@ INCLUDE" compiler5.fs"
 INCLUDE" defer-fetch-store.fs"
 INCLUDE" defining.fs"
 INCLUDE" vocabulary.fs"
-INCLUDE" resolver-branch.fs"
-
-: RESOLVES   ( name )   ( a-addr -- )
-   '
-   >DOES> @                          \ get first address in branch list
-   BEGIN  ?DUP WHILE                 \ chain down list until null marker
-      DUP  @                         \ get next address in list
-      -ROT 2DUP SWAP RESOLVER-BRANCH \ compile the call or branch
-      SWAP
-   REPEAT
-   DROP ;                            \ drop a-addr
 
 
 \ Constants
@@ -169,7 +147,7 @@ SIZE DICTIONARY CROSS  \ define a new dictionary
 ' LITERAL ' CURRENT-LITERAL >BODY REL!
 ' RELATIVE-LITERAL ' CURRENT-RELATIVE-LITERAL >BODY REL!
 'FORTH   \ save value of 'FORTH
-' CROSS >BODY @  INCLUDE" init-space.fs" CELLS -  TO 'FORTH
+' CROSS >BODY @  CELL-  TO 'FORTH
    \ make 'FORTH point to the start of it minus the initial branch
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
@@ -190,29 +168,10 @@ INCLUDE" highlevel.fs"
 INCLUDE" initialize.fs"
 
 ' .FORTH-LINK TO-ASMOUT
-' NEW-FORTH >BODY REL@ REL@  ' FORTH >BODY REL@ REL!   \ patch root wordlist
-' FORTH >BODY REL@ CELL+  CHAIN REL!   \ patch CHAIN
-' FORTH >NAME CELL-  0 OVER !  CELL-  0 SWAP !   \ zero FORTH wordlist's info and link fields
-' VALUE >DOES>  ALSO META  RESOLVES VALUE  PREVIOUS \ resolve run-times
-' DEFER >DOES>  ALSO META  RESOLVES DEFER  PREVIOUS
-' VOCABULARY >DOES>  ALSO META  RESOLVES VOCABULARY  PREVIOUS
-' ABORT ' SCAN-TEST >BODY REL!
-' ABORT ' VISIBLE? >BODY REL!
-' NEW-FORTH >BODY REL@ REL@  PREVIOUS   \ leave initial branch target on the stack
+PREVIOUS
 
 .PREVIOUS-INFO \ output info field of last word defined
 -1 TO ASMOUT
-HERE 'FORTH -   \ ( length ) of binary image
-ROOT HERE OVER ALLOT   \ make space for binary image ( length start )
-TUCK   \ ( start length start )
-'FORTH  INCLUDE" init-space.fs" CELLS   \ ( s l s 'FORTH nCELLS )
-TUCK + -ROT +   \ ( s l 'FORTH+nCELLS s+nCELLS )
-2 PICK MOVE   \ copy dictionary ( s l )
-
-OVER INCLUDE" init-space.fs" CELLS ERASE   \ zero initial branch space
-OVER SWAP 2SWAP 'FORTH ROT  NATIVE-CALL   \ patch in initial branch
-
-S" pforth-new" SAVE-OBJECT   \ write system image
 
 ( PREVIOUS) PREVIOUS DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
