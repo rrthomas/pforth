@@ -14,8 +14,6 @@ AM_INIT_AUTOMAKE([-Wall foreign])
 
 dnl Check for programs
 AC_PROG_LN_S
-AC_PATH_PROG(LATEXMK, latexmk, true)
-AM_CONDITIONAL([HAVE_LATEXMK], [test "$ac_cv_path_LATEXMK" != "true"])
 
 dnl Check for Bee and its binutils
 AC_PROG_GREP

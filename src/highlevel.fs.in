@@ -11,11 +11,6 @@
 CR .( @PACKAGE_NAME@ high level words )
 
 
-\ Placeholder
-
-: NOTHING ;
-
-
 \ System variables
 
 0 VALUE 'FORTH   \ set in per-platform INITIALIZE
@@ -158,7 +153,6 @@ PROVIDE: +!   TUCK @  +  SWAP ! ; [THEN]
 
 \ Characters
 
-\ FIXME: Add SYNONYM
 : +CHAR   1 ;
 : -CHAR   -1 ;
 : CHAR+   1+ ;
@@ -178,16 +172,6 @@ PROVIDE: MAX   2DUP < IF  SWAP  THEN  DROP ; [THEN]
 : U>UD   0 ;
 : UD>U   DROP ;
 
-: WITHIN   OVER -  >R -  R> U< ;
-
-: M*   * S>D ;
-: UM*   * U>UD ;
-: FM/MOD   NIP /MOD ;
-: SM/REM   NIP S/REM ;
-: UM/MOD   NIP U/MOD ;
-: */   >R * R> / ;
-: */MOD   >R * R> /MOD ;
-
 : D0=   0= SWAP 0= AND ;
 : D+   D>S >R D>S R>  +  S>D ;
 : DNEGATE   D>S NEGATE S>D ;
@@ -201,7 +185,6 @@ PROVIDE: MAX   2DUP < IF  SWAP  THEN  DROP ; [THEN]
 \ Strings #1
 
 : COUNT   DUP CHAR+ SWAP C@ ;
-: /STRING   ( c-addr1 u1 n -- c-addr2 u2 )   TUCK -  -ROT CHARS +  SWAP ;
 : CMOVE   CHARS OVER + SWAP ?DO  DUP C@ I C! CHAR+  +CHAR +LOOP  DROP ;
 : CMOVE>   ?DUP IF  CHARS CHAR- TUCK  + -ROT  OVER +  DO  I C@ OVER C!  CHAR-
    -CHAR +LOOP  ELSE DROP  THEN  DROP ;
@@ -230,7 +213,6 @@ VARIABLE ROOTDP
 : C,   DUP .BYTE  RAW-C, ;
 : CALIGN   HERE  DUP ALIGNED  >-< 0 ?DO  DUP RAW-C,  LOOP  .CALIGN ;
 
-: ADDRESS!   ! ;
 : >REL   ( from to -- offset )   DUP IF  >-<  ELSE NIP  THEN ;
 : RAW-REL,   HERE SWAP >REL RAW, ;
 : REL,   DUP RAW-REL,  .REL-OFFSET ;
@@ -268,7 +250,6 @@ VARIABLE CURRENT
 
 \ Interpreter #1
 
-CREATE PAD  256 ALLOT
 CREATE TOKEN  256 ALLOT
 : TOKEN-END   TOKEN 256 + ;
 CREATE S"B  256 ALLOT
@@ -280,7 +261,6 @@ INCLUDE" os-compiler.fs"   \ words necessary for the machine
    CELL +LOOP  DROP ;
 INCLUDE" compiler.fs"
 DEFER CURRENT-COMPILE,  ' COMPILE, IS CURRENT-COMPILE,
-INCLUDE" call-cells.fs" CONSTANT #CALL-CELLS
 : (RAW-POSTPONE)   CURRENT-COMPILE, ;
 : (POSTPONE)   CURRENT-COMPILE, ;
 VARIABLE CREATED   \ Indicate whether last word was CREATEd

@@ -49,9 +49,7 @@ INCLUDE" assembler.fs"
 \ Create stubs for words that may not exist on host
 STUB IP
 STUB DOCOL
-STUB LINK
 STUB UNLINK
-STUB (LITERAL)
 STUB (BRANCH)
 STUB (?BRANCH)
 STUB (LOOP)
@@ -131,7 +129,6 @@ INCLUDE" vocabulary.fs"
 \ Constants
 
 DICTIONARY-SIZE CONSTANT SIZE
-INCLUDE" call-cells.fs" CONSTANT #TARGET-CALL-CELLS
 
 NATIVE  ' LOCAL?  ' 'SELECTOR >BODY REL! \ now meta-compiler is built, allow it to run
 

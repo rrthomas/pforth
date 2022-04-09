@@ -8,4 +8,4 @@
 # THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 # RISK.
 
-EXTRA_DIST = ackermann.fs DoubleARM.txt redefinition.fs string.fs tests.fb tests.fs
+EXTRA_DIST = ackermann.fs
