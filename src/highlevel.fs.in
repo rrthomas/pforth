@@ -269,11 +269,11 @@ VARIABLE CURRENT
 
 \ Interpreter #1
 
-VARIABLE 'BUFFERS
-: PAD   'BUFFERS @ 256 + ;
-: TOKEN   'BUFFERS @ 512 + ;
-: S"B   'BUFFERS @ 768 + ;
-: SCRATCH   'BUFFERS @ 1024 + ;
+CREATE PAD  256 ALLOT
+CREATE TOKEN  256 ALLOT
+: TOKEN-END   TOKEN 256 + ;
+CREATE S"B  256 ALLOT
+CREATE SCRATCH  256 ALLOT
 
 
 INCLUDE" os-compiler.fs"   \ words necessary for the machine
@@ -423,7 +423,7 @@ INCLUDE" control3.fs"
 1024 CONSTANT /FILE-BUFFER
 16 CONSTANT #FILE-BUFFERS
 VARIABLE FILE-BUFFER#  0 ' FILE-BUFFER# >BODY !   \ next file buffer to use
-0 VALUE FIRST-FILE
+CREATE FIRST-FILE  #FILE-BUFFERS /FILE-BUFFER * ALLOT
 : ALLOCATE-BUFFER   ( -- c-addr ior )   FILE-BUFFER# @  DUP #FILE-BUFFERS
    = IF  -1  ELSE DUP 1+ FILE-BUFFER# !  /FILE-BUFFER *  FIRST-FILE +  0
    THEN ;
@@ -441,7 +441,7 @@ VARIABLE EVALUAND
 VARIABLE #EVALUAND
 
 VARIABLE #TIB
-: TIB   'BUFFERS @ ;
+CREATE TIB  256 ALLOT
 
 VARIABLE #FIB
 0 VALUE FIB
@@ -554,8 +554,8 @@ VARIABLE HELD
 : HEX   16 BASE ! ;
 : HOLD   -CHAR HELD +!  HELD @ C! ;
 : SIGN   0< IF  [CHAR] - HOLD  THEN ;
-: <#   TOKEN HELD ! ;
-: #>   2DROP  HELD @  TOKEN OVER - ;
+: <#   TOKEN-END HELD ! ;
+: #>   2DROP  HELD @  TOKEN-END OVER - ;
 : #   BASE @ U>UD UD/MOD  2SWAP UD>U  DUP 10 < IF  [CHAR] 0 +
    ELSE [ CHAR A 10 - ] LITERAL +  THEN  HOLD ;
 : #S   BEGIN  #  2DUP D0= UNTIL ;
@@ -1192,16 +1192,11 @@ INCLUDE" parse-command-line.fs"
 
 : START   ( limit here -- )
    ROOTDP !                          \ initialize dictionary pointer
-   DUP TO LIMIT                      \ set LIMIT
+   TO LIMIT                          \ set LIMIT
    [ ' (THROW) ] RELATIVE-LITERAL 'THROW!
                                      \ set 'THROW
    0 HANDLER !                       \ reset HANDLER
    0 FILE-BUFFER# !                  \ reset FILE-BUFFER#
-   DUP #FILE-BUFFERS /FILE-BUFFER * - \ file buffers,
-   DUP TO FIRST-FILE
-   256 5 * -                         \ and TIB, PAD, TOKEN, SCRATCH and S"B
-   'BUFFERS !                        \ set 'BUFFERS
-   'BUFFERS @  TUCK -  ERASE         \ erase buffers
    ROOT                              \ use ROOT dictionary
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
