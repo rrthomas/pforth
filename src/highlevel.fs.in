@@ -27,7 +27,7 @@ PROVIDE: TRUE   -1 ; [THEN]
 PROVIDE: FALSE   0 ; [THEN]
 
 \ FIXME: should really be calculated for host system
-S" ADDRESS-UNIT-BITS" ENVIRONMENT? 0= [IF] ABORT [THEN]  CONSTANT BYTE-BITS
+8 CONSTANT BYTE-BITS
 
 PROVIDE: -   NEGATE + ; [THEN]
 
@@ -1055,46 +1055,6 @@ VARIABLE CURSORX   \ cursor x position during WORDS
    CURSORX @ IF  NEWLINE  THEN ;     \ ensure we're on a new line
 : WORDS   CONTEXT @  WORDLIST-WORDS ;
 : ALL-WORDS   GET-ORDER 0 ?DO  WORDLIST-WORDS  LOOP ;
-
-
-\ Environmental queries
-
-: ENVIRONMENT?
-   "CASE
-      S" /COUNTED-STRING"    "OF  255                "ENDOF
-      S" /HOLD"              "OF  256                "ENDOF
-      S" /PAD"               "OF  256                "ENDOF
-      S" ADDRESS-UNIT-BITS"  "OF  8                  "ENDOF
-      S" BLOCK"              "OF  FALSE              "ENDOF
-      S" BLOCK-EXT"          "OF  FALSE              "ENDOF
-      S" CORE"               "OF  TRUE               "ENDOF
-      S" CORE-EXT"           "OF  FALSE              "ENDOF
-      S" DOUBLE"             "OF  FALSE              "ENDOF
-      S" DOUBLE-EXT"         "OF  FALSE              "ENDOF
-      S" EXCEPTION"          "OF  TRUE               "ENDOF
-      S" EXCEPTION-EXT"      "OF  TRUE               "ENDOF
-      S" FACILITY"           "OF  FALSE              "ENDOF
-      S" FACILITY-EXT"       "OF  FALSE              "ENDOF
-      S" FILE"               "OF  TRUE               "ENDOF
-      S" FILE-EXT"           "OF  TRUE               "ENDOF
-      S" FLOORED"            "OF  TRUE               "ENDOF
-      S" MAX-CHAR"           "OF  255                "ENDOF
-      S" MAX-D"              "OF  -1 1 RSHIFT S>D    "ENDOF
-      S" MAX-N"              "OF  -1 1 RSHIFT        "ENDOF
-      S" MAX-U"              "OF  -1                 "ENDOF
-      S" MAX-UD"             "OF  -1 0               "ENDOF
-      S" RETURN-STACK-CELLS" "OF  RETURN-STACK-CELLS "ENDOF
-      S" SEARCH-ORDER"       "OF  TRUE               "ENDOF
-      S" SEARCH-ORDER-EXT"   "OF  TRUE               "ENDOF
-      S" STACK-CELLS"        "OF  STACK-CELLS        "ENDOF
-      S" STRING"             "OF  TRUE               "ENDOF
-      S" STRING-EXT"         "OF  TRUE               "ENDOF
-      S" TOOLS"              "OF  FALSE              "ENDOF
-      S" TOOLS-EXT"          "OF  FALSE              "ENDOF
-      S" WORDLISTS"          "OF  8                  "ENDOF
-      2DROP FALSE EXIT
-   "ENDCASE
-   TRUE ;
 
 
 \ Exceptions #3
