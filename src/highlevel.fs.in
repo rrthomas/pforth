@@ -19,7 +19,6 @@ CR .( @PACKAGE_NAME@ high level words )
 \ System variables
 
 0 VALUE 'FORTH   \ set in per-platform INITIALIZE
-0 VALUE LIMIT
 
 
 \ Arithmetic #1
@@ -1190,9 +1189,8 @@ FALSE VALUE INTERACT?
 
 INCLUDE" parse-command-line.fs"
 
-: START   ( limit here -- )
+: START   ( here -- )
    ROOTDP !                          \ initialize dictionary pointer
-   TO LIMIT                          \ set LIMIT
    [ ' (THROW) ] RELATIVE-LITERAL 'THROW!
                                      \ set 'THROW
    0 HANDLER !                       \ reset HANDLER
