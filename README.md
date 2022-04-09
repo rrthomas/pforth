@@ -78,4 +78,4 @@ above).
 I will probably fix any bugs. Any future development is likely to involve a
 total rewrite; I'm particularly interested in rewriting pForth in a more
 Forth-like manner (more decomposed, rather than implementing each word as a
-single word), and perhaps using object orientation. See `doc/ToDo`.
+single word), and perhaps using object orientation. See `doc/TODO.txt`.
