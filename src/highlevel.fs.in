@@ -435,8 +435,7 @@ VARIABLE #FIB
 
 \ SAVE-INPUT returns the current input source immediately under the number of
 \ items returned, encoded as:
-\       0 = user input device, -1 = string
-\       2 = file
+\       0 = user input device, -1 = string, 1 = file
 : SAVE-INPUT   ( -- xn...x1 n )
    >IN @                             \ get >IN
    CASE SOURCE-ID                    \ look at SOURCE-ID
@@ -445,21 +444,18 @@ VARIABLE #FIB
          EVALUAND @ #EVALUAND @      \ #EVALUAND -1
          -1 4
       ENDOF
-      >R  FIB #FIB @ SOURCE-ID 2 5  R>
-      \ if a file leave >IN FIB #FIB fid 2
+      >R  FIB #FIB @ SOURCE-ID 1 5  R>
+      \ if a file leave >IN FIB #FIB fid 1
    ENDCASE ;
-\ RESTORE-INPUT always succeeds unless the input source buffer being restored
-\ has been altered, which it has no way of telling.
-: RESTORE-INPUT   ( xn...x1 n -- f )
+: RESTORE-INPUT   ( xn...x1 n -- )
    DROP
    CASE
       0 OF  0 TO SOURCE-ID  ENDOF
-      2 OF  TO SOURCE-ID  #FIB !  TO FIB  ENDOF
+      1 OF  TO SOURCE-ID  #FIB !  TO FIB  ENDOF
       -1 OF  #EVALUAND ! EVALUAND !  -1 TO SOURCE-ID
       ENDOF
    ENDCASE
-   >IN !
-   FALSE ;
+   >IN ! ;
 
 VARIABLE 'RETURN
 : SAVE-INPUT>R   \ save input specification to return stack
@@ -479,7 +475,7 @@ VARIABLE 'RETURN
       R> -ROT                        \ can't use a DO loop as this would
       1-                             \ interfere with the return stack
    REPEAT
-   RESTORE-INPUT DROP                \ set input specification
+   RESTORE-INPUT                     \ set input specification
    'RETURN @ >R ;                    \ restore return address
 
 DEFER SCAN-TEST
