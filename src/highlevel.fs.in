@@ -985,34 +985,6 @@ VOCABULARY FORTH
 : ORDER   ." CONTEXT: "  GET-ORDER  0 ?DO  H.  LOOP  CR ." CURRENT: "
    GET-CURRENT H. ;
 
-: (FORGET)
-   >NAME DP !
-   CHAIN DUP  BEGIN  @  DUP HERE < UNTIL  OVER !
-   BEGIN  @ ?DUP WHILE
-      DUP CELL-  DUP @
-      BEGIN  DUP HERE < INVERT WHILE  >LINK REL@  REPEAT
-      SWAP REL!
-   REPEAT ;
-: FORGET   ( name )   ' (FORGET) ;
-: MARKER   ( name )
-   CREATE                            \ create the MARKER word
-   GET-ORDER  DUP ,                  \ save the search order
-   0 ?DO  ,  LOOP
-   LAST ,                            \ and the last definition.
-   DP ,                              \ and the current DP
-   DOES>                             \ at runtime:
-      DUP @  DUP >R                  \ save no. of lists in order
-      CELLS 2DUP + CELL+             \ get old value of HERE
-      DP >R                          \ save current DP
-      DUP CELL+ @  TO DP             \ restore old DP
-      @ (FORGET)                     \ delete words after old HERE
-      R> TO DP                       \ restore current DP
-      OVER CELL+ -ROT + DO           \ retrieve the search order
-         I @
-      -CELL +LOOP
-      R>                             \ retrieve size of search order
-      SET-ORDER ;                    \ restore the search order
-
 VARIABLE CURSORX   \ cursor x position during WORDS
 : ADVANCE   ( +n -- )   CURSORX +! ;
 : WRAP?   ( -- f )   CURSORX @ + WIDTH < INVERT ;

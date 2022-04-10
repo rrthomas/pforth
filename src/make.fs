@@ -8,8 +8,6 @@
 \ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 \ RISK.
 
-MARKER DISPOSE
-
 \ Halt immediately on exception, for easier debugging
 \ FIXME: Only halt on memory exceptions (or use core dump facility)
 \ : HALT-HANDLER   HALT ;
