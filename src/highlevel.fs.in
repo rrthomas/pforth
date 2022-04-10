@@ -166,21 +166,6 @@ PROVIDE: +!   TUCK @  +  SWAP ! ; [THEN]
 PROVIDE: MIN   2DUP > IF  SWAP  THEN  DROP ; [THEN]
 PROVIDE: MAX   2DUP < IF  SWAP  THEN  DROP ; [THEN]
 
-: S>D   DUP 0< ;
-: D>S   DROP ;
-
-: U>UD   0 ;
-: UD>U   DROP ;
-
-: D0=   0= SWAP 0= AND ;
-: D+   D>S >R D>S R>  +  S>D ;
-: DNEGATE   D>S NEGATE S>D ;
-: D-   DNEGATE D+ ;
-: M+   S>D D+ ;
-: D*   D>S >R D>S R>  *  S>D ;
-: UD/MOD  UD>U >R UD>U R>  U/MOD  >R U>UD R> U>UD ;
-: DABS   IF  NEGATE  THEN  U>UD ;
-
 
 \ Strings #1
 
@@ -364,13 +349,13 @@ INCLUDE" control3.fs"
       EOL NIP - ?DUP IF              \ if not at the end of the line,
          R@ FILE-POSITION            \ get the current file position
          ?DUP IF                     \ if an error occurred
-            >R 2DROP DROP  FALSE R>  \ clear up, leave false flag
+            >R 2DROP  FALSE R>       \ clear up, leave false flag
             R> DROP  EXIT            \ and ior, and exit
          THEN
-         ROT U>UD D-                 \ set pointer to just after EOL
+         >-<                         \ set pointer to just after EOL
          R@ REPOSITION-FILE
          ?DUP IF                     \ if there was an error
-            FALSE SWAP  EXIT         \ exit with error code
+            FALSE SWAP  R> DROP  EXIT \ exit with error code
          THEN
       THEN
    ELSE
@@ -530,21 +515,19 @@ VARIABLE HELD
 : HOLD   -CHAR HELD +!  HELD @ C! ;
 : SIGN   0< IF  [CHAR] - HOLD  THEN ;
 : <#   TOKEN-END HELD ! ;
-: #>   2DROP  HELD @  TOKEN-END OVER - ;
-: #   BASE @ U>UD UD/MOD  2SWAP UD>U  DUP 10 < IF  [CHAR] 0 +
+: #>   DROP  HELD @  TOKEN-END OVER - ;
+: #   BASE @ U/MOD  SWAP  DUP 10 < IF  [CHAR] 0 +
    ELSE [ CHAR A 10 - ] LITERAL +  THEN  HOLD ;
-: #S   BEGIN  #  2DUP D0= UNTIL ;
+: #S   BEGIN  #  DUP 0= UNTIL ;
 
-: D.R   -ROT  TUCK DABS  <# #S ROT SIGN #>  ROT OVER -  0 MAX SPACES  TYPE ;
-: D.   0 D.R  SPACE ;
-: .R   SWAP S>D  ROT D.R ;
+: .R   SWAP DUP ABS  <# #S SWAP SIGN #>  ROT OVER -  0 MAX SPACES  TYPE ;
 : .   0 .R  SPACE ;
 : DEC.   BASE @ SWAP  DECIMAL .  BASE ! ;
-: U.R   SWAP U>UD  ROT D.R ;
-: U.   0 U.R  SPACE ;
+: U.R   .R ;
+: U.   0 .R  SPACE ;
 : H.   BASE @  SWAP HEX U.  BASE ! ;
 
-: >NUMBER   ( ud1 c-addr1 u1 -- ud2 c-addr2 u2 )
+: >NUMBER   ( u1 c-addr1 u2 -- u3 c-addr2 u4 )
    DUP IF                            \ if something to convert
       CHARS OVER + SWAP              \ form limits for a loop
       TUCK  OVER >R                  \ save initial address and
@@ -558,16 +541,16 @@ VARIABLE HELD
          OVER 0<  OR IF              \ or too small
             DROP I  LEAVE            \ leave address of character
          THEN                        \ and exit the loop
-         >R BASE @ U>UD D*           \ multiply n by BASE
-         R> M+                       \ add new digit
+         >R BASE @ *                 \ multiply n by BASE
+         R> +                        \ add new digit
          I CHAR+                     \ address of next character
       LOOP
       DUP R> >-<                     \ construct u'
    THEN ;
 : SKIP-CHAR   ( c-addr u -- c-addr+1 u-1)   1- SWAP  CHAR+ SWAP ;
-: NUMBER   ( c-addr -- d true | n false )
+: NUMBER   ( c-addr -- n )
    DUP >R                            \ save address of string
-   0. ROT                            \ make accumulator for >NUMBER
+   0 SWAP                            \ make accumulator for >NUMBER
    COUNT                             \ count the string
    BASE @ >R                         \ save BASE
    CASE  OVER C@                     \ set base if leading #, $ or %
@@ -579,22 +562,18 @@ VARIABLE HELD
    [CHAR] - =  DUP >R  IF            \ skip first character if it's
       SKIP-CHAR                      \ a minus and save the flag
    THEN
-   FALSE >R                          \ save false flag
    BEGIN
       >NUMBER                        \ convert up to non-digit
       ?DUP WHILE                     \ if the string's not finished,
       OVER C@ 4 / 11 <> IF           \ is the non-digit punctuation?
-         2R> 2DROP                   \ FIXME: Tighten up parsing
+         R>                          \ FIXME: Tighten up parsing
          R> BASE !  R> UNDEFINED     \ if not, then not a number
       THEN
-      R> DROP  TRUE >R               \ if so, set double no. flag
-      SKIP-CHAR                      \ and skip the punctuation
+      SKIP-CHAR                      \ if so, skip the punctuation
    REPEAT
    DROP                              \ drop string address
-   2R> >R                            \ retrieve leading minus flag
-   IF  DNEGATE  THEN                 \ if leading minus, negate no.
-   R@ INVERT IF  D>S  THEN           \ return single or double no.
-   R>                                \ and flag as appropriate
+   R>                                \ retrieve leading minus flag
+   IF  NEGATE  THEN                  \ if leading minus, negate no.
    R> BASE !                         \ restore BASE
    R> DROP ;                         \ drop address of string
 
@@ -789,13 +768,7 @@ CREATE 'SELECTOR  ' LOCAL?  DUP RAW-REL,  .LINK
          DROP                        \ drop found flag
          NUMBER                      \ try getting a number
          STATE @ IF                  \ compile if STATE is non-zero
-            IF                       \ if a double number
-               SWAP                  \ compile MS word
-               CURRENT-LITERAL
-            THEN
             CURRENT-LITERAL          \ compile single no./LS word
-         ELSE
-            DROP                     \ else get rid of flag
          THEN
       THEN
    REPEAT DROP ;                     \ get rid of input address

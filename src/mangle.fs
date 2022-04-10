@@ -4,7 +4,7 @@
 : ISLOWER   DUP [CHAR] a < INVERT  SWAP [CHAR] z > INVERT  AND ;
 : ISALPHA   DUP ISUPPER  SWAP ISLOWER  OR ;
 : ISALNUM   DUP ISDIGIT  SWAP ISALPHA  OR ;
-: 2.H   BASE @ >R  HEX  U>UD  <# # # #>  R> BASE !  TYPE ;
+: 2.H   BASE @ >R  HEX  <# # # #>  R> BASE !  TYPE ;
 : .MANGLE   ( c-addr u -- ) \ print a Forth name mangled
    OVER + SWAP  ?DO
       I C@  DUP ISALPHA IF              \ output letters literally (FIXME: only mangle leading digit)
