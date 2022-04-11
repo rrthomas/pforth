@@ -40,23 +40,6 @@ INCLUDE" assembler.fs"
 : .FORTH-ADDRESS   ." .word last_word - ." CR ;
 : .FORTH-LINK   ." .set last_word, " LAST >NAME .NAME CR ;
 
-\ STUB FOO creates an empty word.
-\ This is used to POSTPONE target words that may not exist on the host.
-: STUB   BL WORD  HEADER ;
-
-\ Create stubs for words that may not exist on host
-STUB IP
-STUB DOCOL
-STUB UNLINK
-STUB (BRANCH)
-STUB (?BRANCH)
-STUB (LOOP)
-STUB (+LOOP)
-STUB UNLOOP
-STUB (CREATE)
-STUB (C")
-STUB (S")
-
 
 VOCABULARY META  ALSO META DEFINITIONS
 FOREIGN  ' NON-META?  ' 'SELECTOR >BODY REL! \ build meta-compiler using native compiler
