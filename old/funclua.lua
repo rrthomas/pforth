@@ -1,0 +1,1 @@
+/home/rrt/Software/Lua/funclua.lua

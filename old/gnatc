@@ -1,0 +1,33 @@
+#! /home/rrt/bin/lua -f
+prog = {
+  name = "gnatc",
+  banner = "gnatc 0.1 (23 Jul 02) by Reuben Thomas (rrt@sc3d.org)",
+  purpose = "Gnat to Lua compiler",
+}
+
+
+require "std.lua"
+
+
+-- Compiler table has a function for each special form
+
+
+-- Process a file
+function main(file)
+  local prog = evalFile (file)
+  
+end
+
+
+-- Command-line options
+options = Options {
+}
+
+-- Main routine
+processArgs()
+processFiles(main)
+
+
+-- Changelog
+
+-- 23jul02  0.1  Program first written
