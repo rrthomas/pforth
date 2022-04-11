@@ -1,2 +1,0 @@
-#! /bin/sh
-gcc -W -Wall -g -I. -o gnat gnat.c buffer.c stream.c vector.c `libslack-config --cflags --libs`
