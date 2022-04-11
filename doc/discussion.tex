@@ -1,0 +1,131 @@
+%
+% Gnat: A Simple Language
+%
+% Reuben Thomas
+%
+% 22/4-20/5/97
+%
+
+% Define the semantics of the built-in functions
+
+
+\documentclass[english]{article}
+\usepackage{babel,a4,newlfont}
+
+
+
+% Alter some default parameters for general typesetting
+
+\frenchspacing
+\emergencystretch=10pt
+
+
+% New commands
+
+\newcommand{\cont}{\noindent}
+\newcommand{\goesto}{\ensuremath{\longrightarrow}}
+
+
+
+\begin{document}
+
+\title{Gnat: A Simple Language}
+\author{Reuben Thomas}
+\date{20th May 1997}
+\maketitle
+
+
+
+\section{Introduction}
+
+Gnat is a new language whose aim is to be as simple and natural as possible for programmers to use, while still being powerful and expressive. It draws heavily on the functional style of ML, the data structures of ABC, and the philosophy behind the design of Modula-3 and Java.
+
+
+
+\section{Background}
+
+These days, new languages have to justify their existence. The golden age of language invention is gone, and it is no longer acceptable to create a new language simply for the sake of it. A new language must have strong advantages to survive and prosper. There is some sense to this attitude: an excess of languages creates a Babel in which programmers cannot understand one another, and too many pet languages are just reinventions of one another, or lack features recognised as essential to all programming languages. Yet the holy grail of the perfect language has still not been achieved, and new languages do still arise and become successful. Increasingly the new successful languages are not those that innovate, providing new features, but those that consolidate, providing tried and tested features in as syntactically simple and semantically clean a way as possible.
+
+This new breed of language is designed far more with the programmer in mind. Where languages used to be designed to try out new constructs or make implementation more efficient, the focus is now on making the language easier to use, and reducing bugs. Oberon and Java are good examples: they are simpler and smaller than their predecessors, Modula-2 and C++, lacking the features in both which have proved troublesome to programmers, and building on their strengths. The difference is rather like that between CISC and RISC processors: like more the orthogonal, straightforward RISC processors the new languages tend to be more self-consistent, with fewer odd corners than the old.
+
+It is not only imperative languages that have matured: the CAML family represents a maturing of the functional paradigm, and similar efforts are going on in logic and distributed programming. Multi-paradigm languages such as Leda, which combines the imperative, object-oriented, functional and logical styles, exist.
+
+
+
+\section{Aims}
+
+So what is left? In a word, simplicity. Gnat is an attempt to design a language which is as simple as possible in a variety of ways:
+
+\begin{description}
+\item[Size]Above all, to be simple a language must be small. A small uniform language is much easier to understand, implement and reason about than a large baroque construction.
+
+\item[Semantics]A small language will have a small semantics, but other sorts of simplicity are also important:
+\begin{description}
+\item[Uniformity]RISC processors are easier to program than CISC processors because of their orthogonal design: the programmer does not have to remember which registers can be used for indexing, or whether an instruction can take memory operands, as the rules are few and simple. Similarly, a good language should have simple rules about which constructs may be used in what combinations.
+\item[Tractability]To be able to ensure program and compiler quality, a language should be formally tractable. This is crucial for safety-critical systems, important for mission-critical commercial systems, and useful just so that it can be determined that a program really does mean what it is supposed to.
+\item[Ease]The semantics should not include constructs that are hard to reason about; classic examples are pointers and explicit memory management. Such constructs lead to bugs and tend to make the semantics hard to formalise.
+\item[Naturalness]The semantics should be designed for the programmer, not the machine: it should not be necessary for numbers to have a fixed size, or arrays to be indexed by integers. Such features simplify the implementation and increase efficiency, but make programming harder and may even complicate the semantics. Most efficiency losses can be made up by having a good type system.
+\end{description}
+
+\item[Syntax]The syntax is the interface between the semantics and the programmer, and has responsibilities to both:
+\begin{description}
+\item[Correspondence]The syntax must correspond obviously with the semantics: different semantic constructs should be emphasised by different syntax, and related semantics by similar syntax.
+\item[Ergonomics]The syntax must be easy to type and read: the commonest constructs should have the shortest representation, and the syntax should allow and encourage code to be laid out in a clear and uncluttered manner. Precedence and associativity rules should be arranged so that it is obvious how expressions should be read.
+\end{description}
+
+\item[Expressiveness]An expressive language allows complex algorithms to be written concisely. It is obvious that a language can be arbitrarily expressive if it is arbitrarily large, but not so obvious that a small language can also be extremely expressive.
+
+\item[Modularity]Increasingly languages are becoming modular in design: they are often built on a core which is then augmented with extra layers of syntax and semantics. This helps to keep the language simple by keeping different aspects separate, so that the programmer and implementor do not have to think about every aspect of the language at once. Features such as object-orientation and type-checking are candidates for such modularisation. At a lower level, separating assignments from expressions avoids confusion.
+\end{description}
+
+
+As well as simplicity, Gnat has other important features:
+
+\begin{description}
+\item[Security]However silly, Gnat programs cannot crash. While this does not help to prevent bugs, it does stop bugs in programs having bad side effects on the system on which they are running.
+\item[Interactivity]Gnat's design allows it to be implemented as a compiled or an interpreted language. While compilation is arguably important for efficiency, programmers seem much happier developing programs in an interactive environment, largely because this makes incremental development and experimentation much easier.
+\end{description}
+
+
+Some important features not yet part of Gnat's design are intended to be added in future:
+
+\begin{description}
+\item[Type checking]In most programming languages, type systems have two main benefits: they constrain the programmer, forbidding many dirty programming tricks which obfuscate code and preventing logical type errors which cause bugs and crashes, and they allow a more efficient implementation of the language. On the other hand, type annotations bloat the syntax of many languages, and a type system can get in the way of rapid prototyping. In Gnat, type checking will be optional.
+\item[Non-integer arithmetic]Non-integer arithmetic is necessary for many applications. Unlimited-precision fractions and standard floating point arithmetic will be added to the design.
+\item[Separation]It has long been recognised that large programs are easier to write if the language allows programs to be written as separate units.
+\item[Communication]Increasingly, support for distributed and concurrent programming is needed. Communication also deals with conventional input and output.
+\item[Persistence]In tandem with distributed and concurrent programming, support for persistence is needed. The author's view is that persistence should be, as far as possible, transparent, as in Smalltalk and ABC.
+\item[Formal semantics]Although Gnat is believed to be tractable, it does not yet have a formal semantics. In line with the views expressed above, one is planned.
+\end{description}
+
+
+
+\section{Exclusions}
+
+The list of aims above omits some that are common in language design:
+
+\begin{description}
+\item[Efficiency]Despite its increasing obviousness and validity, the observation that the efficiency of programs is far less important than the efficiency of programmers is still widely ignored. Modern ML and Java compilers provide more than adequate performance for most programs without seriously compromising the design of the languages.
+\item[Engineering]Apart from allowing program unit separation, there is no obvious support for good engineering practice. This is because engineering is not a programming problem, but one of methodology and management. Inasmuch as Gnat supports programming, it supports engineering.
+\item[Input-output]Input and output are primarily an operating system and library issue. Programming languages should only be concerned with the more general problem of communication.
+\item[Portability]This is one of the most vital properties of any program, but is an implementation problem, spanning compilation, libraries and operating systems.
+\end{description}
+
+
+
+\section{Influences}
+
+The design of Gnat has been strongly influenced by several other languages:
+
+\begin{description}
+\item[ML]ML's functional style and simple, consistent syntax have influenced Gnat heavily.
+\item[ABC]ABC has had a profound influence through its beautiful simplicity and disregard for machine limitations. Its associative table mechanism has influenced Gnat's lists.
+\item[Pict]The layered definition of Gnat was inspired by that of Pict.
+\item[Modula-3 and Java]These attempts to define simple yet powerful language using only familiar syntax and semantics were the main impetus to design Gnat.
+\item[C]For all its faults C is wonderfully concise, and Gnat's design tries to capture the conciseness without the obfuscation.
+\item[Forth]Probably the simplest successful programming language, Forth's emphasis on simple, brief functions and the importance of naming have all influenced Gnat's design. Most importantly, Forth's encouragement of linguistic innovation led me to attempt the design of Gnat in the first place.
+\end{description}
+
+
+
+\end{document}

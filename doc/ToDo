@@ -1,0 +1,59 @@
+Switch comments and code so that (* *) encloses code. Comments can then not
+be nested. This is the beginning of literate proramming.
+
+Need to sort out what is in base and what not. Probably numbers should go in
+base, along with basic arithmetic, and boolean tests.
+
+Need also to think about generators and co-routines (which should be the same
+thing: in short, delayed expressions).
+
+Change positions within lists to Icon system.
+
+
+Distinguish the bit-string operations &&, ||, !! and  ^^ from the logical
+operations &, | and !. The latter should be based on success and failure.
+<exp> & <exp> succeeds with the value of the RH <exp> iff both succeed.
+<exp> | <exp> succeeds with the value of the first <exp> to succeed, and does
+not evaluate the others.
+
+
+Exceptions: surely handlers ought to be first class, and the syntax above
+just sugar?
+
+Any exception not handled by the current handler goes up to the next level
+and so on until the outermost level is reached when it stops with an error.
+
+Syntactically, throw is just another function, albeit a special one. Its
+first argument is the exception and its second the exception's parameter.
+
+Can now relegate <if> and <while> to the extension layers.
+
+Generalise to every expression generating an exception and a value. Allow
+more general execution mechanisms (need code to be lists for this).
+
+
+Think about parallelism:
+
+Need two main things:
+
+1. Channels of communication and locations.
+2. Parallel composition.
+
+As well as every expression having a value and an exception, it could also
+have a location. Then you could (in a join-calculusy way) specify an
+exception migrating to a location (where it would be in parallel with all the
+other expressions at that location). I'm not sure how this fits with channels
+of communication at the moment.
+
+Alternative view of need:
+
+1. Address of self
+2. Enumerate neighbours of a node
+3. Get load of a node
+4. Migrate a process to a node
+5. Get a failure signal
+
+
+Types: in most type systems, the name is all that's important; others
+generalise to structure. We could have two parameters to a type: the name and
+the maximum length (if any).

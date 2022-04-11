@@ -1,0 +1,342 @@
+%
+% Gnat: A Simple Language
+%
+% Reuben Thomas
+%
+% 22/4-20/5/97, 7/7/02
+%
+
+% Define the semantics of the built-in functions
+
+
+\documentclass[english]{article}
+\usepackage{babel,a4,newlfont,amsmath,reggram,ctable}
+
+
+
+% Alter some default parameters for general typesetting
+
+\frenchspacing
+\emergencystretch=10pt
+
+
+% New commands
+
+\newcommand{\cont}{\noindent}
+
+
+
+\begin{document}
+
+\title{Gnat: A Simple Language}
+\author{Reuben Thomas}
+\date{7th July 2002}
+\maketitle
+
+
+
+\section{Introduction}
+
+Gnat is a new language which aims to be:
+
+\begin{itemize}
+\item simple and natural for programmers
+\item easy to implement efficiently
+\item convenient for all sorts of programming
+\end{itemize}
+
+It draws heavily on the functional style of Lisp, the data
+structures of Lua, and the philosophy behind the design of Forth.
+
+
+
+\section{Notation}
+
+Gnat's grammar is described in a BNF-like notation constructed as
+follows:
+
+\begin{description}
+\item[Terminal tokens]are shown \conc{thus}, which is a single token,
+  not a concatenation of four.
+\item[Non-terminals]are shown \nont{thus}.
+\item[Concatenation]is denoted by textual concatenation.
+\item[Alternatives]are separated by vertical bars, thus:
+  \nont{A}\Alt\nont{B}\nont{C}. Alternation is less binding than
+  concatenation, so the example just given means ``\nont{A}, or
+  \nont{B} followed by \nont{C}''.
+\item[Parentheses]are used to indicate binding: for example,
+  \lbrac\nont{A}\alt\nont{B}\rbrac\ \nont{C} means ``\nont{A} or
+  \nont{B}, followed by \nont{C}''.
+\item[Optional tokens]are enclosed in square brackets, which may be
+  nested:\\\conc{A cat's\opt{-tail \opt{causes}} wounds!}
+\item[Zero or more]repetitions of a token are denoted by appending an
+  asterisk, thus: \nont{A}\closure.
+\item[One or more]repetitions of a token are denoted by appending a
+  plus sign, thus: \nont{A}\pclosure.
+\item[Lists]are denoted by a single terminal character before a
+  repetition symbol: for example, \nont{ship}\conc{,}\pclosure\ 
+  denotes a comma-separated list of ships.
+\item[White space tokens]are denoted by a space within a sequence of
+  concatenated tokens. The space around an alternation does not count,
+  so in the following phrase there is only one white space token:
+  \mbox{\nont{A} \nont{B}\Alt\nont{C}\nont{D}}. White space tokens are
+  all optional (as if enclosed in square brackets).
+\item[Productions]have the non-terminal being defined on the left,
+  followed by an equals sign, followed by the definition:
+  \mbox{\nont{insect} = \nont{head}\nont{thorax}\nont{abdomen}}.
+\end{description}
+
+
+
+\section{The core language}
+
+\subsection{Tokens}
+
+A program consists of a sequence of tokens; their grammar is given by:
+
+\begin{bnfc}
+\item[tok]\nont{res}\Alt\nont{id}\Alt\nont{char}
+\item[id]\nont{alpha}\lbrac\nont{letter}\alt\nont{digit}\rbrac\closure\Alt
+  \nont{symbol}\pclosure
+\item[symbol]!\Alt \#\Alt \$\Alt \%\Alt \&\Alt '\Alt *\Alt +\Alt -\Alt .%
+\Alt /\Alt :\Alt<\Alt =\Alt >\Alt ?\Alt @\Alt \verb|\|\Alt \verb|^|\Alt%
+\_\Alt`\Alt|\Alt\verb|~|
+\item[digit]\textrm{A decimal digit from 0--9}
+\item[alpha]\textrm{An upper or lower-case letter from A--Z}
+\item[letter]\nont{alpha}\Alt\_
+\item[char]\textrm{Any character}
+\end{bnfc}
+
+Any number of spaces, linefeeds (ASCII 10) and tabs (ASCII 9), form a
+white space token. A comment, which starts with \conc{//} and ends
+with \verb|\\|, also counts as white space. Comments may be nested.
+
+A program is formed from a string of 8-bit ASCII characters as
+follows:
+
+\begin{enumerate}
+\item Find the longest prefix of the string that is a token, and
+  delete it from the string.
+\item If the token is a white space token then discard it.
+\item If the token is a \nont{strings}, concatenate all the
+  \nont{string}s which form it together to form one large
+  \nont{string}.
+\item Append the token to the program.
+\item Repeat from step 1 until no characters remain in the string.
+\end{enumerate}
+
+\subsubsection{Reserved identifiers}
+
+The identifiers given by \nont{res} are reserved, and may not be used
+as \nont{var}s.
+
+\begin{bnfc}
+\item[res]\#\Alt\$\Alt\$\$\Alt\$=\Alt.\Alt:\Alt:=\Alt=>\Alt|=\Alt null\Alt
+false\Alt true\Alt if\Alt then\Alt else \Alt while\Alt do
+\end{bnfc}
+
+
+\subsection{Sequence}
+
+\begin{bnfc}
+\item[seq]\nont{exp} ; \pclosure
+\end{bnfc}
+
+\cont A sequence of expressions (\nont{seq}) contains expressions
+separated by semi-colons; since an expression may be empty, a sequence
+may also end in a semi-colon. To evaluate a \nont{seq} the expressions
+are evaluated from left to right. The value of a sequence is the value
+of the last expression.
+
+
+\subsection{Expression}
+
+\begin{bnfc}
+\item[exp]\opt{\nont{hand}}\Alt\nont{func}\Alt\nont{app}
+\end{bnfc}
+
+\cont An expression (\nont{exp}) is a handled expression
+(\nont{hand}), a function (\nont{func}), an application (\nont{app})
+or the empty expression, whose value is \conc{null}.
+
+
+\subsection{Exception}
+
+\begin{bnfc}
+\item[hand]\nont{exp} catch \nont{catches}
+\item[catches]\nont{catch}\Alt\nont{catches} | \nont{catch}
+\item[catch]\nont{exc} => \nont{exp}
+\item[exc]\nont{id}
+\end{bnfc}
+
+\cont
+
+
+\subsection{Application}
+
+\begin{bnfc}
+\item[app]\nont{val}\pclosure
+\end{bnfc}
+
+\cont An application (\nont{app}) is a list of values. The value of an
+application $av$ is the value obtained by applying the value of $a$ to
+the value of $v$. The values of these various applications are
+described below in the appropriate places. Any application not
+described below has the value \conc{null}.
+
+
+\subsection{Function}
+
+\begin{bnfc}
+\item[func]\nont{var} => \nont{exp}
+\end{bnfc}
+
+\cont The value of \conc{($x$ => $e$)$v$} is the value of $e$ after
+the value of $v$ has been substituted for all free occurrences of $x$.
+Within $e$ the identifier \conc{<=} has the value \mbox{\conc{$x$ =>
+    $e$}}. The value of a function is itself.
+
+
+\subsection{Value}
+
+\begin{bnfc}
+\item[val]\nont{list}\Alt\nont{scope}\Alt null
+\end{bnfc}
+
+\cont A value (\nont{val}) is either a list (\nont{list}), a scope
+(\nont{scope}) or \conc{null}. The value of \conc{null} is itself.
+\conc{null} is the only value that is not a list.
+
+
+\subsection{Slice}
+
+There are two slice functions: the small slice, \conc{\$}, and the big
+slice, \conc{\$\$}. The value of the small slice \conc{\$$nl$} is that
+of the $n$th element of $l$. If $|n|$ is outside the range
+\conc{$1$\dots\#$l$} then the value of the slice is \conc{null}. The
+value of the big slice \conc{\$\$$l_1$$l_2$} is a list of elements of
+$l_2$, according to the value of the elements of $l_1$. $l_1$ may
+contain three sorts of elements:
+
+\begin{description}
+\item[$a$]An atom whose value is $n$ selects \conc{$l_2$\$$n$}.
+\item[\conc{[$a_1$]}]A list with one element whose value is $n$
+  selects \conc{$l_2$\$$\operatorname{sgn} n\ldots l_2$\$$n$}.
+\item[\conc{[$a_1$,$a_2$]}]A list with two elements whose values are
+  $n_1$ and $n_2$ selects \conc{$l_2$\$$n_1\ldots l_2$\$$n_2$}. If the
+  $n_1$th element comes after the $n_2$th, no elements are selected.
+\end{description}
+
+
+\subsection{Selection}
+
+The value of a selection \conc{|$vl$} is the index of the first
+element from the left in $l$ whose first element is $v$. If there is
+no such element in $l$ then the value of the selection is \conc{null}.
+
+
+\subsection{List}
+
+\begin{bnfc}
+\item[list]{[} \nont{app},\pclosure\ ]\Alt\\{[} \nont{elem},\pclosure\ ]\Alt\\\nont{atom}
+\item[elem]\nont{ord}\Alt\nont{key}
+\item[ord]\nont{app} |= \nont{app}
+\item[key]\nont{app} \$= \nont{app}
+\end{bnfc}
+
+\cont Lists may be atomic (\nont{atom}) or non-atomic. A list's
+elements are implicitly numbered, and may also be indexed
+associatively. An atomic list is a bit string.
+
+The elements of a list are numbered left to right consecutively from
+one upwards, and right to left from minus one downwards.
+
+Lists may be applied to one another. The value of the application
+$l_1l_2$ is the result of successively modifying $l_1$ with each
+element of $l_2$, from left to right. The results of the various
+possible modifications of a list $l$ by a modifier are as follows:
+
+\begin{ctabular}{cp{3in}}
+  %\tabstrut
+  \bf Modifier & \bf Result \\ \hline \nont{app}: $a$ &
+  An extra element whose value is $a$ is added to the right-hand
+  end of $l$, unless the value of $a$ is \conc{null}, in which
+  case it is ignored. \\
+  \nont{ord}: \conc{$a_1$ |= $a_2$} &
+  The value of element $a_1$ of $l$ is set to the value of $a_2$;
+  if $|a_1|$ is outside the range \conc{$1$\dots\#$l$} then the
+  \nont{ord} has no effect. \\
+  \nont{key}: \conc{$a_1$ \$= $a_2$} &
+  The first element of $l$ from the left whose first element has
+  the same value as $a_1$ is replaced by the value of
+  \conc{[$a_1$][$a_2$]}; if no such element exists then the new
+  element is added to the right-hand end of the list. If $a_1$ has
+  the value \conc{null} then the \nont{key} has no effect. \\
+\end{ctabular}
+
+\cont The value of a list $l$ is the value of \conc{[]$l$}. The value
+of \conc{$l$\,null} is the value of $l$, and the value of
+\conc{null\,$l$} is \conc{null}.
+
+
+\subsection{Scope}
+
+\begin{bnfc}
+\item[scope]\lbraceconc\ \nont{ass} , \closure\ \rbraceconc
+\item[ass]\nont{var} := \nont{exp}
+\end{bnfc}
+
+\cont A scope is an abstract list, with elements that are labelled
+rather than numbered. In a scope \conc{\lbraceconc $i_1$ := $e_1$ ,
+  \dots\ , $i_n$ := $e_n$ \rbraceconc} the expressions $e_1$ to $e_n$
+are evaluated, and the results assigned to the variables $i_1$ to
+$i_n$. If any of $i_1$ to $i_n$ are evaluated in the course of
+evaluating $e_1$ to $e_n$, their value will be \conc{null}; however,
+any unevaluated occurrences will refer to the variable defined in the
+scope. \emph{This means that \conc{\lbraceconc a := 2, b :=
+    a+1\rbraceconc} will set \conc{a} to 2 and \conc{b} to
+  \conc{null}, but recursive function definitions will work as
+  expected. This might change if a different evaluation strategy is
+  used, e.g. call-by-need reduction might allow it to work, since
+  neither expression would be evaluated until later.}
+
+If a variable is assigned to more than once in a scope, its value is
+that of the last expression assigned to it.
+
+Scopes may be applied to one another. If $s_1$ is
+\conc{\lbraceconc$a_1$,\dots,$a_n$\rbraceconc} and $s_2$ is
+\conc{\lbraceconc$b_1$,\dots,$b_m$\rbraceconc} then the value of
+$s_1s_2$ is
+\conc{\lbraceconc$a_1$,\dots,$a_n$,$b_1$,\dots,$b_m$\rbraceconc}.
+
+
+\subsection{Version}
+
+\begin{bnfc}
+\item[ver]\nont{scope} \nont{val}
+\end{bnfc}
+
+The value of a version \conc{$sv$} is the value of $v$ when free
+occurrences of the elements of $s$ in $v$ are given the values
+assigned to them in $s$. \emph{It's not clear where a version may occur
+  in the syntax.}
+
+
+\subsection{Atom}
+
+\begin{bnfc}
+\item[atom]\#\nont{list}\Alt\nont{var}\Alt false\Alt true\Alt(\nont{seq})
+\item[var]\nont{id}
+\end{bnfc}
+
+\cont An atom is either a count (\conc{\#$l$}), a variable
+(\nont{var}) the single bit \conc{false} (0) or \conc{true} (1), or a
+bracketed sequence of expressions (\conc{(\nont{seq})}.
+
+The value of a \nont{var} to which no value has been assigned is
+\conc{null}. The value of a \nont{count} \conc{\#$a$} is the number of
+elements in $a$.
+
+
+
+\end{document}

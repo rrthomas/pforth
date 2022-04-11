@@ -1,0 +1,7 @@
+A language which is only partially specified.
+
+It is human-readable first and machine-readable second.
+
+The part which is machine-comprehensible can be extended, so that for example, comments could become contracts.
+
+The gross syntax should be specified so that an interpreter can complain when there is a bit it needs to understand to execute the program, but can safely skip comments or facultative bits of the language (like contracts, assertions, or type annotations).

@@ -1,0 +1,226 @@
+%
+% Gnat: A Simple Language
+%
+% Reuben Thomas
+%
+% 22/4-20/5/97
+%
+
+% Define the semantics of the built-in functions
+
+
+\documentclass[english]{article}
+\usepackage{babel,a4,newlfont,amsmath,reggram,mytable}
+
+
+
+% Alter some default parameters for general typesetting
+
+\frenchspacing
+\emergencystretch=10pt
+
+
+% New commands
+
+\newcommand{\cont}{\noindent}
+\newcommand{\goesto}{\ensuremath{\longrightarrow}}
+
+
+
+\begin{document}
+
+\title{Gnat: A Simple Language}
+\author{Reuben Thomas}
+\date{20th May 1997}
+\maketitle
+
+
+
+\section{Introduction}
+
+Gnat is a new language whose aim is to be as simple and natural as possible for programmers to use, while still being powerful and expressive. It draws heavily on the functional style of ML, the data structures of ABC, and the philosophy behind the design of Modula-3 and Java.
+
+
+
+\section{Notation}
+
+\emph{Need to describe the rewriting notation used to extend the grammar.}
+
+
+
+\section{Further layers}
+
+Further layers of Gnat have not yet been considered in detail, except for one: syntactic sugar. The other main features to add are type checking, modules, exceptions and pattern matching. Also to consider are persistent, distributed and parallel programming.
+
+
+\subsection{Syntactic extension}
+
+It should be possible to add new syntax to Gnat in terms of the old. The grammar rules will be extensions to the old rules (shown by the production starting with an ellipsis), and include a transformation showing how the new syntax is sugared into the old (shown by a right-pointing arrow). \emph{[This notation needs to be improved showing not only the new grammar but naming each part of the production so that the transformation can be more than just a permutation; notation should also allow for recursive sugaring where necessary; additionally the semantics should be tightened up of how exactly sugaring is applied during parsing.]}
+
+\subsubsection{Reserved identifiers}
+
+The list of reserved identifiers is extended.
+
+\begin{bnfc}
+\item[res]\dots\Alt\nont{1-op}\Alt\nont{2-op}\Alt\nont{io}
+\item[1-op]\verb|~|\Alt!
+\item[2-op]\$\Alt\$\$\Alt|\Alt.\Alt+\Alt-\Alt*\Alt/\Alt\%\Alt=\Alt<\Alt>%
+\Alt\&\Alt|\Alt\verb|^|
+\item[io]print\Alt input
+\end{bnfc}
+
+\cont The functions which have not yet been defined have the following meanings:
+
+\begin{mytabular}{|c|l|}
+\tabstrut\bf Function & \bf Meaning \\ \hline
+\conc{+}, \conc{-}, \conc{*}, \conc{/}, \conc{\%} &
+Integer addition, subtraction, multiplication, division and remainder. \\
+\conc{=}, \conc{<}, \conc{>} &
+Boolean equality, less-than and greater-than \\
+\conc{\&}, \conc{|}, \verb|^| &
+Logical and, or and exclusive-or. \\
+\end{mytabular}
+
+\cont All these functions are left-associative. With the exception of \conc{.}, all take their first argument on the left and their second on the right.
+
+\subsubsection{Integers and string constants}
+
+\begin{bnfc}
+\item[tok]\dots\Alt\nont{int}\Alt\nont{strings}
+\item[int]\nont{digit}\lbrac\nont{alpha}\alt\nont{digit}\rbrac%
+\closure\opt{\_\nont{digit}\pclosure}
+\item[strings]\nont{string} \opt{\nont{strings}}
+\item[string]"\nont{char}\closure"
+\item[atom]\dots\Alt\nont{int}\Alt\nont{string}
+\end{bnfc}
+
+\cont This rule allows integer and string constants in programs.
+
+Integers are represented as a list of their binary digits in twos-complement format, the most significant bit being the sign bit. Character strings are encoded as lists of 8-bit ASCII codes.
+
+\paragraph{Integers}
+
+Integers have two important properties: first, they may be of any size, and secondly, they may be expressed in any base from 2 to 36, using the letters to represent the digits 10--35. The base is indicated by an underscore followed by one or two decimal digits indicating the base, and must be in the range 2--36. An \nont{int} without a base is assumed to be decimal.
+
+\paragraph{String literals}
+
+The following character sequences are translated as shown below when they occur in \nont{string} tokens.
+
+\begin{mytabular}{|c|c|}
+\tabstrut\bf Escape & \bf Character \\ \hline
+\verb|\d|\nont{digit}\opt{\nont{digit}\opt{\nont{digit}}} &
+    \nont{digit}\pclosure\verb|_|10 \\
+\verb|\h|\nont{digit}\opt{\nont{digit}} & \nont{digit}\pclosure\verb|_|16 \\
+\verb|\n|                      & LF       \\
+\verb|\t|                      & TAB      \\
+\verb|\"|                      & "        \\
+\verb|\\|                      & \verb|\| \\
+\end{mytabular}
+
+It is an error for a literal (unescaped) non-printing character (0--31 or 127) to appear in a \nont{string}, or for an escape sequence starting with \verb|\d| or \verb|\h| to have a character value outside the range 0\dots 255.
+
+\subsubsection{Infix functions}
+
+\begin{bnfc}
+\item[app]\dots\Alt\nont{val} \nont{2-op} \nont{app} \goesto\
+\nont{2-op} \nont{val} \nont{app}
+\end{bnfc}
+
+\cont This rule allows infix functions to be used. They all associate to the left. The order of precedence of the built-in functions (monadic and dyadic) is given by the following table:
+
+\begin{mytabular}{|c|}
+\verb|~| \\
+\conc{+ -} \\
+\conc{* / \%} \\
+\conc{= < >} \\
+\verb_& | ^ !_\\
+\end{mytabular}
+
+\cont \conc{-} is monadic as well as dyadic, according to context, and can also replace \verb|_| as the minus sign on numbers with suitable massaging of the grammar.
+
+\emph{Different \nont{2-op}s need different binding levels: for example, slicing, selection and version should have a \nont{list} on the right-hand side rather than an \nont{app}. Also need to decide in which order the prefix versions of the functions take their arguments. Need a notation for giving the left argument first, or in general of skipping arguments of a function to fix a particular one.}
+
+\subsubsection{Curried function definition}
+
+\begin{bnfc}
+\item[ass]\dots\Alt\nont{var} := \nont{vars} -> \nont{exp} \goesto\ \nont{var} := \nont{var} -> \dots\ -> \nont{exp}
+\end{bnfc}
+
+\cont This rule allows the omission of \nont{->} after all but the last argument of a function. Proper multi-argument functions must await pattern-matching of lists.
+
+\subsubsection{List element deletion}
+
+\begin{bnfc}
+\item[ass]\dots\Alt\nont{var} :=! \goesto\ \nont{var} := null
+\item[ord]\dots\Alt\nont{exp} |=! \goesto\ \nont{exp} |= null
+\item[key]\dots\Alt\nont{exp} \$=! \goesto\ \nont{exp} \$= null
+\end{bnfc}
+
+\cont These rules emphasise that deletion is not like normal assignment, and are useful with type checking, which should forbid the assignment of \conc{null}.
+
+\subsubsection{Associative list lookup}
+
+Need a short-hand for \conc{$l$\$($l$|$v$)}. How about \conc{$l$\$|$v$}?
+
+\subsubsection{Assignments}
+
+\begin{bnfc}
+\item[exp]\dots\Alt\nont{ass} \goesto\ . \lbraceconc \nont{ass}
+\rbraceconc\Alt\\\lbraceconc \nont{ass} , \pclosure ; \nont{exps} \rbraceconc
+\goesto\ \lbraceconc \nont{ass} , \pclosure \rbraceconc . (\nont{exps})
+\end{bnfc}
+
+\cont These rules allow assignments to appear in the middle of expression lists and vice versa, giving a more usual syntax.
+
+\subsubsection{Control expression}
+
+\begin{bnfc}
+\item[if]if \nont{app} then \nont{exp} \opt{else \nont{exp}} 
+\item[while]while \nont{app} do \nont{exp}
+\end{bnfc}
+
+\cont To evaluate \conc{if $a$ then $e_1$ \opt{else $e_2$}}, evalute $a$. If its value is 0 then the value of the \nont{if} is the value of $e_2$, or \conc{null} if the \conc{else} clause is omitted; otherwise it is the value of $e_1$.
+
+To evaluate \conc{while $a$ do $e$} repeatedly evaluate $a$ until it is 0; each time it evaluates to a non-zero value, evaluate $e$. The value of the 
+\nont{while} is \conc{null}.
+
+\emph{This lot needs to be recast in terms of exceptions.}
+
+\subsubsection{Program}
+
+\begin{bnfc}
+\item[prog]\nont{exps}
+\end{bnfc}
+
+\cont A program (\nont{prog}) is a sequence of expressions (\nont{exps}). The value of a program is the value of the sequence.
+
+
+\subsection{Type checking}
+
+Type checking should manifest itself by restricting certain operations, in effect gradually making more classes abstract, and making operations that previous returned \conc{null} cause an error. It might be possible to allow different levels of type checking appropriate to different sorts of programming: excessive type-checking is often the only obstacle to a ``high-level'' language being used for ``low-level'' programming.
+
+There should be an inference system (again, as another layer) so that only occasional annotation is needed. Try to use the \conc{: \nont{type}} notation for type annotation.
+
+Type checking should enable huge efficiency gains.
+
+Use (at least at the lowest level) simple name equivalence, but make sure that values always carry their original type name so that the fact of two types' equivalence never makes them interchangeable or possible to confuse. This conflicts rather with persistent programming, so this issue must be addressed too.
+
+It seems that to introduce the natural notation for function recursion it is necessary to differentiate function declarations from variable declarations.
+
+
+\subsection{Patterns}
+
+Should be able to match using list constructors. There are as yet no abstract constructors; perhaps those should be built for abstract types too; and destructor functions as well. Have a case statement just as in ML.
+
+
+\subsection{Success and failure}
+
+Have notion of expressions either having a value, or succeeding and failing as in Icon. If assignments whose right-hand side succeeds or fails themselves succeed or fail (which they should) then surely assignments whose right-hand sides are values should have that value.
+
+
+\subsection{Evaluation mechanism}
+
+At the moment a call-by-value reduction strategy is being used. Should call-by-need be adopted, or some such method?
+
+
+\end{document}

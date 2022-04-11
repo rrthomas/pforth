@@ -1,0 +1,115 @@
+Gnat
+
+Implemented as a series of modules each of which provides particular
+special forms and atoms.
+
+At present dynamically typed; next step is to add optional static
+typing (with a cast to untyped, so that well-typed standard routines
+can be used in ad-hoc scripts).
+
+
+Syntax
+
+For now, use Scheme syntax for ease of implementation. In future,
+store as XML for ease of editing and compilation, or in some
+equivalent. Have a Lua-like concrete syntax that can with the addition
+of a separator (;) be made an unambiguous character stream
+representation that can be parsed; without the separator, needs
+markup. Hence with that one small change can be used both by
+intelligent and dumb editors.
+
+
+Types
+
+<atom>:
+Type # the type of types
+
+<exp>:
+type <atom> # value is the type of <atom>
+
+
+Code
+
+<atom>:
+Code # the type of code
+nil
+(<exp>)
+break # exits innermost repeat
+
+<exp>:
+seq <atom> ... # evaluate <atom>s; the value of the seq is the value
+ # of the last atom
+apply <atom1> <atom2> # evaluate <atom1> and apply resulting function
+ # to <atom2>
+lambda <id> <atom> # the evaluation of <atom> is delayed to
+ # application time, when free occurrences of <id> are bound to the
+ # given value
+case <atom1> <atom1_1> <atom1_2> ... <atom2> # evaluate <atom1>,
+ # then sequentially evaluate <atomi_1> until an equal value found;
+ # value is <atomi_2>, or <atom2> if none found
+repeat <atom> # endless loop, value is nil
+catch <atom1> <atom2> <atom3> # evaluate <atom1>, handled by <atom2>,
+ # then <atom3>; value is that of <atom3>
+throw <atom> # throw to innermost handler
+
+
+Integer
+
+<atom>:
+Integer # the type of integers
+<integer>
+
+add <integer1> <integer2>
+sub <integer1> <integer2>
+mul <integer1> <integer2>
+div <integer1> <integer2>
+mod <integer1> <integer2>
+leq <integer1> <integer2> # returns true or false
+and <integer1> <integer2> # bitwise ops on integer part
+or <integer1> <integer2>
+xor <integer1> <integer2>
+not <integer>
+
+
+Float
+
+<atom>:
+Float # the type of floats
+<float>
+
+<exp>:
+fadd <float1> <float2>
+fsub <float1> <float2>
+fmul <float1> <float2>
+fdiv <float1> <float2>
+fmod <float1> <float2>
+fleq <float1> <float2> # returns true or false
+
+
+Byte strings
+
+<atom>:
+String # the type of byte strings
+"..." # \", \n and \xdd escapes
+
+<exp>:
+new <integer-length>
+copy <string1> <string2> <integer-length>
+peek <string> <integer-offset> <integer-length>
+poke <string> <integer-offset> <integer-length> <integer>
+fpeek <string> <integer-offset> # return bytes as float
+fpoke <string> <integer-offset> # put float as bytes
+
+
+Table
+
+<atom>:
+Table # the type of tables
+self # the current table
+
+<exp>:
+table <atom> # evaluate <atom> in a new table
+get <atom1> <atom2> # return the value of table <atom1> subscripted by
+ # <atom2>
+set <atom1> <atom2> <atom3> # set table <atom1> subscripted by <atom2>
+ # to value of <atom3>

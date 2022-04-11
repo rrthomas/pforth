@@ -1,0 +1,49 @@
+                            Mini language
+                            #############
+
+Programs consist of case statements which do pattern matching with boolean guards & two types of matching: equality (literal) & structure (constructors). Really it's equality & ignoring (where holes in constructors appear). Constructors can all be unary. They are really just a tagging device; could just as well be omega functions with different names.
+
+Boolean guards & actions are programmed in the underlying instruction set & functions. Evaluation is strict.
+
+Need ways to:
+
+   1 Make closures
+   2 Declare functions    }
+   3 Declare constructors }
+   4 Write guards
+   5 Write code
+   6 Bindings
+
+Declaration: <name> = <closure>
+Closure: { <expr> }
+Case: like Haskell: ## <closure> ( <closure ( | <closure> )* -> <closure> )*
+Code: function application (including native instructions) plus brackets
+Binding: <constructor> [<name>] <closure>
+Expressions: Function application & literals.
+
+fact = { \ n { ## { n } { 0 } -> { 1 }
+                        { n } -> { n * fact (n - 1) } } }
+
+Need some way in the syntax of differentiating identifiers bound by patterns from those being referred to. It's a name that comes after a constructor. But constructors are just functions. So denote holes with ` before. Real problem is that bindings are not syntactically special. What about scope, too?
+
+fact = { \ 'n { ## { 'n } { 0 } -> { 1 }
+                          { n } -> { * 'n (fact (- 'n 1)) } } }
+
+Binding is different from scope, or perhaps more accurately a special case of scope, as binding always changes the scope of the bound identifier.
+
+_Or_ binding is the same as scoping. Abstraction _is_ scoping rather than a constructor.
+
+Alternative view
+================
+
+Types are the same as scope: types of arguments select the appropriate function by adding scopes to the current environment. But rather than just a stack of scopes, they offer a tree: the implementation of a function needed may not depend just on the type of one but of two or more arguments, and their _place_ is important (int x float vs float x int), so a single name may need to be looked up in multiple environments.
+
+This is not really a tree of environments, but rather a stack of lists. But with curried functions it reduces once more to a simple stack.
+
+Curried functions could behave either as functionals, or as partially-completed lookups waiting for more args: continue until only one function of the correct type left in list of possibles (or alternatively until arity is satisfied), then execute.
+
+How to decide between program-defined and type-defined scope? Could have more than one possible function to execute, one given by type and one by program scope.
+
+How to indicate early vs late binding succinctly in source?
+
+Could do it all explicitly: program scope by blocks and type scope by "executing" them, i.e. first-class scope. Of course everything can be done this way.
