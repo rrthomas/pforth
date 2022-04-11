@@ -1,4 +1,4 @@
-calli INITIALIZE
+calli START
 .set _byte_bits, 8
 .set _immediate_bit, 1 << (bee_word_bits - 1)
 .set _compiling_bit, 1 << (bee_word_bits - 2)
@@ -11982,25 +11982,19 @@ calli _28_QUIT_29_
 ret
 .set DO_2D_START_2D_OPTIONS_info, 0 | 0 | 0 | (16 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
-.byte 0x12 
-.ascii "PARSE-COMMAND-LINE"
-.balign bee_word_bytes, 0x20 
-.word DO_2D_START_2D_OPTIONS - .
-.word PARSE_2D_COMMAND_2D_LINE_compilation
-.word PARSE_2D_COMMAND_2D_LINE_info 
-.global PARSE_2D_COMMAND_2D_LINE
-PARSE_2D_COMMAND_2D_LINE:
-ret
-.set PARSE_2D_COMMAND_2D_LINE_info, 0 | 0 | 0 | (18 <<_name_length_bits) | 0x0 
-.balign bee_word_bytes
 .byte 0x5 
 .ascii "START"
 .balign bee_word_bytes, 0x20 
-.word PARSE_2D_COMMAND_2D_LINE - .
+.word DO_2D_START_2D_OPTIONS - .
 .word START_compilation
 .word START_info 
 .global START
 START:
+pops
+calli CELL_2D_
+pushreli _27_FORTH_body
+store
+pushreli END_OF_IMAGE
 calli ROOTDP
 store
 pushreli _28_THROW_29_
@@ -12016,29 +12010,11 @@ calli ONLY
 calli FORTH
 calli DEFINITIONS
 calli DECIMAL
-calli PARSE_2D_COMMAND_2D_LINE
 calli INITIALIZE_2D_ARGS
 calli INITIALIZE_2D_TERMINAL
 calli DO_2D_START_2D_OPTIONS
 ret
-.set START_info, 0 | 0 | 0 | (5 <<_name_length_bits) | 0x0 
-.balign bee_word_bytes
-.byte 0xA 
-.ascii "INITIALIZE"
-.balign bee_word_bytes, 0x20 
-.word START - .
-.word INITIALIZE_compilation
-.word INITIALIZE_info 
-.global INITIALIZE
-INITIALIZE:
-pops
-calli CELL_2D_
-pushreli _27_FORTH_body
-store
-pushreli END_OF_IMAGE
-calli START
-ret
 .balign bee_word_bytes
 END_OF_IMAGE:
-.set last_word, INITIALIZE
-.set INITIALIZE_info, 0 | 0 | 0 | (10 <<_name_length_bits) | 0x0 
+.set last_word, START
+.set START_info, 0 | 0 | 0 | (5 <<_name_length_bits) | 0x0 

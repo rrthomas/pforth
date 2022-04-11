@@ -127,7 +127,13 @@ PROVIDE: CELL/   CELL / ; [THEN]
 : TOP-BIT-SET   1 CELL-BITS 1- LSHIFT ;
 
 
-INCLUDE" control1.fs"
+\ Control structures #1
+
+PROVIDE: J   R> R> R> R>  DUP  -ROT >R >R  -ROT >R >R ; [THEN]
+PROVIDE: (LOOP)   R>  R> 1+  DUP R@ =  SWAP >R  SWAP >R ; [THEN]
+PROVIDE: (+LOOP)   R> SWAP  R>  R@ OVER SWAP -  -ROT +  R@ OVER SWAP -
+   SWAP >R  XOR 0<  SWAP >R ; [THEN]
+PROVIDE: UNLOOP   R>  R> DROP R> DROP  >R ; [THEN]
 
 
 \ Stack manipulation #2
@@ -180,7 +186,31 @@ PROVIDE: MAX   2DUP < IF  SWAP  THEN  DROP ; [THEN]
 
 \ Compiler #1
 
-INCLUDE" compiler-defer.fs"
+\ These words are defined in compiler-asm.fs
+DEFER .ALIGN
+DEFER .CALIGN
+DEFER .REL-OFFSET
+DEFER .NOP
+DEFER .ALLOT
+DEFER .ALLOT-CELLS
+DEFER .WORD
+DEFER .BYTE
+DEFER .STRING
+DEFER .PUSHI
+DEFER .PUSHRELI
+DEFER .PUSH
+DEFER .LABEL
+DEFER .LABEL-DEF
+DEFER .BODY-LABEL-DEF
+DEFER .BRANCH
+DEFER .IF
+DEFER .RET
+DEFER .IMMEDIATE-METHOD
+DEFER .COMPILE-METHOD
+DEFER .CALL-COMPILE-METHOD
+DEFER .INLINE-COUNT
+DEFER .CREATED-CODE
+DEFER .PUSHRELI-SYMBOL
 
 0 VALUE DP
 : HERE   DP @ ;
@@ -241,16 +271,100 @@ CREATE S"B  256 ALLOT
 CREATE SCRATCH  256 ALLOT
 
 
-INCLUDE" os-compiler.fs"   \ words necessary for the machine
+\ Writing code to memory
+
+\ Default naive implementation.
+: CODE!   ( x adr -- )   ! ;
+: CODE,   ( x -- )   , ;
 : CODE-MOVE   CELLS OVER + SWAP ?DO  DUP @  I CODE!  CELL+
    CELL +LOOP  DROP ;
-INCLUDE" compiler.fs"
+
+
+\ Machine-dependent words
+
+INCLUDE" opcodes.fs"
+
+
+\ Core compiler
+
+: CALL   ( at from to -- )   >-< SWAP ! ;
+
+: NOP,   INSN_NOP OP2_INSN >OPCODE2 RAW, ;
+: CALL,   HERE SWAP OFFSET CELL/ OP_CALLI >OPCODE RAW, ;
+: BRANCH,   0 OP2_JUMPI >OPCODE2 RAW, ;
+: IF,   0 OP2_JUMPZI >OPCODE2 RAW, ;
+: PUSH,   ( x -- )
+   DUP CELLS CELL/  OVER = IF
+      OP_PUSHI >OPCODE RAW,
+   ELSE
+      HERE 2 CELLS + CALL,  RAW,  INSN_POPR OP2_INSN >OPCODE2 RAW,  INSN_LOAD OP2_INSN >OPCODE2 RAW,
+   THEN ;
+: PUSHREL,   HERE SWAP OFFSET CELL/ OP_PUSHRELI >OPCODE RAW, ;
+
+: @BRANCH   ( from -- to )   DUP @ OP2_SHIFT ARSHIFT CELLS + ;
+: !BRANCH   ( from to -- )   OVER SWAP OFFSET CELL/  OVER @ OPCODE2>  >OPCODE2  SWAP ! ;
+: COMPILE,   DUP >INFO 2 + C@  ?DUP IF  0 DO  DUP @ ,  CELL+  LOOP  DROP
+   ELSE CALL,  THEN ;
+
+: ADDR>LABEL   'FORTH - CELL/ ;
+CHAR b CONSTANT BACKWARD
+CHAR f CONSTANT FORWARD
+CHAR n CONSTANT NONAME
+
+: BEGIN   HERE  DUP BACKWARD .LABEL-DEF ; IMMEDIATE COMPILING
+: AHEAD   HERE  DUP FORWARD .BRANCH  BRANCH, ; IMMEDIATE COMPILING
+: IF   HERE  DUP FORWARD .IF  IF, ; IMMEDIATE COMPILING
+
+: THEN   DUP FORWARD .LABEL-DEF  HERE !BRANCH ; IMMEDIATE COMPILING
+
+: LINK, ;
+: UNLINK,   .RET  INSN_RET OP2_INSN >OPCODE2 RAW, ; COMPILING
+: LEAVE, ;
+
+
 DEFER CURRENT-COMPILE,  ' COMPILE, IS CURRENT-COMPILE,
 : (POSTPONE)   CURRENT-COMPILE, ;
 VARIABLE CREATED   \ Indicate whether last word was CREATEd
-INCLUDE" compiler1.fs"
-INCLUDE" compiler-postpone.fs"
-INCLUDE" defer-fetch-store.fs"
+
+
+\ Data structures
+
+: LITERAL
+   DUP
+   DUP CELLS CELL/  OVER = IF  .PUSHI  ELSE  .PUSH  THEN
+   PUSH, ; IMMEDIATE COMPILING
+: RELATIVE-LITERAL   DUP .PUSHRELI  PUSHREL, ; IMMEDIATE COMPILING
+
+: >BODY   2 CELLS + ;
+\ >DOES>, given the xt of a defining word, returns the address of the DOES>
+\ code.
+: >DOES>   ( xt -- 'does )   DUP >INFO @ $FFFF AND CELLS  + ;
+: (DOES>)   DUP >NAME CREATED !  >DOES>  LAST CELL+  DUP ROT CALL ;
+
+
+\ Compiler words that need special treatment during meta-compilation owing
+\ to their use of POSTPONE
+
+: AGAIN   DUP BACKWARD .BRANCH  HERE BRANCH, SWAP !BRANCH ; IMMEDIATE COMPILING
+: UNTIL   DUP BACKWARD .IF  HERE IF, SWAP !BRANCH ; IMMEDIATE COMPILING
+
+: DOES-LINK,   POSTPONE R> ;
+
+: DO,   POSTPONE 2>R ; COMPILING
+: LOOP,   POSTPONE (LOOP)  POSTPONE UNTIL ; COMPILING
+: +LOOP,   POSTPONE (+LOOP)  POSTPONE UNTIL ; COMPILING
+: END-LOOP,   POSTPONE UNLOOP ; COMPILING
+
+: CREATE,   .NOP  NOP,  ['] (CREATE) CALL,
+   LAST >NAME .CREATED-CODE
+   ['] (CREATE) >NAME  CREATED ! ;
+
+
+\ Defer address fetch/store
+\ Defined early so they can be POSTPONEd
+
+: DEFER!   >BODY REL! ;
+: DEFER@   >BODY REL@ ;
 
 
 \ Strings #2
@@ -262,7 +376,9 @@ INCLUDE" defer-fetch-store.fs"
 : SCRATCH-C0END   ( c-addr1 u1 -- HERE )   SCRATCH 256 C0END  SCRATCH ;
 : ",   ( c-addr u -- )   DUP C,  2DUP .STRING   HERE SWAP  DUP RAW-ALLOT  CMOVE ;
 
-INCLUDE" strings2a.fs"
+: (C")   R>  DUP C@ 1+ CHARS OVER + ALIGNED  >R ;
+: (S")   R>  DUP C@  TUCK 1+ CHARS OVER + ALIGNED  >R
+   CHAR+ SWAP ;
 
 
 INCLUDE" fileio.fs"
@@ -275,8 +391,45 @@ INCLUDE" terminal.fs"   \ terminal I/O words
 : QUIT   -56 THROW ;
 
 
-INCLUDE" control2.fs"
-INCLUDE" strings2b.fs"
+\ Control structures #2
+
+: WHILE   POSTPONE IF  1 ROLL ; IMMEDIATE COMPILING
+: REPEAT   POSTPONE AGAIN  POSTPONE THEN ; IMMEDIATE COMPILING
+: ELSE   POSTPONE AHEAD  1 ROLL  POSTPONE THEN ; IMMEDIATE COMPILING
+
+VARIABLE 'NODE
+VARIABLE 'LOOP
+: NEW-NODE
+   'NODE @ 'LOOP @
+   HERE  CELL 1- INVERT AND
+   DUP 'LOOP ! 'NODE ! ;
+: TIE-NODE
+   'LOOP @ FORWARD .LABEL-DEF
+   'NODE @
+   BEGIN
+      DUP 'LOOP @ <> WHILE
+      DUP @BRANCH SWAP  POSTPONE THEN
+   REPEAT DROP
+   'LOOP ! 'NODE ! ;
+: I   POSTPONE R@ ; IMMEDIATE COMPILING
+: LEAVE   LEAVE,  'LOOP @ FORWARD .BRANCH  HERE  'NODE  DUP @  HERE BRANCH, SWAP !BRANCH  ! ; IMMEDIATE COMPILING
+: DO   NEW-NODE  DO,  POSTPONE BEGIN ; IMMEDIATE COMPILING
+: ?DO   NEW-NODE  POSTPONE 2DUP DO, POSTPONE = POSTPONE IF
+   POSTPONE LEAVE POSTPONE THEN  POSTPONE BEGIN ; IMMEDIATE COMPILING
+: LOOP   LOOP,  TIE-NODE  END-LOOP, ; IMMEDIATE COMPILING
+: +LOOP   +LOOP,  TIE-NODE  END-LOOP, ; IMMEDIATE COMPILING
+
+: RECURSE   LAST COMPILE, ; IMMEDIATE COMPILING
+
+: CASE   0 ; IMMEDIATE COMPILING
+: OF   1+ >R  POSTPONE OVER POSTPONE = POSTPONE IF  POSTPONE DROP  R> ;
+IMMEDIATE COMPILING
+: ENDOF   >R  POSTPONE ELSE  R> ; IMMEDIATE COMPILING
+: ENDCASE   POSTPONE DROP  0 ?DO  POSTPONE THEN  LOOP ; IMMEDIATE COMPILING
+
+
+: CLITERAL   POSTPONE (C")  ", 0 CALIGN ; IMMEDIATE COMPILING
+: SLITERAL   POSTPONE (S")  ", 0 CALIGN ; IMMEDIATE COMPILING
 
 
 \ Memory #2
@@ -326,7 +479,13 @@ INCLUDE" strings2b.fs"
    2DROP FALSE ;                     \ leave c-addr1 u1 false
 
 
-INCLUDE" control3.fs"
+\ Control structures #3
+
+: "CASE   POSTPONE CASE ; IMMEDIATE COMPILING
+: "OF   1+ >R  POSTPONE 2OVER POSTPONE COMPARE POSTPONE 0= POSTPONE IF
+  POSTPONE 2DROP  R> ; IMMEDIATE COMPILING
+: "ENDOF   POSTPONE ENDOF ; IMMEDIATE COMPILING
+: "ENDCASE   POSTPONE 2DROP  0 ?DO  POSTPONE THEN  LOOP ; IMMEDIATE COMPILING
 
 
 \ Mass storage input/output #1
@@ -396,7 +555,7 @@ CREATE FIRST-FILE  #FILE-BUFFERS /FILE-BUFFER * ALLOT
 
 \ Terminal input/output #2
 
-INCLUDE" accept.fs"
+: ACCEPT   ( c-addr +n1 -- +n2 )   STDIN READ-LINE  2DROP ;
 
 VARIABLE >IN
 
@@ -500,8 +659,21 @@ HERE  DUP BACKWARD .LABEL-DEF  S" @PACKAGE@" ",  CREATE "PROGRAM-NAME  REL,
 : ERROR-PREFIX   "PROGRAM-NAME REL@ COUNT TYPE  S" : " TYPE ;
 
 
-INCLUDE" compiler2.fs"
-INCLUDE" interpreter3.fs"
+\ Compiler #2
+
+: C"   [CHAR] " PARSE  POSTPONE CLITERAL ; IMMEDIATE COMPILING
+: S"   [CHAR] " PARSE  S"B SWAP 2DUP 2>R  CMOVE  2R> ;
+   :NONAME   [CHAR] " PARSE  POSTPONE SLITERAL ;IMMEDIATE
+
+: ."   POSTPONE S"  POSTPONE TYPE ; IMMEDIATE COMPILING
+
+: CHAR   BL WORD  CHAR+ C@ ;
+: [CHAR]   CHAR  POSTPONE LITERAL ; IMMEDIATE COMPILING
+
+
+\ Interpreter #3
+
+: ABORT"   POSTPONE C"  POSTPONE (ABORT") ; IMMEDIATE COMPILING
 
 
 \ Numeric conversion
@@ -645,6 +817,23 @@ DEFER CURRENT-RELATIVE-LITERAL  ' RELATIVE-LITERAL IS CURRENT-RELATIVE-LITERAL
    THEN ;
 IMMEDIATE COMPILING
 
+
+\ Name mangling
+: ISDIGIT   DUP [CHAR] 0 < INVERT  SWAP [CHAR] 9 > INVERT  AND ;
+: ISUPPER   DUP [CHAR] A < INVERT  SWAP [CHAR] Z > INVERT  AND ;
+: ISLOWER   DUP [CHAR] a < INVERT  SWAP [CHAR] z > INVERT  AND ;
+: ISALPHA   DUP ISUPPER  SWAP ISLOWER  OR ;
+: ISALNUM   DUP ISDIGIT  SWAP ISALPHA  OR ;
+: 2.H   BASE @ >R  HEX  <# # # #>  R> BASE !  TYPE ;
+: .MANGLE   ( c-addr u -- ) \ print a Forth name mangled
+   OVER + SWAP  ?DO
+      I C@  DUP ISALPHA IF              \ output letters literally (FIXME: only mangle leading digit)
+         EMIT
+      ELSE                              \ escape everything else
+         [CHAR] _ EMIT  2.H  [CHAR] _ EMIT
+      THEN
+   LOOP ;
+
 \ A header has the following structure:
 \
 \  Name field                         counted string, up to 32 chars, space-padded to cell
@@ -657,7 +846,6 @@ IMMEDIATE COMPILING
 \                                     bytes 2-(MS byte - 1) are reserved for the back-end
 \                                     bytes 0 & 1 are offset in cells to DOES> code for a
 \                                     defining word
-INCLUDE" mangle.fs"
 : .NAME   COUNT  .MANGLE ;
 : .NAME-LABEL   DUP ." .global " .NAME CR  .NAME ." :" CR ;
 : (.LINK)   ." .word " ?DUP IF >NAME .NAME ELSE ." . " THEN ."  - ." CR ;
@@ -850,7 +1038,25 @@ CREATE 'SELECTOR  ' LOCAL?  DUP RAW-REL,  .LINK
 : [UNDEFINED]   POSTPONE [DEFINED] INVERT ; IMMEDIATE
 
 
-INCLUDE" compiler4.fs"
+\ Compiler #4
+
+: COLON   HEADER  TRUE SMUDGE  LINK,  ] ;
+: :   BL WORD  COLON ;
+: CURRENT?   ( wid xt n -- f )   2DROP  GET-CURRENT = ;
+: PROVIDED?  ['] CURRENT? SELECT NIP ;
+: [PROVIDED]   BL WORD PROVIDED? ; IMMEDIATE
+: PROVIDE:
+   BL WORD  DUP PROVIDED? IF
+      DROP
+      POSTPONE [ELSE]
+   ELSE
+      COLON
+   THEN ;
+: ;   UNLINK,  POSTPONE [  FALSE SMUDGE ; IMMEDIATE COMPILING
+: :NONAME   ALIGN  0 ,  HERE  DUP NONAME .LABEL-DEF  LINK,  ] ;
+: ;IMMEDIATE   POSTPONE ;  SET-IMMEDIATE
+   DUP  LAST >NAME  .COMPILE-METHOD
+   LAST >COMPILE REL! ; IMMEDIATE COMPILING
 
 
 \ Miscellaneous
@@ -921,8 +1127,39 @@ INCLUDE" compiler4.fs"
 : INCLUDE"   ( file )   [CHAR] " WORD COUNT  INCLUDED ;
 
 
-INCLUDE" compiler5.fs"
-INCLUDE" defining.fs"
+\ Compiler #5
+
+: '   BL WORD FIND  0= IF  UNDEFINED  THEN ;
+: [']   '   DUP >NAME .PUSHRELI-SYMBOL  PUSHREL, ; IMMEDIATE COMPILING
+
+
+\ Defining
+
+: CREATE   BL WORD HEADER  CREATE,  ALIGN  LAST .BODY-LABEL-DEF ;
+: DOES>   LAST POSTPONE RELATIVE-LITERAL  POSTPONE (DOES>)  UNLINK,  ALIGN
+   HERE LAST TUCK - CELL/  SWAP  DUP >NAME ['] .DOES-LABEL TO-ASMOUT  >INFO
+   DUP @ $FFFF INVERT AND ROT OR  SWAP !  DOES-LINK, ; IMMEDIATE COMPILING
+
+: VARIABLE   CREATE  1 ALLOT-CELLS ;
+: CONSTANT   BL WORD HEADER  LINK,  POSTPONE LITERAL  UNLINK, ;
+: VALUE   CREATE  ,  DOES>  @ ;
+: .BODY-LITERAL   ." pushreli " .NAME ." _body" CR ;
+: BODY-LITERAL
+   DUP FIND  0= IF  UNDEFINED  THEN
+   >BODY  PUSHREL,
+   ['] .BODY-LITERAL  TO-ASMOUT ;
+: TO   ' >BODY ! ;
+   :NONAME   BL WORD  BODY-LITERAL  POSTPONE ! ;IMMEDIATE
+
+: .DEFER-ADDRESS   ." .word " .NAME ." _defer - ." CR ;
+: DEFER   CREATE  HERE  ['] ABORT >REL RAW,  LAST >NAME ['] .DEFER-ADDRESS TO-ASMOUT  DOES>  REL@ EXECUTE ;
+: ACTION-OF   ' DEFER@ ;
+   :NONAME   POSTPONE [']  POSTPONE DEFER@ ;IMMEDIATE
+: .DEFER-LABEL   ." .set " .NAME ." _defer, "
+   DUP >INFO CELL 1- + C@ IF  >NAME .NAME  ELSE NONAME .LABEL  THEN  CR ;
+: .DEFER-ABORT   ." .set " .NAME ." _defer, ABORT" CR ;
+: IS   '  2DUP >NAME ['] .DEFER-LABEL TO-ASMOUT  DEFER! ;
+   :NONAME   POSTPONE [']  POSTPONE DEFER! ;IMMEDIATE
 
 
 \ Word lists
@@ -939,7 +1176,8 @@ CREATE CHAIN  HERE BACKWARD .LABEL-DEF  0 ,
 )
 : WORDLIST   ALIGN HERE  0 RAW,
    HERE  CHAIN  DUP REL@ RAW-REL,  0 .WORD ( FIXME: chain to previous wordlist )  REL!  0 , ;
-INCLUDE" vocabulary.fs"
+: VOCABULARY   WORDLIST  CREATE  REL,  DOES>
+   #ORDER @ 0= IF  1 #ORDER +!  THEN  REL@ CONTEXT ! ;
 HERE BACKWARD .LABEL-DEF  ' .FORTH-ADDRESS TO-ASMOUT
 VOCABULARY FORTH
 : FORTH-WORDLIST   ['] FORTH >BODY REL@ ;
@@ -996,7 +1234,11 @@ VARIABLE CURSORX   \ cursor x position during WORDS
    THEN ;
 
 
-INCLUDE" os.fs"   \ include OS access words
+\ FIXME: use curses instead.
+: AT-XY
+   27 EMIT  [CHAR] [ EMIT  SWAP 0 .R  [CHAR] ; EMIT  0 .R  [CHAR] H EMIT ;
+
+INCLUDE" compiler-asm.fs"
 
 
 \ Command-line argument interface
@@ -1063,9 +1305,11 @@ FALSE VALUE INTERACT?
    THEN
    (QUIT) ;
 
-INCLUDE" parse-command-line.fs"
-
 : START   ( here -- )
+   \ Assume that we were called by a call instruction at 'FORTH, and
+   \ use our return address to calculate the new value of 'FORTH.
+   R> CELL-  TO 'FORTH
+   [ HERE  .ASM[ pushreli END_OF_IMAGE]  0 RAW,  DUP ] \ value of HERE
    ROOTDP !                          \ initialize dictionary pointer
    [ ' (THROW) ] RELATIVE-LITERAL 'THROW!
                                      \ set 'THROW
@@ -1074,7 +1318,10 @@ INCLUDE" parse-command-line.fs"
    ROOT                              \ use ROOT dictionary
    ONLY FORTH DEFINITIONS            \ minimal word list
    DECIMAL                           \ numbers treated as base 10
-   PARSE-COMMAND-LINE
    INITIALIZE-ARGS
    INITIALIZE-TERMINAL
    DO-START-OPTIONS ;                \ process command-line args
+
+ALIGN
+.ASM[ END_OF_IMAGE:]
+HERE >-<  OP_PUSHRELI OR  SWAP ! \ FIXME: add !OFFSET

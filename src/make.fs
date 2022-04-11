@@ -47,7 +47,7 @@ INCLUDE" assembler.fs"
       .S ." stack not balanced" CR  ABORT
    THEN ;
 
-INCLUDE" util.fs"
+: LIBC-PRIMITIVE   NIP NIP  CODE  BPUSHI LIBC BRET  END-CODE  2 INLINE ;
 
 VOCABULARY NEW-FORTH   \ define the new root vocabulary
 
@@ -64,7 +64,7 @@ DICTIONARY-SIZE DICTIONARY CROSS  \ define a new dictionary
 
 ALSO CROSS NEW-FORTH DEFINITIONS FOREIGN
 STDERR-FILENO TO ASMOUT
-.ASM[ calli INITIALIZE]
+.ASM[ calli START]
 .ASM[ .set _byte_bits, 8]
 .ASM[ .set _immediate_bit, 1 << (bee_word_bits - 1)]
 .ASM[ .set _compiling_bit, 1 << (bee_word_bits - 2)]
@@ -77,7 +77,6 @@ INCLUDE" system-params.fs"
 [THEN]
 
 INCLUDE" highlevel.fs"
-INCLUDE" initialize.fs"
 
 ' .FORTH-LINK TO-ASMOUT
 PREVIOUS

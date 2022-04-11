@@ -14,19 +14,13 @@ noinst_DATA = pforth-32.bin pforth-64.bin
 EXTRA_DIST =  $(portable_SRCS) $(host_SRCS) pforth pforth-32.bin pforth-64.bin
 DISTCLEANFILES = highlevel.fs
 
-portable_SRCS = compiler2.fs compiler4.fs compiler5.fs control1.fs		\
-	control2.fs control3.fs defer-fetch-store.fs defining.fs does.fs	\
-	interpreter3.fs make.fs vocabulary.fs
+portable_SRCS = make.fs
 
 BUILD_PFORTH = $(BEE) $(abs_top_srcdir)/src/pforth-$(bee_word_bits).bin
 
 host_SRCS = $(portable_SRCS) \
-	accept.fs assembler.fs call-cells.fs code.fs compiler1.fs		\
-	compiler.fs compiler-asm.fs compiler-defer.fs compiler-postpone.fs	\
-	extra-primitives.fs fileio.fs initialize.fs mangle.fs opcodes.fs	\
-	os-compiler.fs os.fs parse-command-line.fs platform.fs			\
-	primitives.fs strings2a.fs strings2b.fs system-params.fs		\
-	terminal.fs util.fs
+	assembler.fs compiler-asm.fs extra-primitives.fs fileio.fs		\
+	opcodes.fs platform.fs primitives.fs system-params.fs terminal.fs
 
 ETAGS_ARGS = --language forth $(portable_SRCS) $(host_SRCS) highlevel.fs.in
 
