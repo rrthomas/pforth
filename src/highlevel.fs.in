@@ -21,8 +21,7 @@ CR .( @PACKAGE_NAME@ high level words )
 PROVIDE: TRUE   -1 ; [THEN]
 PROVIDE: FALSE   0 ; [THEN]
 
-\ FIXME: should really be calculated for host system
-8 CONSTANT BYTE-BITS
+8 CONSTANT BYTE-BITS \ FIXME: check assumption
 
 PROVIDE: -   NEGATE + ; [THEN]
 
