@@ -43,7 +43,6 @@ INCLUDE" assembler.fs"
 
 VOCABULARY META  ALSO META DEFINITIONS
 FOREIGN  ' NON-META?  ' 'SELECTOR >BODY REL! \ build meta-compiler using native compiler
-DECIMAL
 
 \ Check stack is balanced
 : ??STACK
