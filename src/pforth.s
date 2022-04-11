@@ -4368,22 +4368,10 @@ CURRENT_2D_COMPILE_2C__body:
 .set CURRENT_2D_COMPILE_2C__info, 0 | 0 | 0 | (16 <<_name_length_bits) | 0x0 
 .set CURRENT_2D_COMPILE_2C__doer, DEFER_does
 .balign bee_word_bytes
-.byte 0xE 
-.ascii "(RAW-POSTPONE)"
-.balign bee_word_bytes, 0x20 
-.word CURRENT_2D_COMPILE_2C_ - .
-.word _28_RAW_2D_POSTPONE_29__compilation
-.word _28_RAW_2D_POSTPONE_29__info 
-.global _28_RAW_2D_POSTPONE_29_
-_28_RAW_2D_POSTPONE_29_:
-calli CURRENT_2D_COMPILE_2C_
-ret
-.set _28_RAW_2D_POSTPONE_29__info, 0 | 0 | 0 | (14 <<_name_length_bits) | 0x0 
-.balign bee_word_bytes
 .byte 0xA 
 .ascii "(POSTPONE)"
 .balign bee_word_bytes, 0x20 
-.word _28_RAW_2D_POSTPONE_29_ - .
+.word CURRENT_2D_COMPILE_2C_ - .
 .word _28_POSTPONE_29__compilation
 .word _28_POSTPONE_29__info 
 .global _28_POSTPONE_29_
@@ -4426,12 +4414,12 @@ pushi 1 # 0x1
 dup
 eq
 neg
-jumpzi .L2696f
+jumpzi .L2689f
 calli _2E_PUSHI
-jumpi .L2698f
-.L2696f:
+jumpi .L2691f
+.L2689f:
 calli _2E_PUSH
-.L2698f:
+.L2691f:
 calli PUSH_2C_
 ret
 .set LITERAL_compilation, (2 * bee_word_bytes)
@@ -4632,7 +4620,7 @@ CREATE_2C_:
 calli _2E_NOP
 calli NOP_2C_
 pushreli _28_CREATE_29_
-calli _28_RAW_2D_POSTPONE_29_
+calli CALL_2C_
 calli LAST
 calli _3E_NAME
 calli _2E_CREATED_2D_CODE
@@ -5374,7 +5362,7 @@ trap 0x0
 pushi 1 # 0x1 
 dup
 calli _3E_
-jumpzi .L3272f
+jumpzi .L3265f
 pushi 257 # 0x101 
 trap 0x0 
 pushi 0 # 0x0 
@@ -5386,12 +5374,12 @@ pushi 0 # 0x0
 dup
 pushi 0 # 0x0 
 trap 0x0 
-jumpi .L3284f
-.L3272f:
+jumpi .L3277f
+.L3265f:
 pop
 pushi 0 
 pushi 0 
-.L3284f:
+.L3277f:
 ret
 .set ABSOLUTE_2D_ARG_info, 0 | 0 | 0 | (12 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -5839,21 +5827,21 @@ calli FORWARD
 calli _2E_LABEL_2D_DEF
 calli _27_NODE
 load
-.L3552b:
+.L3545b:
 pushi 0 # 0x0 
 dup
 calli _27_LOOP
 load
 calli _3C__3E_
-jumpzi .L3557f
+jumpzi .L3550f
 pushi 0 # 0x0 
 dup
 calli _40_BRANCH
 pushi 0 # 0x0 
 swap
 calli THEN - (2 * bee_word_bytes) + THEN_compilation
-jumpi .L3552b
-.L3557f:
+jumpi .L3545b
+.L3550f:
 pop
 calli _27_LOOP
 store
@@ -6051,15 +6039,15 @@ calli _32_DUP
 calli _32__3E_R
 eq
 neg
-jumpzi .L3686f
-jumpi .L3682f
-.L3686f:
-.L3688b:
+jumpzi .L3679f
+jumpi .L3675f
+.L3679f:
+.L3681b:
 calli THEN - (2 * bee_word_bytes) + THEN_compilation
 calli _28_LOOP_29_
-jumpzi .L3688b
-.L3682f:
-.L3687f:
+jumpzi .L3681b
+.L3675f:
+.L3680f:
 calli UNLOOP
 ret
 .set ENDCASE_compilation, (2 * bee_word_bytes)
@@ -6183,10 +6171,10 @@ calli MIN
 pushi 0 # 0x0 
 dup
 calli _30__3E_
-jumpzi .L3771f
+jumpzi .L3764f
 pushi 0 
 calli _32__3E_R
-.L3774b:
+.L3767b:
 pushi 1 # 0x1 
 dup
 load1
@@ -6194,7 +6182,7 @@ pushi 1 # 0x1
 dup
 load1
 calli _3C__3E_
-jumpzi .L3781f
+jumpzi .L3774f
 load1
 pushi 0 # 0x0 
 swap
@@ -6207,7 +6195,7 @@ calli NIP
 calli NIP
 calli UNLOOP
 ret
-.L3781f:
+.L3774f:
 calli CHAR_2B_
 pushi 0 # 0x0 
 swap
@@ -6215,8 +6203,8 @@ calli CHAR_2B_
 pushi 0 # 0x0 
 swap
 calli _28_LOOP_29_
-jumpzi .L3774b
-.L3773f:
+jumpzi .L3767b
+.L3766f:
 calli UNLOOP
 calli _32_DROP
 calli _32_DUP
@@ -6230,11 +6218,11 @@ neg
 calli _32__2A_
 not
 and
-jumpi .L3815f
-.L3771f:
+jumpi .L3808f
+.L3764f:
 calli _32_DROP
 calli _32_DROP
-.L3815f:
+.L3808f:
 ret
 .set COMPARE_info, 0 | 0 | 0 | (7 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -6260,12 +6248,12 @@ pushi 0 # 0x0
 swap
 calli _30__3D_
 or
-jumpzi .L3837f
+jumpzi .L3830f
 calli NIP
 calli NIP
 calli FALSE
 ret
-.L3837f:
+.L3830f:
 pushi 1 # 0x1 
 swap
 pushi 0 # 0x0 
@@ -6300,14 +6288,14 @@ swap
 pushi 0 # 0x0 
 swap
 calli _32__3E_R
-.L3876b:
+.L3869b:
 calli _32_DUP
 dups
 pushi 1 # 0x1 
 dup
 calli COMPARE
 calli _30__3D_
-jumpzi .L3882f
+jumpzi .L3875f
 calli _32_DROP
 add
 dups
@@ -6317,10 +6305,10 @@ add
 calli TRUE
 calli UNLOOP
 ret
-.L3882f:
-calli _28_LOOP_29_
-jumpzi .L3876b
 .L3875f:
+calli _28_LOOP_29_
+jumpzi .L3869b
+.L3868f:
 calli UNLOOP
 calli _32_DROP
 calli FALSE
@@ -6393,15 +6381,15 @@ calli _32_DUP
 calli _32__3E_R
 eq
 neg
-jumpzi .L3940f
-jumpi .L3936f
-.L3940f:
-.L3942b:
+jumpzi .L3933f
+jumpi .L3929f
+.L3933f:
+.L3935b:
 calli THEN - (2 * bee_word_bytes) + THEN_compilation
 calli _28_LOOP_29_
-jumpzi .L3942b
-.L3936f:
-.L3941f:
+jumpzi .L3935b
+.L3929f:
+.L3934f:
 calli UNLOOP
 ret
 .set _22_ENDCASE_compilation, (2 * bee_word_bytes)
@@ -6423,7 +6411,7 @@ swap
 dups
 calli READ_2D_FILE
 calli _3F_DUP
-jumpzi .L3960f
+jumpzi .L3953f
 calli NIP
 calli NIP
 pushi 0 
@@ -6435,18 +6423,18 @@ swap
 pops
 pop
 ret
-.L3960f:
+.L3953f:
 pushi 0 # 0x0 
 dup
 calli _30__3D_
-jumpzi .L3975f
+jumpzi .L3968f
 calli NIP
 calli FALSE
 pushi 0 
 pops
 pop
 ret
-.L3975f:
+.L3968f:
 calli TUCK
 calli EOL
 calli SEARCH
@@ -6455,7 +6443,7 @@ swap
 pushi 1 # 0x1 
 swap
 pop
-jumpzi .L3990f
+jumpzi .L3983f
 calli TUCK
 neg
 add
@@ -6466,11 +6454,11 @@ calli NIP
 neg
 add
 calli _3F_DUP
-jumpzi .L4001f
+jumpzi .L3994f
 dups
 calli FILE_2D_POSITION
 calli _3F_DUP
-jumpzi .L4005f
+jumpzi .L3998f
 pushs
 calli _32_DROP
 calli FALSE
@@ -6478,24 +6466,24 @@ pops
 pops
 pop
 ret
-.L4005f:
+.L3998f:
 calli _3E__2D__3C_
 dups
 calli REPOSITION_2D_FILE
 calli _3F_DUP
-jumpzi .L4017f
+jumpzi .L4010f
 calli FALSE
 pushi 0 # 0x0 
 swap
 pops
 pop
 ret
-.L4017f:
-.L4001f:
-jumpi .L4024f
-.L3990f:
+.L4010f:
+.L3994f:
+jumpi .L4017f
+.L3983f:
 pop
-.L4024f:
+.L4017f:
 pops
 pop
 calli TRUE
@@ -6515,11 +6503,11 @@ pushs
 dups
 calli WRITE_2D_FILE
 calli _3F_DUP
-jumpzi .L4040f
+jumpzi .L4033f
 pops
 pop
 ret
-.L4040f:
+.L4033f:
 calli EOL
 pops
 calli WRITE_2D_FILE
@@ -6552,15 +6540,15 @@ calli _32_DUP
 calli _32__3E_R
 eq
 neg
-jumpzi .L4064f
-jumpi .L4060f
-.L4064f:
-.L4066b:
+jumpzi .L4057f
+jumpi .L4053f
+.L4057f:
+.L4059b:
 calli SPACE
 calli _28_LOOP_29_
-jumpzi .L4066b
-.L4060f:
-.L4065f:
+jumpzi .L4059b
+.L4053f:
+.L4058f:
 calli UNLOOP
 ret
 .set SPACES_info, 0 | 0 | 0 | (6 <<_name_length_bits) | 0x0 
@@ -6582,18 +6570,18 @@ calli _32_DUP
 calli _32__3E_R
 eq
 neg
-jumpzi .L4084f
-jumpi .L4080f
-.L4084f:
-.L4086b:
+jumpzi .L4077f
+jumpi .L4073f
+.L4077f:
+.L4079b:
 dups
 load1
 calli EMIT
 calli _2B_CHAR
 calli _28__2B_LOOP_29_
-jumpzi .L4086b
-.L4080f:
-.L4085f:
+jumpzi .L4079b
+.L4073f:
+.L4078f:
 calli UNLOOP
 ret
 .set TYPE_info, 0 | 0 | 0 | (4 <<_name_length_bits) | 0x0 
@@ -6606,10 +6594,10 @@ ret
 .word _2D_TRAILING_info 
 .global _2D_TRAILING
 _2D_TRAILING:
-.L4099b:
+.L4092b:
 pushi 0 # 0x0 
 dup
-jumpzi .L4101f
+jumpzi .L4094f
 calli _32_DUP
 neg
 not
@@ -6618,15 +6606,15 @@ load1
 calli BL
 eq
 neg
-jumpi .L4110f
-.L4101f:
+jumpi .L4103f
+.L4094f:
 calli FALSE
-.L4110f:
-jumpzi .L4112f
+.L4103f:
+jumpzi .L4105f
 neg
 not
-jumpi .L4099b
-.L4112f:
+jumpi .L4092b
+.L4105f:
 ret
 .set _2D_TRAILING_info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -6701,10 +6689,10 @@ dup
 calli _23_FILE_2D_BUFFERS
 eq
 neg
-jumpzi .L6206f
+jumpzi .L6199f
 pushi -1 
-jumpi .L6208f
-.L6206f:
+jumpi .L6201f
+.L6199f:
 pushi 0 # 0x0 
 dup
 not
@@ -6716,7 +6704,7 @@ mul
 calli FIRST_2D_FILE
 add
 pushi 0 
-.L6208f:
+.L6201f:
 ret
 .set ALLOCATE_2D_BUFFER_info, 0 | 0 | 0 | (15 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -6733,17 +6721,17 @@ pushi 0 # 0x0
 dup
 load
 calli _30__3D_
-jumpzi .L6231f
+jumpzi .L6224f
 pop
 pushi -1 
-jumpi .L6234f
-.L6231f:
+jumpi .L6227f
+.L6224f:
 pushi -1 
 pushi 0 # 0x0 
 swap
 calli _2B__21_
 pushi 0 
-.L6234f:
+.L6227f:
 ret
 .set FREE_2D_BUFFER_info, 0 | 0 | 0 | (11 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -6903,34 +6891,34 @@ pushi 1 # 0x1
 dup
 eq
 neg
-jumpzi .L6349f
+jumpzi .L6342f
 pop
 calli EVALUAND
 load
 calli _23_EVALUAND
 load
-jumpi .L6355f
-.L6349f:
+jumpi .L6348f
+.L6342f:
 pushi 0 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L6361f
+jumpzi .L6354f
 pop
 calli TIB
 calli _23_TIB
 load
-jumpi .L6366f
-.L6361f:
+jumpi .L6359f
+.L6354f:
 pushs
 calli FIB
 calli _23_FIB
 load
 pops
 pop
-.L6366f:
-.L6355f:
+.L6359f:
+.L6348f:
 ret
 .set SOURCE_info, 0 | 0 | 0 | (6 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -6950,18 +6938,18 @@ pushi 1 # 0x1
 dup
 eq
 neg
-jumpzi .L6387f
+jumpzi .L6380f
 pop
 pushi 0 
 pushi 2 
-jumpi .L6391f
-.L6387f:
+jumpi .L6384f
+.L6380f:
 pushi -1 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L6397f
+jumpzi .L6390f
 pop
 calli EVALUAND
 load
@@ -6969,8 +6957,8 @@ calli _23_EVALUAND
 load
 pushi -1 
 pushi 4 
-jumpi .L6405f
-.L6397f:
+jumpi .L6398f
+.L6390f:
 pushs
 calli FIB
 calli _23_FIB
@@ -6980,8 +6968,8 @@ pushi 1
 pushi 5 
 pops
 pop
-.L6405f:
-.L6391f:
+.L6398f:
+.L6384f:
 ret
 .set SAVE_2D_INPUT_info, 0 | 0 | 0 | (10 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -6999,19 +6987,19 @@ pushi 1 # 0x1
 dup
 eq
 neg
-jumpzi .L6427f
+jumpzi .L6420f
 pop
 pushi 0 
 pushreli SOURCE_2D_ID_body
 store
-jumpi .L6432f
-.L6427f:
+jumpi .L6425f
+.L6420f:
 pushi 1 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L6438f
+jumpzi .L6431f
 pop
 pushreli SOURCE_2D_ID_body
 store
@@ -7019,14 +7007,14 @@ calli _23_FIB
 store
 pushreli FIB_body
 store
-jumpi .L6446f
-.L6438f:
+jumpi .L6439f
+.L6431f:
 pushi -1 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L6452f
+jumpzi .L6445f
 pop
 calli _23_EVALUAND
 store
@@ -7035,12 +7023,12 @@ store
 pushi -1 
 pushreli SOURCE_2D_ID_body
 store
-jumpi .L6461f
-.L6452f:
+jumpi .L6454f
+.L6445f:
 pop
-.L6461f:
-.L6446f:
-.L6432f:
+.L6454f:
+.L6439f:
+.L6425f:
 calli _3E_IN
 store
 ret
@@ -7076,9 +7064,9 @@ store
 calli SAVE_2D_INPUT
 pushi 0 # 0x0 
 dup
-.L6484b:
+.L6477b:
 calli _3F_DUP
-jumpzi .L6485f
+jumpzi .L6478f
 pushi 0 # 0x0 
 swap
 pushi 1 # 0x1 
@@ -7086,8 +7074,8 @@ swap
 pushs
 neg
 not
-jumpi .L6484b
-.L6485f:
+jumpi .L6477b
+.L6478f:
 pushs
 calli _27_RETURN
 load
@@ -7109,9 +7097,9 @@ store
 pops
 pushi 0 # 0x0 
 dup
-.L6510b:
+.L6503b:
 calli _3F_DUP
-jumpzi .L6511f
+jumpzi .L6504f
 pops
 pushi 1 # 0x1 
 swap
@@ -7119,8 +7107,8 @@ pushi 0 # 0x0
 swap
 neg
 not
-jumpi .L6510b
-.L6511f:
+jumpi .L6503b
+.L6504f:
 calli RESTORE_2D_INPUT
 calli _27_RETURN
 load
@@ -7178,28 +7166,28 @@ calli _32_DUP
 calli _32__3E_R
 eq
 neg
-jumpzi .L6562f
-jumpi .L6558f
-.L6562f:
-.L6564b:
+jumpzi .L6555f
+jumpi .L6551f
+.L6555f:
+.L6557b:
 pushi 0 # 0x0 
 dup
 dups
 load1
 calli SCAN_2D_TEST
-jumpzi .L6569f
+jumpzi .L6562f
 calli NIP
 dups
 pushi 0 # 0x0 
 swap
-jumpi .L6558f
-.L6569f:
+jumpi .L6551f
+.L6562f:
 calli _2B_CHAR
 calli _28__2B_LOOP_29_
-jumpzi .L6564b
-.L6558f:
-.L6574f:
-.L6563f:
+jumpzi .L6557b
+.L6551f:
+.L6567f:
+.L6556f:
 calli UNLOOP
 pop
 pushi 1 # 0x1 
@@ -7281,7 +7269,7 @@ calli PARSE
 calli TYPE
 ret
 .set _2E__28__compilation, (2 * bee_word_bytes)
-.L6640b:
+.L6633b:
 .byte 0x6 
 .ascii "pforth"
 .set _2E__28__info, _immediate_bit | 0 | 0 | (2 <<_name_length_bits) | 0x0 
@@ -7298,7 +7286,7 @@ nop
 calli _22_PROGRAM_2D_NAME_doer
 .balign bee_word_bytes
 _22_PROGRAM_2D_NAME_body:
-.word .L6640b - .
+.word .L6633b - .
 .set _22_PROGRAM_2D_NAME_info, 0 | 0 | 0 | (13 <<_name_length_bits) | 0x0 
 .set _22_PROGRAM_2D_NAME_doer, _28_CREATE_29__does
 .balign bee_word_bytes
@@ -7357,12 +7345,12 @@ calli _32_R_3E_
 ret
 .balign bee_word_bytes
 .word 0 
-.L6685n:
+.L6678n:
 pushi 34 
 calli PARSE
 calli SLITERAL - (2 * bee_word_bytes) + SLITERAL_compilation
 ret
-.set S_22__compilation, .L6685n - (S_22_ - 2 * bee_word_bytes)
+.set S_22__compilation, .L6678n - (S_22_ - 2 * bee_word_bytes)
 .set S_22__info, _immediate_bit | 0 | 0 | (2 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x2 
@@ -7510,10 +7498,10 @@ ret
 .global SIGN
 SIGN:
 calli _30__3C_
-jumpzi .L6767f
+jumpzi .L6760f
 pushi 45 
 calli HOLD
-.L6767f:
+.L6760f:
 ret
 .set SIGN_info, 0 | 0 | 0 | (4 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -7568,14 +7556,14 @@ dup
 pushi 10 
 lt
 neg
-jumpzi .L6806f
+jumpzi .L6799f
 pushi 48 
 add
-jumpi .L6809f
-.L6806f:
+jumpi .L6802f
+.L6799f:
 pushi 55 
 add
-.L6809f:
+.L6802f:
 calli HOLD
 ret
 .set _23__info, 0 | 0 | 0 | (1 <<_name_length_bits) | 0x0 
@@ -7588,12 +7576,12 @@ ret
 .word _23_S_info 
 .global _23_S
 _23_S:
-.L6818b:
+.L6811b:
 calli _23_
 pushi 0 # 0x0 
 dup
 calli _30__3D_
-jumpzi .L6818b
+jumpzi .L6811b
 ret
 .set _23_S_info, 0 | 0 | 0 | (2 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -7719,7 +7707,7 @@ ret
 _3E_NUMBER:
 pushi 0 # 0x0 
 dup
-jumpzi .L6906f
+jumpzi .L6899f
 pushi 1 # 0x1 
 dup
 add
@@ -7730,23 +7718,23 @@ pushi 1 # 0x1
 dup
 pushs
 calli _32__3E_R
-.L6917b:
+.L6910b:
 load1
 pushi 0 # 0x0 
 dup
 pushi 65 
 lt
 neg
-jumpzi .L6923f
+jumpzi .L6916f
 pushi 48 
 neg
 add
-jumpi .L6927f
-.L6923f:
+jumpi .L6920f
+.L6916f:
 pushi 55 
 neg
 add
-.L6927f:
+.L6920f:
 pushi 0 # 0x0 
 dup
 calli BASE
@@ -7759,11 +7747,11 @@ pushi 1 # 0x1
 dup
 calli _30__3C_
 or
-jumpzi .L6943f
+jumpzi .L6936f
 pop
 dups
-jumpi .L6916f
-.L6943f:
+jumpi .L6909f
+.L6936f:
 pushs
 calli BASE
 load
@@ -7773,15 +7761,15 @@ add
 dups
 calli CHAR_2B_
 calli _28_LOOP_29_
-jumpzi .L6917b
-.L6916f:
-.L6946f:
+jumpzi .L6910b
+.L6909f:
+.L6939f:
 calli UNLOOP
 pushi 0 # 0x0 
 dup
 pops
 calli _3E__2D__3C_
-.L6906f:
+.L6899f:
 ret
 .set _3E_NUMBER_info, 0 | 0 | 0 | (7 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -7829,44 +7817,44 @@ pushi 1 # 0x1
 dup
 eq
 neg
-jumpzi .L6998f
+jumpzi .L6991f
 pop
 pushi 10 
 calli BASE
 store
 calli SKIP_2D_CHAR
-jumpi .L7004f
-.L6998f:
+jumpi .L6997f
+.L6991f:
 pushi 36 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L7010f
+jumpzi .L7003f
 pop
 pushi 16 
 calli BASE
 store
 calli SKIP_2D_CHAR
-jumpi .L7016f
-.L7010f:
+jumpi .L7009f
+.L7003f:
 pushi 37 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L7022f
+jumpzi .L7015f
 pop
 pushi 2 
 calli BASE
 store
 calli SKIP_2D_CHAR
-jumpi .L7028f
-.L7022f:
+jumpi .L7021f
+.L7015f:
 pop
-.L7028f:
-.L7016f:
-.L7004f:
+.L7021f:
+.L7009f:
+.L6997f:
 pushi 1 # 0x1 
 dup
 load1
@@ -7876,13 +7864,13 @@ neg
 pushi 0 # 0x0 
 dup
 pushs
-jumpzi .L7039f
+jumpzi .L7032f
 calli SKIP_2D_CHAR
-.L7039f:
-.L7041b:
+.L7032f:
+.L7034b:
 calli _3E_NUMBER
 calli _3F_DUP
-jumpzi .L7043f
+jumpzi .L7036f
 pushi 1 # 0x1 
 dup
 load1
@@ -7890,22 +7878,22 @@ pushi 4
 calli _2F_
 pushi 11 
 calli _3C__3E_
-jumpzi .L7051f
+jumpzi .L7044f
 pops
 pops
 calli BASE
 store
 pops
 calli UNDEFINED
-.L7051f:
+.L7044f:
 calli SKIP_2D_CHAR
-jumpi .L7041b
-.L7043f:
+jumpi .L7034b
+.L7036f:
 pop
 pops
-jumpzi .L7062f
+jumpzi .L7055f
 neg
-.L7062f:
+.L7055f:
 pops
 calli BASE
 store
@@ -7940,7 +7928,7 @@ calli _23_ORDER
 load
 pushi 0 # 0x0 
 dup
-jumpzi .L7088f
+jumpzi .L7081f
 pushi 0 # 0x0 
 dup
 pushs
@@ -7950,16 +7938,16 @@ calli TUCK
 add
 calli CELL_2D_
 calli _32__3E_R
-.L7098b:
+.L7091b:
 dups
 load
 calli _2D_CELL
 calli _28__2B_LOOP_29_
-jumpzi .L7098b
-.L7097f:
+jumpzi .L7091b
+.L7090f:
 calli UNLOOP
 pops
-.L7088f:
+.L7081f:
 ret
 .set GET_2D_ORDER_info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -8005,10 +7993,10 @@ VET_2D_WORDLIST:
 pushi 0 # 0x0 
 dup
 pushs
-.L7131b:
+.L7124b:
 calli REL_40_
 calli _3F_DUP
-jumpzi .L7133f
+jumpzi .L7126f
 pushi 0 # 0x0 
 dup
 calli _3E_NAME
@@ -8020,7 +8008,7 @@ swap
 calli COUNT
 calli COMPARE
 calli _30__3D_
-jumpzi .L7145f
+jumpzi .L7138f
 pushi 0 # 0x0 
 dup
 calli _3E_INFO
@@ -8028,7 +8016,7 @@ load
 calli SMUDGE_2D_BIT
 and
 calli _30__3D_
-jumpzi .L7153f
+jumpzi .L7146f
 dups
 pushi 1 # 0x1 
 dup
@@ -8043,23 +8031,23 @@ pushi 0 # 0x0
 dup
 pushs
 calli VISIBLE_3F_
-jumpzi .L7168f
+jumpzi .L7161f
 calli NIP
 calli NIP
 pops
 pops
 pop
 ret
-jumpi .L7175f
-.L7168f:
+jumpi .L7168f
+.L7161f:
 pops
 pop
-.L7175f:
-.L7153f:
-.L7145f:
+.L7168f:
+.L7146f:
+.L7138f:
 calli _3E_LINK
-jumpi .L7131b
-.L7133f:
+jumpi .L7124b
+.L7126f:
 calli _32_DROP
 pops
 pop
@@ -8098,12 +8086,12 @@ pops
 pushi 0 # 0x0 
 swap
 calli _3F_DUP
-jumpzi .L7207f
+jumpzi .L7200f
 pushi 1 
 pushi 0 # 0x0 
 swap
 calli _32__3E_R
-.L7212b:
+.L7205b:
 calli TUCK
 calli COUNT
 pushi 0 # 0x0 
@@ -8112,7 +8100,7 @@ pushi 1 # 0x1
 swap
 calli VET_2D_WORDLIST
 calli _3F_DUP
-jumpzi .L7220f
+jumpzi .L7213f
 dups
 pushi 1 # 0x1 
 swap
@@ -8121,22 +8109,22 @@ swap
 calli _32__3E_R
 pushi 0 
 calli _32__3E_R
-.L7229b:
+.L7222b:
 pop
 calli _28_LOOP_29_
-jumpzi .L7229b
-.L7228f:
+jumpzi .L7222b
+.L7221f:
 calli UNLOOP
 calli _32_R_3E_
 calli UNLOOP
 ret
-.L7220f:
+.L7213f:
 pushi -1 
 calli _28__2B_LOOP_29_
-jumpzi .L7212b
-.L7211f:
+jumpzi .L7205b
+.L7204f:
 calli UNLOOP
-.L7207f:
+.L7200f:
 pushi 0 
 ret
 .set SELECT_info, 0 | 0 | 0 | (6 <<_name_length_bits) | 0x0 
@@ -8203,22 +8191,22 @@ dup
 calli FIND
 calli _3F_DUP
 calli _30__3D_
-jumpzi .L7279f
+jumpzi .L7272f
 calli UNDEFINED
-.L7279f:
+.L7272f:
 calli _30__3E_
-jumpzi .L7282f
+jumpzi .L7275f
 calli _3E_COMPILE
 calli REL_40_
 calli CALL_2C_
 calli _2E_CALL_2D_COMPILE_2D_METHOD
-jumpi .L7287f
-.L7282f:
+jumpi .L7280f
+.L7275f:
 calli PUSHREL_2C_
 calli _2E_PUSHRELI_2D_SYMBOL
 pushreli _28_POSTPONE_29_
 calli CURRENT_2D_COMPILE_2C_
-.L7287f:
+.L7280f:
 ret
 .set POSTPONE_compilation, (2 * bee_word_bytes)
 .set POSTPONE_info, _immediate_bit | _compiling_bit | 0 | (8 <<_name_length_bits) | 0x0 
@@ -8368,29 +8356,29 @@ calli _32_DUP
 calli _32__3E_R
 eq
 neg
-jumpzi .L7398f
-jumpi .L7394f
-.L7398f:
-.L7400b:
+jumpzi .L7391f
+jumpi .L7387f
+.L7391f:
+.L7393b:
 dups
 load1
 pushi 0 # 0x0 
 dup
 calli ISALPHA
-jumpzi .L7405f
+jumpzi .L7398f
 calli EMIT
-jumpi .L7407f
-.L7405f:
+jumpi .L7400f
+.L7398f:
 pushi 95 
 calli EMIT
 calli _32__2E_H
 pushi 95 
 calli EMIT
-.L7407f:
+.L7400f:
 calli _28_LOOP_29_
-jumpzi .L7400b
-.L7394f:
-.L7399f:
+jumpzi .L7393b
+.L7387f:
+.L7392f:
 calli UNLOOP
 ret
 .set _2E_MANGLE_info, 0 | 0 | 0 | (7 <<_name_length_bits) | 0x0 
@@ -8449,17 +8437,17 @@ calli _28_S_22__29_
 .balign bee_word_bytes, 0x0 
 calli TYPE
 calli _3F_DUP
-jumpzi .L7451f
+jumpzi .L7444f
 calli _3E_NAME
 calli _2E_NAME
-jumpi .L7454f
-.L7451f:
+jumpi .L7447f
+.L7444f:
 calli _28_S_22__29_
 .byte 0x2 
 .ascii ". "
 .balign bee_word_bytes, 0x0 
 calli TYPE
-.L7454f:
+.L7447f:
 calli _28_S_22__29_
 .byte 0x4 
 .ascii " - ."
@@ -8551,20 +8539,20 @@ pushi 0 # 0x0
 dup
 calli IMMEDIATE_2D_BIT
 and
-jumpzi .L7514f
+jumpzi .L7507f
 calli _28_S_22__29_
 .byte 0xE 
 .ascii "_immediate_bit"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-jumpi .L7519f
-.L7514f:
+jumpi .L7512f
+.L7507f:
 calli _28_S_22__29_
 .byte 0x1 
 .ascii "0"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-.L7519f:
+.L7512f:
 calli IMMEDIATE_2D_BIT
 not
 and
@@ -8577,20 +8565,20 @@ pushi 0 # 0x0
 dup
 calli COMPILING_2D_BIT
 and
-jumpzi .L7533f
+jumpzi .L7526f
 calli _28_S_22__29_
 .byte 0xE 
 .ascii "_compiling_bit"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-jumpi .L7538f
-.L7533f:
+jumpi .L7531f
+.L7526f:
 calli _28_S_22__29_
 .byte 0x1 
 .ascii "0"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-.L7538f:
+.L7531f:
 calli COMPILING_2D_BIT
 not
 and
@@ -8603,20 +8591,20 @@ pushi 0 # 0x0
 dup
 calli SMUDGE_2D_BIT
 and
-jumpzi .L7552f
+jumpzi .L7545f
 calli _28_S_22__29_
 .byte 0xB 
 .ascii "_smudge_bit"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-jumpi .L7557f
-.L7552f:
+jumpi .L7550f
+.L7545f:
 calli _28_S_22__29_
 .byte 0x1 
 .ascii "0"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-.L7557f:
+.L7550f:
 calli SMUDGE_2D_BIT
 not
 and
@@ -8758,14 +8746,14 @@ neg
 not
 add
 load1
-jumpzi .L7661f
+jumpzi .L7654f
 calli _3E_NAME
 calli _2E_NAME
-jumpi .L7664f
-.L7661f:
+jumpi .L7657f
+.L7654f:
 calli NONAME
 calli _2E_LABEL
-.L7664f:
+.L7657f:
 ret
 .set _2E_SYMBOL_info, 0 | 0 | 0 | (7 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -8778,15 +8766,15 @@ ret
 .global HEADER
 HEADER:
 calli LAST
-jumpzi .L7673f
+jumpzi .L7666f
 calli _2E_PREVIOUS_2D_INFO
 calli CREATED
 load
 calli _3F_DUP
-jumpzi .L7678f
+jumpzi .L7671f
 calli _2E_CREATED
-.L7678f:
-.L7673f:
+.L7671f:
+.L7666f:
 calli FALSE
 calli CREATED
 store
@@ -8806,7 +8794,7 @@ calli COUNT
 calli _32_DUP
 calli GET_2D_CURRENT
 calli SEARCH_2D_WORDLIST
-jumpzi .L7699f
+jumpzi .L7692f
 pop
 calli _32_DUP
 calli TYPE
@@ -8815,7 +8803,7 @@ calli _28_S_22__29_
 .ascii " is not unique "
 .balign bee_word_bytes, 0x0 
 calli TYPE
-.L7699f:
+.L7692f:
 calli TUCK
 calli _22__2C_
 calli BL
@@ -8886,15 +8874,15 @@ calli HANDLER
 store
 call
 pops
-.L7762b:
+.L7755b:
 calli _3F_DUP
-jumpzi .L7763f
+jumpzi .L7756f
 pops
 pop
 neg
 not
-jumpi .L7762b
-.L7763f:
+jumpi .L7755b
+.L7756f:
 pops
 calli HANDLER
 store
@@ -8932,19 +8920,19 @@ LOCAL_3F_:
 calli NIP
 pushi 1 
 calli _3C__3E_
-jumpzi .L7795f
+jumpzi .L7788f
 calli STATE
 load
 calli GET_2D_CURRENT
 calli FOREIGN_3F_
 and
-jumpzi .L7801f
+jumpzi .L7794f
 calli GET_2D_CURRENT
 eq
 neg
 ret
-.L7801f:
-.L7795f:
+.L7794f:
+.L7788f:
 calli FOREIGN_3F_
 not
 ret
@@ -8964,14 +8952,14 @@ calli _3C__3E_
 calli STATE
 load
 and
-jumpzi .L7820f
+jumpzi .L7813f
 pop
 calli TRUE
-jumpi .L7823f
-.L7820f:
+jumpi .L7816f
+.L7813f:
 calli FOREIGN_3F_
 not
-.L7823f:
+.L7816f:
 ret
 .set NON_2D_META_3F__info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -8999,23 +8987,23 @@ _27_SELECTOR_body:
 .word INTERPRET_info 
 .global INTERPRET
 INTERPRET:
-.L7840b:
+.L7833b:
 calli BL
 calli WORD
 pushi 0 # 0x0 
 dup
 load1
-jumpzi .L7845f
+jumpzi .L7838f
 calli _27_SELECTOR
 calli REL_40_
 calli SELECT
 pushi 0 # 0x0 
 dup
-jumpzi .L7851f
+jumpzi .L7844f
 calli STATE
 load
 calli _30__3D_
-jumpzi .L7855f
+jumpzi .L7848f
 pop
 pushi 0 # 0x0 
 dup
@@ -9023,35 +9011,35 @@ calli _3E_INFO
 load
 calli COMPILING_2D_BIT
 and
-jumpzi .L7863f
+jumpzi .L7856f
 pushi -14 
 calli THROW
-.L7863f:
+.L7856f:
 call
-jumpi .L7867f
-.L7855f:
+jumpi .L7860f
+.L7848f:
 calli _30__3E_
-jumpzi .L7869f
+jumpzi .L7862f
 calli _3E_COMPILE
 calli REL_40_
 call
-jumpi .L7873f
-.L7869f:
+jumpi .L7866f
+.L7862f:
 calli CURRENT_2D_COMPILE_2C_
-.L7873f:
-.L7867f:
-jumpi .L7875f
-.L7851f:
+.L7866f:
+.L7860f:
+jumpi .L7868f
+.L7844f:
 pop
 calli NUMBER
 calli STATE
 load
-jumpzi .L7880f
+jumpzi .L7873f
 calli CURRENT_2D_LITERAL
-.L7880f:
-.L7875f:
-jumpi .L7840b
-.L7845f:
+.L7873f:
+.L7868f:
+jumpi .L7833b
+.L7838f:
 pop
 ret
 .set INTERPRET_info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
@@ -9094,7 +9082,7 @@ pushi 1 # 0x1
 dup
 eq
 neg
-jumpzi .L7914f
+jumpzi .L7907f
 pop
 calli TIB
 pushi 80 
@@ -9105,18 +9093,18 @@ pushi 0
 calli _3E_IN
 store
 calli TRUE
-jumpi .L7925f
-.L7914f:
+jumpi .L7918f
+.L7907f:
 pushi -1 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L7931f
+jumpzi .L7924f
 pop
 calli FALSE
-jumpi .L7934f
-.L7931f:
+jumpi .L7927f
+.L7924f:
 pushs
 calli FIB
 calli _2F_FILE_2D_BUFFER
@@ -9136,8 +9124,8 @@ calli _3E_IN
 store
 pops
 pop
-.L7934f:
-.L7925f:
+.L7927f:
+.L7918f:
 ret
 .set REFILL_info, 0 | 0 | 0 | (6 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -9171,24 +9159,24 @@ calli _5B_ - (2 * bee_word_bytes) + _5B__compilation
 pushi 0 
 pushreli SOURCE_2D_ID_body
 store
-.L7975b:
+.L7968b:
 calli CR
 calli REFILL
-jumpzi .L7977f
+jumpzi .L7970f
 calli INTERPRET
 calli _3F_STACK
 calli STATE
 load
 calli _30__3D_
-jumpzi .L7983f
+jumpzi .L7976f
 calli _28_S_22__29_
 .byte 0x2 
 .ascii "ok"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-.L7983f:
-jumpi .L7975b
-.L7977f:
+.L7976f:
+jumpi .L7968b
+.L7970f:
 calli TRUE
 calli _28_C_22__29_
 .byte 0x10 
@@ -9211,68 +9199,68 @@ pushi 1 # 0x1
 dup
 eq
 neg
-jumpzi .L8005f
+jumpzi .L7998f
 pop
-jumpi .L8007f
-.L8005f:
+jumpi .L8000f
+.L7998f:
 pushi -2 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8013f
+jumpzi .L8006f
 pop
 calli _27_THROWN
 load
 calli COUNT
 calli TYPE
-jumpi .L8019f
-.L8013f:
+jumpi .L8012f
+.L8006f:
 pushi -9 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8025f
+jumpzi .L8018f
 pop
 pushi -9 
 throw
-jumpi .L8029f
-.L8025f:
+jumpi .L8022f
+.L8018f:
 pushi -10 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8035f
+jumpzi .L8028f
 pop
 calli _28_S_22__29_
 .byte 0x10 
 .ascii "division by zero"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-jumpi .L8042f
-.L8035f:
+jumpi .L8035f
+.L8028f:
 pushi -11 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8048f
+jumpzi .L8041f
 pop
 calli _28_S_22__29_
 .byte 0x12 
 .ascii "quotient too large"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-jumpi .L8055f
-.L8048f:
+jumpi .L8048f
+.L8041f:
 pushi -13 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8061f
+jumpzi .L8054f
 pop
 calli _27_THROWN
 load
@@ -9283,62 +9271,62 @@ calli _28_S_22__29_
 .ascii " ?"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-jumpi .L8070f
-.L8061f:
+jumpi .L8063f
+.L8054f:
 pushi -14 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8076f
+jumpzi .L8069f
 pop
 calli _28_S_22__29_
 .byte 0x10 
 .ascii "compilation only"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-jumpi .L8083f
-.L8076f:
+jumpi .L8076f
+.L8069f:
 pushi -20 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8089f
+jumpzi .L8082f
 pop
 calli _28_S_22__29_
 .byte 0x1D 
 .ascii "write to a read-only location"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-jumpi .L8097f
-.L8089f:
+jumpi .L8090f
+.L8082f:
 pushi -23 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8103f
+jumpzi .L8096f
 pop
 pushi -23 
 throw
-jumpi .L8107f
-.L8103f:
+jumpi .L8100f
+.L8096f:
 pushi -56 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8113f
+jumpzi .L8106f
 pop
-jumpi .L8115f
-.L8113f:
+jumpi .L8108f
+.L8106f:
 pushi -512 
 pushi 1 # 0x1 
 dup
 eq
 neg
-jumpzi .L8121f
+jumpzi .L8114f
 pop
 calli _28_S_22__29_
 .byte 0xF 
@@ -9352,8 +9340,8 @@ calli TYPE
 calli CR
 pushi 1 
 throw
-jumpi .L8134f
-.L8121f:
+jumpi .L8127f
+.L8114f:
 calli _28_S_22__29_
 .byte 0xA 
 .ascii "exception "
@@ -9368,17 +9356,17 @@ calli _28_S_22__29_
 .balign bee_word_bytes, 0x0 
 calli TYPE
 pop
-.L8134f:
-.L8115f:
-.L8107f:
-.L8097f:
-.L8083f:
-.L8070f:
-.L8055f:
-.L8042f:
-.L8029f:
-.L8019f:
-.L8007f:
+.L8127f:
+.L8108f:
+.L8100f:
+.L8090f:
+.L8076f:
+.L8063f:
+.L8048f:
+.L8035f:
+.L8022f:
+.L8012f:
+.L8000f:
 ret
 .set HANDLE_2D_ERROR_info, 0 | 0 | 0 | (12 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -9390,7 +9378,7 @@ ret
 .word _28_QUIT_29__info 
 .global _28_QUIT_29_
 _28_QUIT_29_:
-.L8151b:
+.L8144b:
 calli R_30_
 set_sp
 pushreli REPL
@@ -9400,11 +9388,11 @@ dup
 calli HANDLE_2D_ERROR
 pushi -56 
 calli _3C__3E_
-jumpzi .L8160f
+jumpzi .L8153f
 calli S_30_
 calli SP_21_
-.L8160f:
-jumpi .L8151b
+.L8153f:
+jumpi .L8144b
 ret
 .set _28_QUIT_29__info, 0 | 0 | 0 | (6 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -9417,14 +9405,14 @@ ret
 .global _5B_ELSE_5D_
 _5B_ELSE_5D_:
 pushi 1 
-.L8170b:
-.L8170b:
+.L8163b:
+.L8163b:
 calli BL
 calli WORD
 calli COUNT
 pushi 0 # 0x0 
 dup
-jumpzi .L8175f
+jumpzi .L8168f
 calli _32_DUP
 calli _28_S_22__29_
 .byte 0x4 
@@ -9432,12 +9420,12 @@ calli _28_S_22__29_
 .balign bee_word_bytes, 0x0 
 calli COMPARE
 calli _30__3D_
-jumpzi .L8181f
+jumpzi .L8174f
 calli _32_DROP
 not
 neg
-jumpi .L8185f
-.L8181f:
+jumpi .L8178f
+.L8174f:
 calli _32_DUP
 calli _28_S_22__29_
 .byte 0x6 
@@ -9445,41 +9433,41 @@ calli _28_S_22__29_
 .balign bee_word_bytes, 0x0 
 calli COMPARE
 calli _30__3D_
-jumpzi .L8191f
+jumpzi .L8184f
 calli _32_DROP
 neg
 not
 pushi 0 # 0x0 
 dup
-jumpzi .L8197f
+jumpzi .L8190f
 not
 neg
-.L8197f:
-jumpi .L8200f
-.L8191f:
+.L8190f:
+jumpi .L8193f
+.L8184f:
 calli _28_S_22__29_
 .byte 0x6 
 .ascii "[THEN]"
 .balign bee_word_bytes, 0x0 
 calli COMPARE
 calli _30__3D_
-jumpzi .L8205f
+jumpzi .L8198f
 neg
 not
-.L8205f:
-.L8200f:
-.L8185f:
+.L8198f:
+.L8193f:
+.L8178f:
 calli _3F_DUP
 calli _30__3D_
-jumpzi .L8210f
+jumpzi .L8203f
 ret
-.L8210f:
-jumpi .L8170b
-.L8175f:
+.L8203f:
+jumpi .L8163b
+.L8168f:
 calli _32_DROP
 calli REFILL
 calli _30__3D_
-jumpzi .L8170b
+jumpzi .L8163b
 pop
 ret
 .set _5B_ELSE_5D__compilation, (2 * bee_word_bytes)
@@ -9494,9 +9482,9 @@ ret
 .global _5B_IF_5D_
 _5B_IF_5D_:
 calli _30__3D_
-jumpzi .L8224f
+jumpzi .L8217f
 calli _5B_ELSE_5D_ - (2 * bee_word_bytes) + _5B_ELSE_5D__compilation
-.L8224f:
+.L8217f:
 ret
 .set _5B_IF_5D__compilation, (2 * bee_word_bytes)
 .set _5B_IF_5D__info, _immediate_bit | 0 | 0 | (4 <<_name_length_bits) | 0x0 
@@ -9643,13 +9631,13 @@ calli WORD
 pushi 0 # 0x0 
 dup
 calli PROVIDED_3F_
-jumpzi .L8314f
+jumpzi .L8307f
 pop
 calli _5B_ELSE_5D_ - (2 * bee_word_bytes) + _5B_ELSE_5D__compilation
-jumpi .L8317f
-.L8314f:
+jumpi .L8310f
+.L8307f:
 calli COLON
-.L8317f:
+.L8310f:
 ret
 .set PROVIDE_3A__info, 0 | 0 | 0 | (8 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -9720,7 +9708,7 @@ ret
 .word _28__info 
 .global _28_
 _28_:
-.L8364b:
+.L8357b:
 pushi 41 
 calli PARSE
 calli _32_DROP
@@ -9730,12 +9718,12 @@ neg
 pushi 2 
 ult
 neg
-jumpzi .L8373f
+jumpzi .L8366f
 ret
-.L8373f:
+.L8366f:
 calli _3E_IN
 load
-jumpzi .L8377f
+jumpzi .L8370f
 calli SOURCE
 pop
 calli _3E_IN
@@ -9746,15 +9734,15 @@ add
 load1
 pushi 41 
 calli _3C__3E_
-jumpi .L8388f
-.L8377f:
+jumpi .L8381f
+.L8370f:
 calli TRUE
-.L8388f:
-jumpzi .L8390f
+.L8381f:
+jumpzi .L8383f
 calli REFILL
 calli _30__3D_
-jumpzi .L8364b
-.L8390f:
+jumpzi .L8357b
+.L8383f:
 ret
 .set _28__compilation, (2 * bee_word_bytes)
 .set _28__info, _immediate_bit | 0 | 0 | (1 <<_name_length_bits) | 0x0 
@@ -9799,30 +9787,30 @@ _2E_S:
 calli _3F_STACK
 calli DEPTH
 calli _3F_DUP
-jumpzi .L8418f
+jumpzi .L8411f
 neg
 not
 pushi 0 
 pushi 0 # 0x0 
 swap
 calli _32__3E_R
-.L8425b:
+.L8418b:
 dups
 dup
 calli _2E_
 pushi -1 
 calli _28__2B_LOOP_29_
-jumpzi .L8425b
-.L8424f:
+jumpzi .L8418b
+.L8417f:
 calli UNLOOP
-jumpi .L8432f
-.L8418f:
+jumpi .L8425f
+.L8411f:
 calli _28_S_22__29_
 .byte 0xC 
 .ascii "stack empty "
 .balign bee_word_bytes, 0x0 
 calli TYPE
-.L8432f:
+.L8425f:
 ret
 .set _2E_S_info, 0 | 0 | 0 | (2 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -9838,7 +9826,7 @@ calli SAVE_2D_INPUT_3E_R
 pushreli SOURCE_2D_ID_body
 store
 calli ALLOCATE_2D_BUFFER
-jumpzi .L8447f
+jumpzi .L8440f
 calli SOURCE_2D_ID
 pushi 11 # 0xB 
 trap 0x0 
@@ -9848,18 +9836,18 @@ calli _28_C_22__29_
 .ascii "no more file buffers"
 .balign bee_word_bytes, 0x0 
 calli _28_ABORT_22__29_
-.L8447f:
+.L8440f:
 pushreli FIB_body
 store
 calli REFILL
 pushi 0 # 0x0 
 dup
-jumpzi .L8462f
+jumpzi .L8455f
 calli _23_FIB
 load
 pushi 1 
 calli _3E_
-jumpzi .L8467f
+jumpzi .L8460f
 calli FIB
 load1
 pushi 35 
@@ -9873,18 +9861,18 @@ pushi 33
 eq
 neg
 and
-jumpzi .L8481f
+jumpzi .L8474f
 pop
 calli REFILL
-.L8481f:
-.L8467f:
-.L8462f:
-.L8484b:
-jumpzi .L8484f
+.L8474f:
+.L8460f:
+.L8455f:
+.L8477b:
+jumpzi .L8477f
 pushreli INTERPRET
 calli CATCH
 calli _3F_DUP
-jumpzi .L8488f
+jumpzi .L8481f
 calli SOURCE_2D_ID
 pushi 11 # 0xB 
 trap 0x0 
@@ -9892,10 +9880,10 @@ pop
 calli FREE_2D_BUFFER
 pop
 calli THROW
-.L8488f:
+.L8481f:
 calli REFILL
-jumpi .L8484b
-.L8484f:
+jumpi .L8477b
+.L8477f:
 calli FREE_2D_BUFFER
 calli _28_C_22__29_
 .byte 0x16 
@@ -9918,7 +9906,7 @@ calli _32_DUP
 pushi 5 # 0x5 
 trap 0x0 
 calli OPEN_2D_FILE
-jumpzi .L8515f
+jumpzi .L8508f
 pop
 calli TRUE
 calli _28_C_22__29_
@@ -9926,7 +9914,7 @@ calli _28_C_22__29_
 .ascii "file can't be INCLUDED"
 .balign bee_word_bytes, 0x0 
 calli _28_ABORT_22__29_
-.L8515f:
+.L8508f:
 pushs
 calli _32_DROP
 dups
@@ -9969,9 +9957,9 @@ calli BL
 calli WORD
 calli FIND
 calli _30__3D_
-jumpzi .L8554f
+jumpzi .L8547f
 calli UNDEFINED
-.L8554f:
+.L8547f:
 ret
 .set _27__info, 0 | 0 | 0 | (1 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -10144,9 +10132,9 @@ pushi 0 # 0x0
 dup
 calli FIND
 calli _30__3D_
-jumpzi .L8677f
+jumpzi .L8670f
 calli UNDEFINED
-.L8677f:
+.L8670f:
 calli _3E_BODY
 calli PUSHREL_2C_
 pushreli _2E_BODY_2D_LITERAL
@@ -10168,14 +10156,14 @@ store
 ret
 .balign bee_word_bytes
 .word 0 
-.L8693n:
+.L8686n:
 calli BL
 calli WORD
 calli BODY_2D_LITERAL
 pushreli _21_
 calli _28_POSTPONE_29_
 ret
-.set TO_compilation, .L8693n - (TO - 2 * bee_word_bytes)
+.set TO_compilation, .L8686n - (TO - 2 * bee_word_bytes)
 .set TO_info, _immediate_bit | 0 | 0 | (2 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0xE 
@@ -10242,12 +10230,12 @@ calli DEFER_40_
 ret
 .balign bee_word_bytes
 .word 0 
-.L8743n:
+.L8736n:
 calli _5B__27__5D_ - (2 * bee_word_bytes) + _5B__27__5D__compilation
 pushreli DEFER_40_
 calli _28_POSTPONE_29_
 ret
-.set ACTION_2D_OF_compilation, .L8743n - (ACTION_2D_OF - 2 * bee_word_bytes)
+.set ACTION_2D_OF_compilation, .L8736n - (ACTION_2D_OF - 2 * bee_word_bytes)
 .set ACTION_2D_OF_info, _immediate_bit | 0 | 0 | (9 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0xC 
@@ -10277,14 +10265,14 @@ neg
 not
 add
 load1
-jumpzi .L8768f
+jumpzi .L8761f
 calli _3E_NAME
 calli _2E_NAME
-jumpi .L8771f
-.L8768f:
+jumpi .L8764f
+.L8761f:
 calli NONAME
 calli _2E_LABEL
-.L8771f:
+.L8764f:
 calli CR
 ret
 .set _2E_DEFER_2D_LABEL_info, 0 | 0 | 0 | (12 <<_name_length_bits) | 0x0 
@@ -10329,12 +10317,12 @@ calli DEFER_21_
 ret
 .balign bee_word_bytes
 .word 0 
-.L8803n:
+.L8796n:
 calli _5B__27__5D_ - (2 * bee_word_bytes) + _5B__27__5D__compilation
 pushreli DEFER_21_
 calli _28_POSTPONE_29_
 ret
-.set IS_compilation, .L8803n - (IS - 2 * bee_word_bytes)
+.set IS_compilation, .L8796n - (IS - 2 * bee_word_bytes)
 .set IS_info, _immediate_bit | 0 | 0 | (2 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0xA 
@@ -10387,7 +10375,7 @@ nop
 calli CHAIN_doer
 .balign bee_word_bytes
 CHAIN_body:
-.L8838b:
+.L8831b:
 .word 0 
 .set CHAIN_info, 0 | 0 | 0 | (5 <<_name_length_bits) | 0x0 
 .set CHAIN_doer, _28_CREATE_29__does
@@ -10438,16 +10426,16 @@ pops
 calli _23_ORDER
 load
 calli _30__3D_
-jumpzi .L8875f
+jumpzi .L8868f
 pushi 1 
 calli _23_ORDER
 calli _2B__21_
-.L8875f:
+.L8868f:
 calli REL_40_
 calli CONTEXT
 store
 ret
-.L8883b:
+.L8876b:
 .word last_word - .
 .balign bee_word_bytes
 .word 0 
@@ -10466,7 +10454,7 @@ nop
 calli FORTH_doer
 .balign bee_word_bytes
 FORTH_body:
-.word .L8883b - .
+.word .L8876b - .
 .set FORTH_info, 0 | 0 | 0 | (5 <<_name_length_bits) | 0x0 
 .set FORTH_doer, VOCABULARY_does
 .balign bee_word_bytes
@@ -10582,10 +10570,10 @@ dup
 pushi -1 
 eq
 neg
-jumpzi .L8973f
+jumpzi .L8966f
 calli ONLY
-jumpi .L8975f
-.L8973f:
+jumpi .L8968f
+.L8966f:
 pushi 0 # 0x0 
 dup
 calli _23_ORDER
@@ -10600,19 +10588,19 @@ calli _32_DUP
 calli _32__3E_R
 eq
 neg
-jumpzi .L8990f
-jumpi .L8986f
-.L8990f:
-.L8992b:
+jumpzi .L8983f
+jumpi .L8979f
+.L8983f:
+.L8985b:
 dups
 store
 word_bytes
 calli _28__2B_LOOP_29_
-jumpzi .L8992b
-.L8986f:
-.L8991f:
+jumpzi .L8985b
+.L8979f:
+.L8984f:
 calli UNLOOP
-.L8975f:
+.L8968f:
 ret
 .set SET_2D_ORDER_info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -10628,11 +10616,11 @@ calli GET_2D_ORDER
 pushi 0 # 0x0 
 dup
 calli _30__3E_
-jumpzi .L9008f
+jumpzi .L9001f
 calli NIP
 neg
 not
-.L9008f:
+.L9001f:
 calli SET_2D_ORDER
 ret
 .set PREVIOUS_info, 0 | 0 | 0 | (8 <<_name_length_bits) | 0x0 
@@ -10656,15 +10644,15 @@ calli _32_DUP
 calli _32__3E_R
 eq
 neg
-jumpzi .L9028f
-jumpi .L9024f
-.L9028f:
-.L9030b:
+jumpzi .L9021f
+jumpi .L9017f
+.L9021f:
+.L9023b:
 calli H_2E_
 calli _28_LOOP_29_
-jumpzi .L9030b
-.L9024f:
-.L9029f:
+jumpzi .L9023b
+.L9017f:
+.L9022f:
 calli UNLOOP
 calli CR
 calli _28_S_22__29_
@@ -10760,10 +10748,10 @@ ret
 .global WORDLIST_2D_WORDS
 WORDLIST_2D_WORDS:
 calli NEWLINE
-.L9089b:
+.L9082b:
 calli REL_40_
 calli _3F_DUP
-jumpzi .L9091f
+jumpzi .L9084f
 pushi 0 # 0x0 
 dup
 calli _3E_NAME
@@ -10771,33 +10759,33 @@ calli COUNT
 pushi 0 # 0x0 
 dup
 calli WRAP_3F_
-jumpzi .L9099f
+jumpzi .L9092f
 calli NEWLINE
-.L9099f:
+.L9092f:
 pushi 0 # 0x0 
 dup
 calli ADVANCE
 calli TYPE
 calli GAP
 calli WRAP_3F_
-jumpzi .L9107f
+jumpzi .L9100f
 calli NEWLINE
-jumpi .L9109f
-.L9107f:
+jumpi .L9102f
+.L9100f:
 calli GAP
 pushi 0 # 0x0 
 dup
 calli SPACES
 calli ADVANCE
-.L9109f:
+.L9102f:
 calli _3E_LINK
-jumpi .L9089b
-.L9091f:
+jumpi .L9082b
+.L9084f:
 calli CURSORX
 load
-jumpzi .L9119f
+jumpzi .L9112f
 calli NEWLINE
-.L9119f:
+.L9112f:
 ret
 .set WORDLIST_2D_WORDS_info, 0 | 0 | 0 | (14 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -10829,15 +10817,15 @@ calli _32_DUP
 calli _32__3E_R
 eq
 neg
-jumpzi .L9141f
-jumpi .L9137f
-.L9141f:
-.L9143b:
+jumpzi .L9134f
+jumpi .L9130f
+.L9134f:
+.L9136b:
 calli WORDLIST_2D_WORDS
 calli _28_LOOP_29_
-jumpzi .L9143b
-.L9137f:
-.L9142f:
+jumpzi .L9136b
+.L9130f:
+.L9135f:
 calli UNLOOP
 ret
 .set ALL_2D_WORDS_info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
@@ -10851,11 +10839,11 @@ ret
 .global _28_THROW_29_
 _28_THROW_29_:
 calli _3F_DUP
-jumpzi .L9153f
+jumpzi .L9146f
 calli HANDLER
 load
 calli _3F_DUP
-jumpzi .L9157f
+jumpzi .L9150f
 set_sp
 calli R_3E_RESTORE_2D_INPUT
 pops
@@ -10867,16 +10855,16 @@ swap
 pushs
 calli SP_21_
 pops
-jumpi .L9169f
-.L9157f:
+jumpi .L9162f
+.L9150f:
 calli ERROR_2D_PREFIX
 pushi 0 # 0x0 
 dup
 calli HANDLE_2D_ERROR
 calli CR
 throw
-.L9169f:
-.L9153f:
+.L9162f:
+.L9146f:
 ret
 .set _28_THROW_29__info, 0 | 0 | 0 | (7 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
@@ -10922,11 +10910,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9209n:
+.L9202n:
 pushreli _28__2E_ALIGN_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_ALIGN_defer, .L9209n
+.set _2E_ALIGN_defer, .L9202n
 .set _28__2E_ALIGN_29__info, 0 | 0 | 0 | (8 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x9 
@@ -10947,11 +10935,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9227n:
+.L9220n:
 pushreli _28__2E_CALIGN_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_CALIGN_defer, .L9227n
+.set _2E_CALIGN_defer, .L9220n
 .set _28__2E_CALIGN_29__info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0xD 
@@ -10968,7 +10956,7 @@ calli _28_S_22__29_
 .balign bee_word_bytes, 0x0 
 calli TYPE
 calli _3F_DUP
-jumpzi .L9239f
+jumpzi .L9232f
 calli BACKWARD
 calli _2E_LABEL
 calli _28_S_22__29_
@@ -10976,23 +10964,23 @@ calli _28_S_22__29_
 .ascii " - ."
 .balign bee_word_bytes, 0x0 
 calli TYPE
-jumpi .L9245f
-.L9239f:
+jumpi .L9238f
+.L9232f:
 calli _28_S_22__29_
 .byte 0x1 
 .ascii "0"
 .balign bee_word_bytes, 0x0 
 calli TYPE
-.L9245f:
+.L9238f:
 calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9252n:
+.L9245n:
 pushreli _28__2E_REL_2D_OFFSET_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_REL_2D_OFFSET_defer, .L9252n
+.set _2E_REL_2D_OFFSET_defer, .L9245n
 .set _28__2E_REL_2D_OFFSET_29__info, 0 | 0 | 0 | (13 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x6 
@@ -11012,11 +11000,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9265n:
+.L9258n:
 pushreli _28__2E_NOP_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_NOP_defer, .L9265n
+.set _2E_NOP_defer, .L9258n
 .set _28__2E_NOP_29__info, 0 | 0 | 0 | (6 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x8 
@@ -11037,11 +11025,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9280n:
+.L9273n:
 pushreli _28__2E_ALLOT_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_ALLOT_defer, .L9280n
+.set _2E_ALLOT_defer, .L9273n
 .set _28__2E_ALLOT_29__info, 0 | 0 | 0 | (8 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0xE 
@@ -11067,11 +11055,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9300n:
+.L9293n:
 pushreli _28__2E_ALLOT_2D_CELLS_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_ALLOT_2D_CELLS_defer, .L9300n
+.set _2E_ALLOT_2D_CELLS_defer, .L9293n
 .set _28__2E_ALLOT_2D_CELLS_29__info, 0 | 0 | 0 | (14 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x7 
@@ -11092,11 +11080,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9314n:
+.L9307n:
 pushreli _28__2E_WORD_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_WORD_defer, .L9314n
+.set _2E_WORD_defer, .L9307n
 .set _28__2E_WORD_29__info, 0 | 0 | 0 | (7 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x7 
@@ -11117,11 +11105,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9329n:
+.L9322n:
 pushreli _28__2E_BYTE_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_BYTE_defer, .L9329n
+.set _2E_BYTE_defer, .L9322n
 .set _28__2E_BYTE_29__info, 0 | 0 | 0 | (7 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x9 
@@ -11151,7 +11139,7 @@ add
 pushi 0 # 0x0 
 swap
 calli _32__3E_R
-.L9354b:
+.L9347b:
 dups
 load1
 pushi 0 # 0x0 
@@ -11165,25 +11153,25 @@ pushi 92
 eq
 neg
 or
-jumpzi .L9367f
+jumpzi .L9360f
 pushi 92 
 calli EMIT
-.L9367f:
+.L9360f:
 calli EMIT
 calli _28_LOOP_29_
-jumpzi .L9354b
-.L9353f:
+jumpzi .L9347b
+.L9346f:
 calli UNLOOP
 calli EMIT
 calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9378n:
+.L9371n:
 pushreli _28__2E_STRING_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_STRING_defer, .L9378n
+.set _2E_STRING_defer, .L9371n
 .set _28__2E_STRING_29__info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x8 
@@ -11204,11 +11192,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9393n:
+.L9386n:
 pushreli _28__2E_PUSHI_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_PUSHI_defer, .L9393n
+.set _2E_PUSHI_defer, .L9386n
 .set _28__2E_PUSHI_29__info, 0 | 0 | 0 | (8 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0xB 
@@ -11229,11 +11217,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9409n:
+.L9402n:
 pushreli _28__2E_PUSHRELI_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_PUSHRELI_defer, .L9409n
+.set _2E_PUSHRELI_defer, .L9402n
 .set _28__2E_PUSHRELI_29__info, 0 | 0 | 0 | (11 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x7 
@@ -11275,11 +11263,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9440n:
+.L9433n:
 pushreli _28__2E_PUSH_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_PUSH_defer, .L9440n
+.set _2E_PUSH_defer, .L9433n
 .set _28__2E_PUSH_29__info, 0 | 0 | 0 | (7 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x8 
@@ -11304,11 +11292,11 @@ calli EMIT
 ret
 .balign bee_word_bytes
 .word 0 
-.L9459n:
+.L9452n:
 pushreli _28__2E_LABEL_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_LABEL_defer, .L9459n
+.set _2E_LABEL_defer, .L9452n
 .set _28__2E_LABEL_29__info, 0 | 0 | 0 | (8 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0xC 
@@ -11329,11 +11317,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9474n:
+.L9467n:
 pushreli _28__2E_LABEL_2D_DEF_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_LABEL_2D_DEF_defer, .L9474n
+.set _2E_LABEL_2D_DEF_defer, .L9467n
 .set _28__2E_LABEL_2D_DEF_29__info, 0 | 0 | 0 | (12 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x11 
@@ -11355,11 +11343,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9491n:
+.L9484n:
 pushreli _28__2E_BODY_2D_LABEL_2D_DEF_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_BODY_2D_LABEL_2D_DEF_defer, .L9491n
+.set _2E_BODY_2D_LABEL_2D_DEF_defer, .L9484n
 .set _28__2E_BODY_2D_LABEL_2D_DEF_29__info, 0 | 0 | 0 | (17 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x9 
@@ -11380,11 +11368,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9506n:
+.L9499n:
 pushreli _28__2E_BRANCH_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_BRANCH_defer, .L9506n
+.set _2E_BRANCH_defer, .L9499n
 .set _28__2E_BRANCH_29__info, 0 | 0 | 0 | (9 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x5 
@@ -11405,11 +11393,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9520n:
+.L9513n:
 pushreli _28__2E_IF_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_IF_defer, .L9520n
+.set _2E_IF_defer, .L9513n
 .set _28__2E_IF_29__info, 0 | 0 | 0 | (5 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x6 
@@ -11429,11 +11417,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9533n:
+.L9526n:
 pushreli _28__2E_RET_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_RET_defer, .L9533n
+.set _2E_RET_defer, .L9526n
 .set _28__2E_RET_29__info, 0 | 0 | 0 | (6 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x13 
@@ -11459,11 +11447,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9556n:
+.L9549n:
 pushreli _28__2E_IMMEDIATE_2D_METHOD_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_IMMEDIATE_2D_METHOD_defer, .L9556n
+.set _2E_IMMEDIATE_2D_METHOD_defer, .L9549n
 .set _28__2E_IMMEDIATE_2D_METHOD_29__info, 0 | 0 | 0 | (19 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x11 
@@ -11503,11 +11491,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9588n:
+.L9581n:
 pushreli _28__2E_COMPILE_2D_METHOD_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_COMPILE_2D_METHOD_defer, .L9588n
+.set _2E_COMPILE_2D_METHOD_defer, .L9581n
 .set _28__2E_COMPILE_2D_METHOD_29__info, 0 | 0 | 0 | (17 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x16 
@@ -11541,11 +11529,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9617n:
+.L9610n:
 pushreli _28__2E_CALL_2D_COMPILE_2D_METHOD_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_CALL_2D_COMPILE_2D_METHOD_defer, .L9617n
+.set _2E_CALL_2D_COMPILE_2D_METHOD_defer, .L9610n
 .set _28__2E_CALL_2D_COMPILE_2D_METHOD_29__info, 0 | 0 | 0 | (22 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0xF 
@@ -11573,11 +11561,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9638n:
+.L9631n:
 pushreli _28__2E_INLINE_2D_COUNT_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_INLINE_2D_COUNT_defer, .L9638n
+.set _2E_INLINE_2D_COUNT_defer, .L9631n
 .set _28__2E_INLINE_2D_COUNT_29__info, 0 | 0 | 0 | (15 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0xF 
@@ -11603,11 +11591,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9656n:
+.L9649n:
 pushreli _28__2E_CREATED_2D_CODE_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_CREATED_2D_CODE_defer, .L9656n
+.set _2E_CREATED_2D_CODE_defer, .L9649n
 .set _28__2E_CREATED_2D_CODE_29__info, 0 | 0 | 0 | (15 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x12 
@@ -11628,11 +11616,11 @@ calli CR
 ret
 .balign bee_word_bytes
 .word 0 
-.L9673n:
+.L9666n:
 pushreli _28__2E_PUSHRELI_2D_SYMBOL_29_
 calli TO_2D_ASMOUT
 ret
-.set _2E_PUSHRELI_2D_SYMBOL_defer, .L9673n
+.set _2E_PUSHRELI_2D_SYMBOL_defer, .L9666n
 .set _28__2E_PUSHRELI_2D_SYMBOL_29__info, 0 | 0 | 0 | (18 <<_name_length_bits) | 0x0 
 .balign bee_word_bytes
 .byte 0x4 
@@ -11888,28 +11876,28 @@ INTERACT_3F__body:
 DO_2D_START_2D_OPTIONS:
 calli ARGC
 load
-jumpzi .L9877f
+jumpzi .L9870f
 calli HERE
 calli _22_PROGRAM_2D_NAME
 calli REL_21_
 calli NEXT_2D_ARG
 calli _22__2C_
-.L9877f:
+.L9870f:
 calli ARGC
 load
-jumpzi .L9885f
-.L9886b:
+jumpzi .L9878f
+.L9879b:
 calli NEXT_2D_ARG
 pushi 1 # 0x1 
 dup
-jumpzi .L9889f
+jumpzi .L9882f
 pushi 1 # 0x1 
 dup
 load1
 pushi 45 
 eq
 neg
-jumpzi .L9896f
+jumpzi .L9889f
 calli _28_S_22__29_
 .byte 0x6 
 .ascii "--help"
@@ -11917,12 +11905,12 @@ calli _28_S_22__29_
 calli _32_OVER
 calli COMPARE
 calli _30__3D_
-jumpzi .L9902f
+jumpzi .L9895f
 calli _32_DROP
 calli HELP
 calli BYE
-jumpi .L9906f
-.L9902f:
+jumpi .L9899f
+.L9895f:
 calli _28_S_22__29_
 .byte 0x9 
 .ascii "--version"
@@ -11930,12 +11918,12 @@ calli _28_S_22__29_
 calli _32_OVER
 calli COMPARE
 calli _30__3D_
-jumpzi .L9913f
+jumpzi .L9906f
 calli _32_DROP
 calli BANNER
 calli BYE
-jumpi .L9917f
-.L9913f:
+jumpi .L9910f
+.L9906f:
 calli _28_S_22__29_
 .byte 0xA 
 .ascii "--evaluate"
@@ -11943,12 +11931,12 @@ calli _28_S_22__29_
 calli _32_OVER
 calli COMPARE
 calli _30__3D_
-jumpzi .L9924f
+jumpzi .L9917f
 calli _32_DROP
 calli NEXT_2D_ARG
 calli EVALUATE
-jumpi .L9928f
-.L9924f:
+jumpi .L9921f
+.L9917f:
 calli _28_S_22__29_
 .byte 0xA 
 .ascii "--interact"
@@ -11956,13 +11944,13 @@ calli _28_S_22__29_
 calli _32_OVER
 calli COMPARE
 calli _30__3D_
-jumpzi .L9935f
+jumpzi .L9928f
 calli _32_DROP
 calli TRUE
 pushreli INTERACT_3F__body
 store
-jumpi .L9940f
-.L9935f:
+jumpi .L9933f
+.L9928f:
 calli HERE
 calli _27_THROWN
 store
@@ -11970,26 +11958,26 @@ calli _22__2C_
 pushi -512 
 calli THROW
 calli _32_DROP
-.L9940f:
-.L9928f:
-.L9917f:
-.L9906f:
-jumpi .L9948f
-.L9896f:
-calli INCLUDED
-.L9948f:
-jumpi .L9886b
+.L9933f:
+.L9921f:
+.L9910f:
+.L9899f:
+jumpi .L9941f
 .L9889f:
+calli INCLUDED
+.L9941f:
+jumpi .L9879b
+.L9882f:
 calli _32_DROP
 calli INTERACT_3F_
 not
-jumpzi .L9954f
+jumpzi .L9947f
 calli BYE
-.L9954f:
-jumpi .L9956f
-.L9885f:
+.L9947f:
+jumpi .L9949f
+.L9878f:
 calli BANNER
-.L9956f:
+.L9949f:
 calli _28_QUIT_29_
 ret
 .set DO_2D_START_2D_OPTIONS_info, 0 | 0 | 0 | (16 <<_name_length_bits) | 0x0 

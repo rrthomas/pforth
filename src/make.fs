@@ -41,78 +41,15 @@ INCLUDE" assembler.fs"
 : .FORTH-LINK   ." .set last_word, " LAST >NAME .NAME CR ;
 
 
-VOCABULARY META  ALSO META DEFINITIONS
-FOREIGN  ' NON-META?  ' 'SELECTOR >BODY REL! \ build meta-compiler using native compiler
-
 \ Check stack is balanced
 : ??STACK
    DEPTH INITIAL-DEPTH <> IF
       .S ." stack not balanced" CR  ABORT
    THEN ;
 
-
-INCLUDE" compiler-defer.fs"
-INCLUDE" compiler-asm.fs"
-INCLUDE" compiler.fs"
-INCLUDE" compiler1.fs"
-
-
-\ Special definition of POSTPONE, to cope with FOREIGN vocabularies
-
-: ?FIND   ( c-addr -- xt )   FIND  0= IF  UNDEFINED  THEN ;
-: (POSTPONE)   >NAME  ?FIND CURRENT-COMPILE, ;
-: (RAW-POSTPONE)   >NAME  ?FIND CALL, ;
-
-\ POSTPONE itself must be defined in FORTH, so that it can be run during the
-\ compilation of the rest of META, which is FOREIGN while it is being built.
-ALSO FORTH DEFINITIONS
-
-: RAW-POSTPONE
-   BL WORD  DUP FIND
-   ?DUP 0= IF  UNDEFINED  THEN
-   0> IF
-      ABORT \ We never RAW-POSTPONE IMMEDIATE words
-   ELSE
-      PUSHREL,  .PUSHRELI-SYMBOL  C" (RAW-POSTPONE)" ?FIND CURRENT-COMPILE,
-   THEN ;
-IMMEDIATE COMPILING
-: POSTPONE
-   BL WORD  DUP FIND
-   ?DUP 0= IF  UNDEFINED  THEN
-   0> IF
-      >COMPILE REL@  CALL,  .CALL-COMPILE-METHOD
-   ELSE
-      PUSHREL,  .PUSHRELI-SYMBOL  C" (POSTPONE)" ?FIND CURRENT-COMPILE,
-   THEN ;
-IMMEDIATE COMPILING
-
-META DEFINITIONS  PREVIOUS  \ use META POSTPONE and LINK,
-INCLUDE" compiler-postpone.fs"
-ALSO META  FOREIGN  PREVIOUS
-
-
-INCLUDE" code.fs"
 INCLUDE" util.fs"
-INCLUDE" control2.fs"
-INCLUDE" control3.fs"
-INCLUDE" strings2b.fs"
-INCLUDE" compiler2.fs"
-INCLUDE" interpreter3.fs"
-: SET-IMMEDIATE   LAST >INFO  DUP @  TOP-BIT-SET OR  SWAP ! ;
-INCLUDE" compiler4.fs"
-INCLUDE" compiler5.fs"
-INCLUDE" defer-fetch-store.fs"
-INCLUDE" defining.fs"
-INCLUDE" vocabulary.fs"
 
-
-\ Constants
-
-NATIVE  ' LOCAL?  ' 'SELECTOR >BODY REL! \ now meta-compiler is built, allow it to run
-
-ALSO FORTH   \ use FORTH's VOCABULARY
 VOCABULARY NEW-FORTH   \ define the new root vocabulary
-PREVIOUS
 
 DICTIONARY-SIZE DICTIONARY CROSS  \ define a new dictionary
 ' CURRENT-COMPILE, >BODY @   \ save compiler
@@ -148,12 +85,10 @@ PREVIOUS
 .PREVIOUS-INFO \ output info field of last word defined
 -1 TO ASMOUT
 
-( PREVIOUS) PREVIOUS DEFINITIONS   \ restore original order
+( PREVIOUS) DEFINITIONS   \ restore original order
 TO 'FORTH   \ restore 'FORTH
 TO CURRENT-RELATIVE-LITERAL   \ restore original compiler
 TO CURRENT-LITERAL
 TO CURRENT-COMPILE,
 
-ALSO META
 ??STACK   \ check stack is balanced
-PREVIOUS

@@ -246,7 +246,6 @@ INCLUDE" os-compiler.fs"   \ words necessary for the machine
    CELL +LOOP  DROP ;
 INCLUDE" compiler.fs"
 DEFER CURRENT-COMPILE,  ' COMPILE, IS CURRENT-COMPILE,
-: (RAW-POSTPONE)   CURRENT-COMPILE, ;
 : (POSTPONE)   CURRENT-COMPILE, ;
 VARIABLE CREATED   \ Indicate whether last word was CREATEd
 INCLUDE" compiler1.fs"
