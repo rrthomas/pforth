@@ -30,7 +30,7 @@ AS_IF([test "$ac_cv_path_AS" = ""],
 AC_PATH_PROG([OBJCOPY], [bee-objcopy])
 AS_IF([test "$ac_cv_path_OBJCOPY" = ""],
     AC_MSG_ERROR([Could not find Bee objcopy]))
-AS_IF([$ac_cv_path_OBJCOPY --info | grep -q "^elf$bee_word_bits-(little|big)bee"],
+AS_IF([$ac_cv_path_OBJCOPY --info | $GREP -q "^elf$bee_word_bits-(little|big)bee"],
     AC_MSG_ERROR([objcopy does not appear to be for bee])
 )
 
