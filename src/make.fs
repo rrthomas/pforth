@@ -1,4 +1,4 @@
-\ Metacompile pForth base image
+\ Metacompile Gnat base image
 \
 \ (c) Reuben Thomas 1996-2020
 \
@@ -15,7 +15,7 @@
 
 DEPTH VALUE INITIAL-DEPTH   \ Note initial stack depth
 INCLUDE" platform.fs"
-CR .( Metacompiling pForth for ) "PLATFORM TYPE .( : )
+CR .( Metacompiling Gnat for ) "PLATFORM TYPE .( : )
 
 
 INCLUDE" assembler.fs"

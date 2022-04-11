@@ -53,5 +53,5 @@ install:
 build_script:
   - sh: git submodule update --init --recursive && autoreconf -i && ./configure --enable-silent-rules
   - sh: if [[ "$APPVEYOR_BUILD_WORKER_IMAGE" == "macos" ]]; then make check; else make distcheck; fi
-  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && ./build-aux/install-executor --no-sudo"
-  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/pforth && git submodule update --init --recursive && autoreconf -fi && ./configure --enable-silent-rules && make check"
+  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/gnat && ./build-aux/install-executor --no-sudo"
+  - cmd: C:\msys64\usr\bin\bash.exe -lc "cd c:/projects/gnat && git submodule update --init --recursive && autoreconf -fi && ./configure --enable-silent-rules && make check"

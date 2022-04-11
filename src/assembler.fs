@@ -1,4 +1,4 @@
-\ Bee assembler for pForth
+\ Bee assembler for Gnat
 \
 \ (c) Reuben Thomas 2020
 \

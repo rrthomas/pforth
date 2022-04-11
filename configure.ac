@@ -8,7 +8,7 @@
 # THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 # RISK.
 
-AC_INIT(pForth, 0.82, rrt@sc3d.org)
+AC_INIT(Gnat, 0.82, rrt@sc3d.org)
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([-Wall foreign])
 
@@ -21,7 +21,7 @@ AC_PATH_PROG([BEE], [bee])
 AS_IF([test "$ac_cv_path_BEE" = ""],
     AC_MSG_ERROR([Could not find Bee]))
   AS_IF([$ac_cv_path_BEE --version | $GREP -q 64-bit], [bee_word_bits=64], [bee_word_bits=32])
-  AS_IF([! $ac_cv_path_BEE $srcdir/src/pforth-$bee_word_bits.bin --evaluate BYE],
+  AS_IF([! $ac_cv_path_BEE $srcdir/src/gnat-$bee_word_bits.bin --evaluate BYE],
     [AC_MSG_ERROR([$ac_cv_path_BEE does not work!])])
 AC_SUBST([bee_word_bits])
 AC_PATH_PROG([AS], [bee-as])
@@ -48,7 +48,7 @@ dnl Generate output files
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
-  src/pforthi
+  src/gnati
   src/highlevel.fs
   doc/Makefile
   extras/Makefile

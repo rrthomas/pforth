@@ -1,14 +1,14 @@
 # Gnat
 
-https://github.com/rrthomas/pforth  
+https://github.com/rrthomas/gnat  
 
 by Reuben Thomas <rrt@sc3d.org>  
 
 Gnat is an experimental Forth-derived language. It is released purely in the
 hope that it might be interesting or useful to someone.
 
-Gnat comes pre-compiled for Bee (`src/bee/pforth-32` and
-`src/bee/pforth-64`).
+Gnat comes pre-compiled for Bee (`src/bee/gnat-32.bin` and
+`src/bee/gnat-64.bin`).
 
 
 ## Copyright and Disclaimer
@@ -49,5 +49,5 @@ and then proceed as above for a release build.
 ## Bugs and comments
 
 Please file bug reports and make comments on
-[GitHub](https://github.com/rrthomas/pforth/issues), or by email (see
+[GitHub](https://github.com/rrthomas/gnat/issues), or by email (see
 above).

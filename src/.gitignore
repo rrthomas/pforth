@@ -1,6 +1,6 @@
 *.o
 highlevel.fs
-/pforthi
-/pforthi.tmp
-/pforth
-/pforth-new.bin
+/gnati
+/gnati.tmp
+/gnat
+/gnat-new.bin
