@@ -126,15 +126,13 @@ INCLUDE" vocabulary.fs"
 
 \ Constants
 
-DICTIONARY-SIZE CONSTANT SIZE
-
 NATIVE  ' LOCAL?  ' 'SELECTOR >BODY REL! \ now meta-compiler is built, allow it to run
 
 ALSO FORTH   \ use FORTH's VOCABULARY
 VOCABULARY NEW-FORTH   \ define the new root vocabulary
 PREVIOUS
 
-SIZE DICTIONARY CROSS  \ define a new dictionary
+DICTIONARY-SIZE DICTIONARY CROSS  \ define a new dictionary
 ' CURRENT-COMPILE, >BODY @   \ save compiler
 ' CURRENT-LITERAL >BODY @
 ' CURRENT-RELATIVE-LITERAL >BODY @
