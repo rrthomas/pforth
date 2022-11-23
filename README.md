@@ -34,7 +34,7 @@ THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER'S RISK.
 
 ## Installation
 
-Bee is required (see above) in either a 32- or 64-bit build.
+Bee version 1 is required (see above) in either a 32- or 64-bit build.
 
 To build the documentation, a comprehensive TeX system such as TeXLive is
 required.
