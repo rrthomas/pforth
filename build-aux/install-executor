@@ -16,7 +16,6 @@ if test "$GITHUB_TOKEN" != ""; then
 fi
 
 cd $HOME
-git clone https://github.com/rrthomas/bee.git
+git clone --branch v1.0 https://github.com/rrthomas/bee.git
 cd bee
-git checkout "${APPVEYOR_REPO_BRANCH##bee-}"
 ./bootstrap && ./configure --enable-silent-rules && make check && $SUDO make install
