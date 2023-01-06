@@ -26,15 +26,8 @@ AS_IF([test "$ac_cv_path_BEE" = ""],
   AS_IF([! $ac_cv_path_BEE $srcdir/src/pforth-$bee_word_bits.bin --evaluate BYE],
     [AC_MSG_ERROR([$ac_cv_path_BEE does not work!])])
 AC_SUBST([bee_word_bits])
-AC_PATH_PROG([AS], [bee-as])
-AS_IF([test "$ac_cv_path_AS" = ""],
-    AC_MSG_ERROR([Could not find Bee as]))
-AC_PATH_PROG([OBJCOPY], [bee-objcopy])
-AS_IF([test "$ac_cv_path_OBJCOPY" = ""],
-    AC_MSG_ERROR([Could not find Bee objcopy]))
-AS_IF([$ac_cv_path_OBJCOPY --info | grep -q "^elf$bee_word_bits-(little|big)bee"],
-    AC_MSG_ERROR([objcopy does not appear to be for bee])
-)
+AC_PATH_PROG([AS], [bee-as], [true])
+AC_PATH_PROG([OBJCOPY], [bee-objcopy], [true])
 
 dnl Readline wrapper
 AC_PATH_PROG(RLWRAP, rlwrap)
