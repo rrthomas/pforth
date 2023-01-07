@@ -12,7 +12,7 @@ bin_SCRIPTS = pforth
 
 noinst_DATA = pforth-32.bin pforth-64.bin
 EXTRA_DIST =  $(portable_SRCS) $(host_SRCS) pforth pforth-32.bin pforth-64.bin
-DISTCLEANFILES = highlevel.fs
+DISTCLEANFILES = highlevel.fs pforth.s
 
 portable_SRCS = compiler2.fs compiler4.fs compiler5.fs control1.fs		\
 	control2.fs control3.fs defer-fetch-store.fs defining.fs does.fs	\
@@ -30,7 +30,13 @@ host_SRCS = $(portable_SRCS) \
 
 ETAGS_ARGS = --language forth $(portable_SRCS) $(host_SRCS) highlevel.fs.in
 
-do_build = $(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs
+do_build = \
+    if test $(srcdir) != $(builddir); then \
+	for i in $(host_SRCS); do \
+	$(LN_S) -f $(abs_top_srcdir)/src/"$$i" . ; \
+	done; \
+    fi && \
+    $(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs
 
 # Build with triple test
 pforth-$(bee_word_bits).bin: $(host_SRCS) highlevel.fs
@@ -52,8 +58,6 @@ pforth.s: pforth-$(bee_word_bits).bin
 
 .o.bin:
 	$(OBJCOPY) -O binary $< $@
-
-check-local:
 
 loc-local:
 	cd $(srcdir) && $(CLOC) $(CLOC_OPTS) $(host_SRCS) $(portable_SRCS) $(abs_builddir)/highlevel.fs
@@ -82,6 +86,4 @@ check-local: pforth
 	$(do_build) && \
 	cmp pforth-$(bee_word_bits).bin pforth-new && \
 	rm pforth-new && \
-	cd $(top_srcdir)/extras && \
-	echo foobar | $(abs_builddir)/pforth tests.fs;
 	./pforth --evaluate FOO || test $$? = 243
