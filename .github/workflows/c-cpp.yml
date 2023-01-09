@@ -1,0 +1,64 @@
+name: C/C++ CI
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            shell: bash
+          - os: macos-latest
+            shell: bash
+          - os: windows-latest
+            sys: mingw64
+            arch: x86_64
+            shell: msys2
+            sudo_flag: --no-sudo
+          # FIXME: Bee doesn't currently build on 32-bit systems: https://github.com/rrthomas/bee/issues/17
+          # - os: windows-latest
+          #   sys: mingw32
+          #   arch: i686
+          #   shell: msys2
+          #   sudo_flag: --no-sudo
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }} {0}
+    steps:
+    - uses: msys2/setup-msys2@v2
+      if: ${{ matrix.os == 'windows-latest' }}
+      with:
+        release: false
+        msystem: ${{matrix.sys}}
+        install: >-
+          patch git groff help2man
+          mingw-w64-${{matrix.arch}}-autotools
+          mingw-w64-${{matrix.arch}}-gcc
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+    - name: Install dependencies (Ubuntu)
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: sudo apt-get -y install texlive-latex-extra texlive-science texlive-fonts-recommended texlive-fonts-extra tex-gyre help2man latexmk rlwrap
+    - name: Install dependencies (macOS)
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: |
+        brew install help2man automake
+        # Prepend optional brew binary directories to PATH
+        echo "/usr/local/opt/m4/bin" >> $GITHUB_PATH
+    - name: Set up environment (Windows)
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+        # Define _POSIX to get a full set of POSIX signal names from signal.h on mingw
+        echo "CPPFLAGS=-D_POSIX" >> $GITHUB_ENV
+    - name: Install VM executor
+      run: |
+        ./build-aux/install-executor ${{ matrix.sudo_flag }}
+        if test ${{ matrix.os }} = ubuntu-latest; then sudo ldconfig; fi
+    - name: Build
+      run: |
+        autoreconf -i && ./configure --enable-silent-rules
+        if test ${{ matrix.os }} = ubuntu-latest; then make distcheck; else make check; fi

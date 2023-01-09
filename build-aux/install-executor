@@ -1,7 +1,7 @@
 #!/bin/bash
-# Install Bee (used for AppVeyor build)
+# Install Bee (used for CI)
 #
-# (c) Reuben Thomas 2018-2022
+# (c) Reuben Thomas 2018-2023
 #
 # This file is in the public domain.
 
@@ -9,10 +9,6 @@ SUDO=sudo
 if test "$1" = "--no-sudo"; then
     shift
     SUDO=""
-fi
-
-if test "$GITHUB_TOKEN" != ""; then
-    GITHUB_HEADER=(-H "Authorization: token $GITHUB_TOKEN")
 fi
 
 cd $HOME
