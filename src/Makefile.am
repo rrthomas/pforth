@@ -86,4 +86,4 @@ check-local: pforth
 	$(do_build) && \
 	cmp pforth-$(bee_word_bits).bin pforth-new && \
 	rm pforth-new && \
-	./pforth --evaluate FOO || test $$? = 243
+	./pforth --evaluate "42 HALT" || test $$? = 42
