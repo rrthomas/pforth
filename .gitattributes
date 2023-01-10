@@ -1,0 +1,3 @@
+# Disable text line ending translation for Forth sources
+# pForth can’t cope with CRLF line endings!
+*.fs -text
