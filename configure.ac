@@ -56,7 +56,7 @@ AC_ARG_VAR([HOST_FLAVOUR], [host flavour])
 AS_IF([test "$HOST_EXECUTOR" = ""],
   [AS_CASE([$host],
     [""], [HOST_EXECUTOR=$BUILD_EXECUTOR; host=$build],
-    [arm*-riscos], [HOST_EXECUTOR=""],
+    [arm*-riscos], [HOST_EXECUTOR=""; host=riscos],
     [beetle*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [beetle])],
     [mit*], [PFORTH_CHECK_EXECUTOR([HOST_EXECUTOR], [mit])],
     [AC_MSG_ERROR([pForth does not support host $host])])],

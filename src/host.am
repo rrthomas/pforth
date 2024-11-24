@@ -9,7 +9,7 @@ highlevel.fs: $(srcdir)/../highlevel.fs.in
 
 include $(srcdir)/../host_src.am
 
-BUILD_PFORTH = $(BUILD_EXECUTOR) $(BUILD_EXECUTOR_FLAGS) $(abs_top_srcdir)/src/$(build_flavour)/pforth
+BUILD_PFORTH = $(BUILD_EXECUTOR) $(BUILD_EXECUTOR_FLAGS) "$(abs_top_srcdir)/src/$(build_flavour)/pforth"
 
 host_SRCS = $(portable_SRCS) \
 	accept.fs assembler.fs bracket-does.fs call-cells.fs code.fs		\
@@ -24,7 +24,7 @@ host_SRCS = $(portable_SRCS) \
 do_build = \
 	if test $(srcdir) != $(builddir); then \
 	    for i in $(host_SRCS); do \
-		$(LN_S) -f $(abs_top_srcdir)/src/$(host)/"$$i" . ; \
+		$(LN_S) -f "$(abs_top_srcdir)/src/$(host)/$$i" . ; \
 	    done; \
 	fi && \
 	$(BUILD_PFORTH) --evaluate "$$MINIMAL_PRIMITIVES" make.fs

@@ -34,4 +34,4 @@ EXTRA_DIST = $(LATEX_SRCS) $(LATEX_PDFS) \
 	ideas.md TODO.txt
 
 .tex.pdf:
-	env BIBINPUTS=$(abs_srcdir)/bibtex/bib $(LATEXMK) $(LATEXMK_OPTS) $<
+	env BIBINPUTS="$(abs_srcdir)/bibtex/bib" $(LATEXMK) $(LATEXMK_OPTS) $<
